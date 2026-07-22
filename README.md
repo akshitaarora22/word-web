@@ -23,28 +23,6 @@ Progress is saved in the browser via `localStorage`.
 
 Just open `index.html` in a browser. That's it.
 
-## Deploy to GitHub Pages
-
-```bash
-# one-time setup
-git init
-git add .
-git commit -m "Word Web v1"
-# create an empty repo named word-web on github.com, then:
-git remote add origin https://github.com/YOUR_USERNAME/word-web.git
-git branch -M main
-git push -u origin main
-```
-
-Then on github.com: **repo → Settings → Pages → Source: Deploy from a branch → Branch: `main` / root → Save.**
-A minute later your game is live at `https://YOUR_USERNAME.github.io/word-web/`.
-
-Every future update is just:
-
-```bash
-git add . && git commit -m "describe change" && git push
-```
-
 ## Project layout
 
 ```
