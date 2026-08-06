@@ -5,7 +5,7 @@
     "organizing_principle": "Roots selected by measured productivity across a GRE-level corpus, then grouped into 13 semantic domains defined for this project. Grouping and ordering are original to this dataset.",
     "content_note": "Root-to-meaning mappings are factual linguistic data. All definitions, example sentences, domain groupings, and notes are original work written for this project. No text from any published vocabulary book is reproduced.",
     "root_count": 140,
-    "word_count": 476,
+    "word_count": 405,
     "domain_count": 13,
     "roots_per_domain": {
       "speech_and_writing": 10,
@@ -23,26 +23,25 @@
       "quantity_and_scale": 10
     },
     "words_per_domain": {
-      "mind_and_emotion": 76,
-      "unrooted": 31,
-      "kinship_and_gender": 21,
-      "people_and_society": 21,
-      "body_and_life": 69,
-      "structure_and_measure": 68,
-      "knowledge_and_perception": 38,
+      "mind_and_emotion": 58,
+      "unrooted": 29,
+      "quantity_and_scale": 10,
+      "kinship_and_gender": 7,
+      "people_and_society": 18,
+      "body_and_life": 55,
+      "structure_and_measure": 69,
+      "knowledge_and_perception": 24,
       "speech_and_writing": 38,
-      "value_and_judgment": 12,
-      "time_and_change": 21,
-      "world_and_nature": 33,
-      "quantity_and_scale": 6,
-      "motion_and_force": 39,
+      "value_and_judgment": 11,
+      "time_and_change": 19,
+      "world_and_nature": 26,
+      "motion_and_force": 38,
       "power_and_conflict": 3
     },
     "words_on_gre_list": 113,
     "roots_without_words": [
       "acer",
       "amare",
-      "andros",
       "archein",
       "audere",
       "bellum",
@@ -71,7 +70,6 @@
       "mater",
       "micros",
       "mnemon",
-      "monos",
       "mors",
       "novus",
       "os_oris",
@@ -82,8 +80,6 @@
       "penuria",
       "plenus",
       "polis",
-      "polys",
-      "potens",
       "probare",
       "pyros",
       "quaerere",
@@ -93,7 +89,6 @@
       "sophos",
       "tempus",
       "timere",
-      "tome",
       "trahere",
       "vacuus",
       "valere",
@@ -140,7 +135,7 @@
     },
     {
       "id": "graphein",
-      "root": "graphein",
+      "root": "graphein, gramma",
       "origin": "Greek",
       "meaning": "to write",
       "domain": "speech_and_writing",
@@ -1277,18 +1272,6 @@
       "gre_list": false
     },
     {
-      "word": "egomaniac",
-      "roots": [
-        "ego"
-      ],
-      "primary_root": "ego",
-      "domain": "mind_and_emotion",
-      "part_of_speech": "noun",
-      "definition": "A person with an obsessive, exaggerated sense of self-importance.",
-      "example": "The director was an egomaniac who demanded credit for everyone's ideas.",
-      "gre_list": false
-    },
-    {
       "word": "egomaniacal",
       "roots": [
         "ego"
@@ -1356,19 +1339,6 @@
       "gre_list": true
     },
     {
-      "word": "misanthropy",
-      "roots": [
-        "misein",
-        "anthropos"
-      ],
-      "primary_root": "misein",
-      "domain": "mind_and_emotion",
-      "part_of_speech": "noun",
-      "definition": "A general dislike or distrust of humankind.",
-      "example": "Years of betrayal had hardened his heart into settled misanthropy.",
-      "gre_list": false
-    },
-    {
       "word": "misanthropic",
       "roots": [
         "misein",
@@ -1379,32 +1349,6 @@
       "part_of_speech": "adjective",
       "definition": "Disliking or shunning other people.",
       "example": "Her misanthropic streak made large parties a form of torture.",
-      "gre_list": false
-    },
-    {
-      "word": "misogyny",
-      "roots": [
-        "misein",
-        "gyne"
-      ],
-      "primary_root": "misein",
-      "domain": "mind_and_emotion",
-      "part_of_speech": "noun",
-      "definition": "Hatred of or contempt for women.",
-      "example": "The report documented a workplace culture soaked in misogyny.",
-      "gre_list": false
-    },
-    {
-      "word": "misogynist",
-      "roots": [
-        "misein",
-        "gyne"
-      ],
-      "primary_root": "misein",
-      "domain": "mind_and_emotion",
-      "part_of_speech": "noun",
-      "definition": "A person who hates or is prejudiced against women.",
-      "example": "The critic exposed the author as an unrepentant misogynist.",
       "gre_list": false
     },
     {
@@ -1434,76 +1378,16 @@
       "gre_list": false
     },
     {
-      "word": "misogamist",
-      "roots": [
-        "misein",
-        "gamos"
-      ],
-      "primary_root": "misein",
-      "domain": "mind_and_emotion",
-      "part_of_speech": "noun",
-      "definition": "A person who hates the institution of marriage.",
-      "example": "A lifelong misogamist, she called weddings a beautiful mistake.",
-      "gre_list": false
-    },
-    {
-      "word": "monogamy",
-      "roots": [
-        "gamos"
-      ],
-      "primary_root": "gamos",
-      "domain": "kinship_and_gender",
-      "part_of_speech": "noun",
-      "definition": "The practice of being married to one person at a time.",
-      "example": "They chose monogamy and never regretted the single ring each wore.",
-      "gre_list": false
-    },
-    {
-      "word": "monogamist",
-      "roots": [
-        "gamos"
-      ],
-      "primary_root": "gamos",
-      "domain": "kinship_and_gender",
-      "part_of_speech": "noun",
-      "definition": "A person who practices marriage to one partner.",
-      "example": "As a committed monogamist, he found the idea of many spouses exhausting.",
-      "gre_list": false
-    },
-    {
       "word": "monogamous",
       "roots": [
+        "monos",
         "gamos"
       ],
-      "primary_root": "gamos",
-      "domain": "kinship_and_gender",
+      "primary_root": "monos",
+      "domain": "quantity_and_scale",
       "part_of_speech": "adjective",
       "definition": "Having only one spouse or partner at a time.",
       "example": "Swans are famously monogamous, often pairing for life.",
-      "gre_list": false
-    },
-    {
-      "word": "bigamy",
-      "roots": [
-        "gamos"
-      ],
-      "primary_root": "gamos",
-      "domain": "kinship_and_gender",
-      "part_of_speech": "noun",
-      "definition": "The crime of marrying someone while already legally married to another.",
-      "example": "He was charged with bigamy after his two wives met by accident.",
-      "gre_list": false
-    },
-    {
-      "word": "bigamist",
-      "roots": [
-        "gamos"
-      ],
-      "primary_root": "gamos",
-      "domain": "kinship_and_gender",
-      "part_of_speech": "noun",
-      "definition": "A person who is unlawfully married to two people at once.",
-      "example": "The bigamist kept two households in two different cities.",
       "gre_list": false
     },
     {
@@ -1519,36 +1403,13 @@
       "gre_list": false
     },
     {
-      "word": "polygamy",
-      "roots": [
-        "gamos"
-      ],
-      "primary_root": "gamos",
-      "domain": "kinship_and_gender",
-      "part_of_speech": "noun",
-      "definition": "The practice of having more than one spouse at a time.",
-      "example": "In some historical societies polygamy was reserved for the wealthy.",
-      "gre_list": false
-    },
-    {
-      "word": "polygamist",
-      "roots": [
-        "gamos"
-      ],
-      "primary_root": "gamos",
-      "domain": "kinship_and_gender",
-      "part_of_speech": "noun",
-      "definition": "A person with more than one spouse at a time.",
-      "example": "The polygamist supported a household of several wives and many children.",
-      "gre_list": false
-    },
-    {
       "word": "polygamous",
       "roots": [
+        "polys",
         "gamos"
       ],
-      "primary_root": "gamos",
-      "domain": "kinship_and_gender",
+      "primary_root": "polys",
+      "domain": "quantity_and_scale",
       "part_of_speech": "adjective",
       "definition": "Having more than one spouse at once.",
       "example": "The documentary followed a polygamous community in the desert.",
@@ -1557,64 +1418,27 @@
     {
       "word": "polygyny",
       "roots": [
-        "gamos",
+        "polys",
         "gyne"
       ],
-      "primary_root": "gamos",
-      "domain": "kinship_and_gender",
+      "primary_root": "polys",
+      "domain": "quantity_and_scale",
       "part_of_speech": "noun",
       "definition": "The custom of one man having several wives.",
       "example": "Polygyny, one husband with many wives, appears in several old texts.",
       "gre_list": false
     },
     {
-      "word": "polyandry",
-      "roots": [
-        "gamos"
-      ],
-      "primary_root": "gamos",
-      "domain": "kinship_and_gender",
-      "part_of_speech": "noun",
-      "definition": "The custom of one woman having several husbands.",
-      "example": "Polyandry, rare worldwide, was documented in parts of the Himalayas.",
-      "gre_list": false
-    },
-    {
       "word": "polyandrous",
       "roots": [
-        "gamos"
+        "polys",
+        "andros"
       ],
-      "primary_root": "gamos",
-      "domain": "kinship_and_gender",
+      "primary_root": "polys",
+      "domain": "quantity_and_scale",
       "part_of_speech": "adjective",
       "definition": "Having more than one husband at a time.",
       "example": "The polyandrous household divided its labor among three husbands.",
-      "gre_list": false
-    },
-    {
-      "word": "anthropology",
-      "roots": [
-        "anthropos",
-        "logos"
-      ],
-      "primary_root": "anthropos",
-      "domain": "people_and_society",
-      "part_of_speech": "noun",
-      "definition": "The study of human societies, cultures, and development.",
-      "example": "Her anthropology degree took her to field sites on three continents.",
-      "gre_list": false
-    },
-    {
-      "word": "anthropologist",
-      "roots": [
-        "anthropos",
-        "logos"
-      ],
-      "primary_root": "anthropos",
-      "domain": "people_and_society",
-      "part_of_speech": "noun",
-      "definition": "A scientist who studies human cultures and origins.",
-      "example": "The anthropologist spent two years living with the community she studied.",
       "gre_list": false
     },
     {
@@ -1644,32 +1468,6 @@
       "gre_list": true
     },
     {
-      "word": "philanthropist",
-      "roots": [
-        "philein",
-        "anthropos"
-      ],
-      "primary_root": "philein",
-      "domain": "mind_and_emotion",
-      "part_of_speech": "noun",
-      "definition": "A person who gives generously to help others.",
-      "example": "The philanthropist quietly paid off the hospital's entire debt.",
-      "gre_list": false
-    },
-    {
-      "word": "philanthropic",
-      "roots": [
-        "philein",
-        "anthropos"
-      ],
-      "primary_root": "philein",
-      "domain": "mind_and_emotion",
-      "part_of_speech": "adjective",
-      "definition": "Devoted to promoting the welfare of others.",
-      "example": "The foundation's philanthropic mission was to end childhood hunger.",
-      "gre_list": false
-    },
-    {
       "word": "ascetic",
       "roots": [],
       "primary_root": null,
@@ -1697,16 +1495,6 @@
       "part_of_speech": "adjective",
       "definition": "Skillful with the hands; nimble.",
       "example": "The dexterous surgeon tied the knot with a single graceful motion.",
-      "gre_list": false
-    },
-    {
-      "word": "dexterity",
-      "roots": [],
-      "primary_root": null,
-      "domain": "unrooted",
-      "part_of_speech": "noun",
-      "definition": "Skill and ease in using the hands or the mind.",
-      "example": "Playing the harp demands remarkable dexterity in both hands.",
       "gre_list": false
     },
     {
@@ -1823,19 +1611,6 @@
       "gre_list": false
     },
     {
-      "word": "dermatologist",
-      "roots": [
-        "derma",
-        "logos"
-      ],
-      "primary_root": "derma",
-      "domain": "body_and_life",
-      "part_of_speech": "noun",
-      "definition": "A doctor who specializes in skin conditions.",
-      "example": "The dermatologist recommended sunscreen and a gentler soap.",
-      "gre_list": false
-    },
-    {
       "word": "dermatitis",
       "roots": [
         "derma"
@@ -1884,18 +1659,6 @@
       "gre_list": false
     },
     {
-      "word": "taxidermist",
-      "roots": [
-        "derma"
-      ],
-      "primary_root": "derma",
-      "domain": "body_and_life",
-      "part_of_speech": "noun",
-      "definition": "A person who mounts and preserves animal skins.",
-      "example": "The taxidermist restored the old museum's fading owl.",
-      "gre_list": false
-    },
-    {
       "word": "pachyderm",
       "roots": [
         "derma"
@@ -1918,45 +1681,6 @@
       "part_of_speech": "noun",
       "definition": "The dental practice of straightening teeth.",
       "example": "Years of orthodontia finally gave him an even smile.",
-      "gre_list": false
-    },
-    {
-      "word": "orthodontist",
-      "roots": [
-        "orthos",
-        "odontos"
-      ],
-      "primary_root": "orthos",
-      "domain": "structure_and_measure",
-      "part_of_speech": "noun",
-      "definition": "A dentist who corrects the alignment of teeth.",
-      "example": "The orthodontist tightened the braces at every monthly visit.",
-      "gre_list": false
-    },
-    {
-      "word": "orthopedics",
-      "roots": [
-        "orthos",
-        "paidos"
-      ],
-      "primary_root": "orthos",
-      "domain": "structure_and_measure",
-      "part_of_speech": "noun",
-      "definition": "The branch of medicine dealing with bones and muscles.",
-      "example": "After the fracture, she was referred to orthopedics.",
-      "gre_list": false
-    },
-    {
-      "word": "orthopedist",
-      "roots": [
-        "orthos",
-        "paidos"
-      ],
-      "primary_root": "orthos",
-      "domain": "structure_and_measure",
-      "part_of_speech": "noun",
-      "definition": "A doctor who treats disorders of the bones and joints.",
-      "example": "The orthopedist set the broken wrist and fitted a cast.",
       "gre_list": false
     },
     {
@@ -2007,19 +1731,6 @@
       "part_of_speech": "noun",
       "definition": "The branch of medicine dealing with the nervous system.",
       "example": "Persistent numbness in his hand led him to neurology.",
-      "gre_list": false
-    },
-    {
-      "word": "neurologist",
-      "roots": [
-        "neuron",
-        "logos"
-      ],
-      "primary_root": "neuron",
-      "domain": "body_and_life",
-      "part_of_speech": "noun",
-      "definition": "A doctor who treats disorders of the nerves and brain.",
-      "example": "The neurologist ordered a scan to find the cause of the tremor.",
       "gre_list": false
     },
     {
@@ -2084,18 +1795,6 @@
       "gre_list": false
     },
     {
-      "word": "cardiologist",
-      "roots": [
-        "logos"
-      ],
-      "primary_root": "logos",
-      "domain": "knowledge_and_perception",
-      "part_of_speech": "noun",
-      "definition": "A doctor who specializes in the heart.",
-      "example": "The cardiologist adjusted his medication and cleared him to exercise.",
-      "gre_list": false
-    },
-    {
       "word": "cardiac",
       "roots": [],
       "primary_root": null,
@@ -2107,9 +1806,11 @@
     },
     {
       "word": "cardiogram",
-      "roots": [],
-      "primary_root": null,
-      "domain": "unrooted",
+      "roots": [
+        "graphein"
+      ],
+      "primary_root": "graphein",
+      "domain": "speech_and_writing",
       "part_of_speech": "noun",
       "definition": "A recording of the heart's electrical activity.",
       "example": "The cardiogram showed a steady, healthy rhythm.",
@@ -2161,45 +1862,6 @@
       "gre_list": false
     },
     {
-      "word": "pediatrician",
-      "roots": [
-        "paidos",
-        "iatreia"
-      ],
-      "primary_root": "paidos",
-      "domain": "kinship_and_gender",
-      "part_of_speech": "noun",
-      "definition": "A doctor who treats children.",
-      "example": "The pediatrician weighed the newborn and checked her reflexes.",
-      "gre_list": false
-    },
-    {
-      "word": "geriatrics",
-      "roots": [
-        "geras",
-        "iatreia"
-      ],
-      "primary_root": "geras",
-      "domain": "body_and_life",
-      "part_of_speech": "noun",
-      "definition": "The branch of medicine dealing with the health of older people.",
-      "example": "As the population aged, demand for geriatrics grew sharply.",
-      "gre_list": false
-    },
-    {
-      "word": "geriatrician",
-      "roots": [
-        "geras",
-        "iatreia"
-      ],
-      "primary_root": "geras",
-      "domain": "body_and_life",
-      "part_of_speech": "noun",
-      "definition": "A doctor who specializes in the care of the elderly.",
-      "example": "The geriatrician reviewed each of her patient's many prescriptions.",
-      "gre_list": false
-    },
-    {
       "word": "geriatric",
       "roots": [
         "geras",
@@ -2210,18 +1872,6 @@
       "part_of_speech": "adjective",
       "definition": "Relating to old age or its medical care.",
       "example": "The hospital opened a geriatric ward for its oldest patients.",
-      "gre_list": false
-    },
-    {
-      "word": "optics",
-      "roots": [
-        "opsis"
-      ],
-      "primary_root": "opsis",
-      "domain": "knowledge_and_perception",
-      "part_of_speech": "noun",
-      "definition": "The science of light and vision.",
-      "example": "The telescope's optics gathered light from distant galaxies.",
       "gre_list": false
     },
     {
@@ -2273,18 +1923,6 @@
       "gre_list": false
     },
     {
-      "word": "ophthalmologist",
-      "roots": [
-        "logos"
-      ],
-      "primary_root": "logos",
-      "domain": "knowledge_and_perception",
-      "part_of_speech": "noun",
-      "definition": "A doctor who treats diseases of the eye.",
-      "example": "The ophthalmologist found the early signs of glaucoma.",
-      "gre_list": false
-    },
-    {
       "word": "optometry",
       "roots": [
         "opsis",
@@ -2295,19 +1933,6 @@
       "part_of_speech": "noun",
       "definition": "The practice of testing eyes and prescribing corrective lenses.",
       "example": "She studied optometry and opened a small vision clinic.",
-      "gre_list": false
-    },
-    {
-      "word": "optometrist",
-      "roots": [
-        "opsis",
-        "metron"
-      ],
-      "primary_root": "opsis",
-      "domain": "knowledge_and_perception",
-      "part_of_speech": "noun",
-      "definition": "A specialist who examines eyes and prescribes glasses.",
-      "example": "The optometrist measured his vision and updated his lenses.",
       "gre_list": false
     },
     {
@@ -2399,32 +2024,6 @@
       "gre_list": false
     },
     {
-      "word": "psychology",
-      "roots": [
-        "psyche",
-        "logos"
-      ],
-      "primary_root": "psyche",
-      "domain": "mind_and_emotion",
-      "part_of_speech": "noun",
-      "definition": "The scientific study of the mind and behavior.",
-      "example": "She turned to psychology to understand why habits are so hard to break.",
-      "gre_list": false
-    },
-    {
-      "word": "psychologist",
-      "roots": [
-        "psyche",
-        "logos"
-      ],
-      "primary_root": "psyche",
-      "domain": "mind_and_emotion",
-      "part_of_speech": "noun",
-      "definition": "A specialist who studies the mind and helps with mental health.",
-      "example": "The psychologist helped him work through years of buried grief.",
-      "gre_list": false
-    },
-    {
       "word": "psychological",
       "roots": [
         "psyche",
@@ -2447,32 +2046,6 @@
       "part_of_speech": "adjective",
       "definition": "Relating to the mind, or to supposed powers beyond the physical.",
       "example": "She felt a strange psychic connection to her twin.",
-      "gre_list": false
-    },
-    {
-      "word": "psychiatry",
-      "roots": [
-        "psyche",
-        "iatreia"
-      ],
-      "primary_root": "psyche",
-      "domain": "mind_and_emotion",
-      "part_of_speech": "noun",
-      "definition": "The medical field concerned with mental illness.",
-      "example": "He entered psychiatry hoping to treat conditions others overlooked.",
-      "gre_list": false
-    },
-    {
-      "word": "psychiatrist",
-      "roots": [
-        "psyche",
-        "iatreia"
-      ],
-      "primary_root": "psyche",
-      "domain": "mind_and_emotion",
-      "part_of_speech": "noun",
-      "definition": "A medical doctor who diagnoses and treats mental illness.",
-      "example": "The psychiatrist prescribed medication alongside weekly therapy.",
       "gre_list": false
     },
     {
@@ -2500,19 +2073,6 @@
       "gre_list": false
     },
     {
-      "word": "psychopath",
-      "roots": [
-        "psyche",
-        "pathos"
-      ],
-      "primary_root": "psyche",
-      "domain": "mind_and_emotion",
-      "part_of_speech": "noun",
-      "definition": "A person with a severe disorder marked by antisocial behavior and no remorse.",
-      "example": "The novel's villain was a charming psychopath who felt nothing for his victims.",
-      "gre_list": false
-    },
-    {
       "word": "psychopathic",
       "roots": [
         "psyche",
@@ -2535,18 +2095,6 @@
       "part_of_speech": "noun",
       "definition": "The treatment of mental disorders through talking rather than drugs.",
       "example": "Months of psychotherapy gave her tools to manage the anxiety.",
-      "gre_list": false
-    },
-    {
-      "word": "psychotherapist",
-      "roots": [
-        "psyche"
-      ],
-      "primary_root": "psyche",
-      "domain": "mind_and_emotion",
-      "part_of_speech": "noun",
-      "definition": "A professional who treats the mind through conversation and counseling.",
-      "example": "The psychotherapist helped the couple hear each other again.",
       "gre_list": false
     },
     {
@@ -2576,18 +2124,6 @@
       "gre_list": false
     },
     {
-      "word": "osteopath",
-      "roots": [
-        "pathos"
-      ],
-      "primary_root": "pathos",
-      "domain": "mind_and_emotion",
-      "part_of_speech": "noun",
-      "definition": "A physician who treats the body partly through manipulation of muscles and bones.",
-      "example": "The osteopath eased his back pain with careful adjustments.",
-      "gre_list": false
-    },
-    {
       "word": "osteopathy",
       "roots": [
         "pathos"
@@ -2600,18 +2136,6 @@
       "gre_list": false
     },
     {
-      "word": "chiropractor",
-      "roots": [
-        "cheir"
-      ],
-      "primary_root": "cheir",
-      "domain": "body_and_life",
-      "part_of_speech": "noun",
-      "definition": "A practitioner who treats the body by adjusting the spine by hand.",
-      "example": "The chiropractor realigned his stiff neck in a single visit.",
-      "gre_list": false
-    },
-    {
       "word": "chiropractic",
       "roots": [
         "cheir"
@@ -2621,19 +2145,6 @@
       "part_of_speech": "noun",
       "definition": "The practice of treating disorders through manual spinal adjustment.",
       "example": "He credited chiropractic with the end of his chronic backache.",
-      "gre_list": false
-    },
-    {
-      "word": "chiropodist",
-      "roots": [
-        "cheir",
-        "podos"
-      ],
-      "primary_root": "cheir",
-      "domain": "body_and_life",
-      "part_of_speech": "noun",
-      "definition": "A specialist who treats problems of the feet (also called a podiatrist).",
-      "example": "The chiropodist trimmed the stubborn callus and eased his walking.",
       "gre_list": false
     },
     {
@@ -2672,32 +2183,6 @@
       "part_of_speech": "noun",
       "definition": "The practice of telling fortunes from the palm; palm reading.",
       "example": "At the fair a woman offered chiromancy, tracing the lines of each palm.",
-      "gre_list": false
-    },
-    {
-      "word": "podiatrist",
-      "roots": [
-        "podos",
-        "iatreia"
-      ],
-      "primary_root": "podos",
-      "domain": "body_and_life",
-      "part_of_speech": "noun",
-      "definition": "A doctor who treats disorders of the foot.",
-      "example": "The podiatrist fitted him with supports for his fallen arches.",
-      "gre_list": false
-    },
-    {
-      "word": "podiatry",
-      "roots": [
-        "podos",
-        "iatreia"
-      ],
-      "primary_root": "podos",
-      "domain": "body_and_life",
-      "part_of_speech": "noun",
-      "definition": "The branch of medicine dealing with the feet.",
-      "example": "She left nursing to study podiatry.",
       "gre_list": false
     },
     {
@@ -2812,19 +2297,6 @@
       "gre_list": false
     },
     {
-      "word": "graphologist",
-      "roots": [
-        "graphein",
-        "logos"
-      ],
-      "primary_root": "graphein",
-      "domain": "speech_and_writing",
-      "part_of_speech": "noun",
-      "definition": "A person who studies handwriting.",
-      "example": "A graphologist examined the note to judge whether it was forged.",
-      "gre_list": false
-    },
-    {
       "word": "calligraphy",
       "roots": [
         "kallos",
@@ -2835,19 +2307,6 @@
       "part_of_speech": "noun",
       "definition": "The art of beautiful handwriting.",
       "example": "She practiced calligraphy until each wedding invitation looked engraved.",
-      "gre_list": false
-    },
-    {
-      "word": "calligrapher",
-      "roots": [
-        "kallos",
-        "graphein"
-      ],
-      "primary_root": "kallos",
-      "domain": "value_and_judgment",
-      "part_of_speech": "noun",
-      "definition": "An artist skilled in beautiful handwriting.",
-      "example": "The calligrapher lettered the diplomas in gold ink.",
       "gre_list": false
     },
     {
@@ -2903,19 +2362,6 @@
       "gre_list": false
     },
     {
-      "word": "gerontologist",
-      "roots": [
-        "geras",
-        "logos"
-      ],
-      "primary_root": "geras",
-      "domain": "body_and_life",
-      "part_of_speech": "noun",
-      "definition": "A scientist who studies the process of aging.",
-      "example": "The gerontologist tracked how sleep changed across the decades of life.",
-      "gre_list": false
-    },
-    {
       "word": "senile",
       "roots": [
         "senex"
@@ -2949,18 +2395,6 @@
       "part_of_speech": "adjective",
       "definition": "Growing old; aging.",
       "example": "The senescent oak still bloomed, though its trunk was hollowing.",
-      "gre_list": false
-    },
-    {
-      "word": "senescence",
-      "roots": [
-        "senex"
-      ],
-      "primary_root": "senex",
-      "domain": "time_and_change",
-      "part_of_speech": "noun",
-      "definition": "The condition or process of growing old.",
-      "example": "Scientists study cell senescence to understand why bodies age.",
       "gre_list": false
     },
     {
@@ -3012,32 +2446,6 @@
       "gre_list": false
     },
     {
-      "word": "biology",
-      "roots": [
-        "bios",
-        "logos"
-      ],
-      "primary_root": "bios",
-      "domain": "body_and_life",
-      "part_of_speech": "noun",
-      "definition": "The science of living organisms.",
-      "example": "In biology she learned how a single cell divides and multiplies.",
-      "gre_list": false
-    },
-    {
-      "word": "biologist",
-      "roots": [
-        "bios",
-        "logos"
-      ],
-      "primary_root": "bios",
-      "domain": "body_and_life",
-      "part_of_speech": "noun",
-      "definition": "A scientist who studies living things.",
-      "example": "The marine biologist tagged the sharks to track their migrations.",
-      "gre_list": false
-    },
-    {
       "word": "biological",
       "roots": [
         "bios",
@@ -3061,19 +2469,6 @@
       "part_of_speech": "noun",
       "definition": "An account of a person's life written by someone else.",
       "example": "The biography traced the inventor from his boyhood to his last patent.",
-      "gre_list": false
-    },
-    {
-      "word": "biographer",
-      "roots": [
-        "bios",
-        "graphein"
-      ],
-      "primary_root": "bios",
-      "domain": "body_and_life",
-      "part_of_speech": "noun",
-      "definition": "A person who writes an account of someone's life.",
-      "example": "The biographer spent a decade sifting through the poet's letters.",
       "gre_list": false
     },
     {
@@ -3114,32 +2509,6 @@
       "part_of_speech": "noun",
       "definition": "An examination of a body to determine the cause of death.",
       "example": "The autopsy revealed that the fall, not the illness, had killed him.",
-      "gre_list": false
-    },
-    {
-      "word": "astronomy",
-      "roots": [
-        "astron",
-        "nomos"
-      ],
-      "primary_root": "astron",
-      "domain": "world_and_nature",
-      "part_of_speech": "noun",
-      "definition": "The scientific study of stars, planets, and space.",
-      "example": "A cold, clear night is perfect for astronomy.",
-      "gre_list": false
-    },
-    {
-      "word": "astronomer",
-      "roots": [
-        "astron",
-        "nomos"
-      ],
-      "primary_root": "astron",
-      "domain": "world_and_nature",
-      "part_of_speech": "noun",
-      "definition": "A scientist who studies the stars and planets.",
-      "example": "The astronomer discovered a comet no one had charted before.",
       "gre_list": false
     },
     {
@@ -3267,19 +2636,6 @@
       "gre_list": false
     },
     {
-      "word": "geologist",
-      "roots": [
-        "geo",
-        "logos"
-      ],
-      "primary_root": "geo",
-      "domain": "world_and_nature",
-      "part_of_speech": "noun",
-      "definition": "A scientist who studies the earth's rocks and structure.",
-      "example": "The geologist read a billion years in the canyon's layered walls.",
-      "gre_list": false
-    },
-    {
       "word": "geography",
       "roots": [
         "geo",
@@ -3290,32 +2646,6 @@
       "part_of_speech": "noun",
       "definition": "The study of the earth's features, peoples, and places.",
       "example": "In geography they mapped the rivers that shaped each ancient city.",
-      "gre_list": false
-    },
-    {
-      "word": "geographer",
-      "roots": [
-        "geo",
-        "graphein"
-      ],
-      "primary_root": "geo",
-      "domain": "world_and_nature",
-      "part_of_speech": "noun",
-      "definition": "A person who studies the earth's landscapes and regions.",
-      "example": "The geographer charted how the coastline had shifted over centuries.",
-      "gre_list": false
-    },
-    {
-      "word": "geometry",
-      "roots": [
-        "geo",
-        "metron"
-      ],
-      "primary_root": "geo",
-      "domain": "world_and_nature",
-      "part_of_speech": "noun",
-      "definition": "The branch of mathematics concerned with shapes, sizes, and space.",
-      "example": "Geometry taught her to prove why the angles must add up.",
       "gre_list": false
     },
     {
@@ -3345,19 +2675,6 @@
       "gre_list": false
     },
     {
-      "word": "zoologist",
-      "roots": [
-        "zoion",
-        "logos"
-      ],
-      "primary_root": "zoion",
-      "domain": "world_and_nature",
-      "part_of_speech": "noun",
-      "definition": "A scientist who studies animals.",
-      "example": "The zoologist spent the season observing wolves in the valley.",
-      "gre_list": false
-    },
-    {
       "word": "zodiac",
       "roots": [
         "zoion"
@@ -3382,36 +2699,12 @@
       "gre_list": false
     },
     {
-      "word": "entomologist",
-      "roots": [
-        "logos"
-      ],
-      "primary_root": "logos",
-      "domain": "knowledge_and_perception",
-      "part_of_speech": "noun",
-      "definition": "A scientist who studies insects.",
-      "example": "The entomologist identified the moth from a single wing.",
-      "gre_list": false
-    },
-    {
-      "word": "anatomy",
-      "roots": [
-        "logos"
-      ],
-      "primary_root": "logos",
-      "domain": "knowledge_and_perception",
-      "part_of_speech": "noun",
-      "definition": "The study of the structure of the body; the body's structure itself.",
-      "example": "Medical students spend their first year mastering anatomy.",
-      "gre_list": false
-    },
-    {
       "word": "anatomical",
       "roots": [
-        "logos"
+        "tome"
       ],
-      "primary_root": "logos",
-      "domain": "knowledge_and_perception",
+      "primary_root": "tome",
+      "domain": "structure_and_measure",
       "part_of_speech": "adjective",
       "definition": "Relating to the structure of the body.",
       "example": "The textbook's anatomical drawings labeled every muscle.",
@@ -3420,46 +2713,22 @@
     {
       "word": "dichotomy",
       "roots": [
-        "logos"
+        "tome"
       ],
-      "primary_root": "logos",
-      "domain": "knowledge_and_perception",
+      "primary_root": "tome",
+      "domain": "structure_and_measure",
       "part_of_speech": "noun",
       "definition": "A division into two sharply opposed parts.",
       "example": "There is a false dichotomy between working hard and working smart.",
       "gre_list": true
     },
     {
-      "word": "dichotomous",
-      "roots": [
-        "logos"
-      ],
-      "primary_root": "logos",
-      "domain": "knowledge_and_perception",
-      "part_of_speech": "adjective",
-      "definition": "Divided into two contrasting parts.",
-      "example": "The study drew a dichotomous line between success and failure with no middle.",
-      "gre_list": false
-    },
-    {
-      "word": "atom",
-      "roots": [
-        "logos"
-      ],
-      "primary_root": "logos",
-      "domain": "knowledge_and_perception",
-      "part_of_speech": "noun",
-      "definition": "The smallest unit of a chemical element.",
-      "example": "Every atom in your body was forged inside a long-dead star.",
-      "gre_list": false
-    },
-    {
       "word": "atomic",
       "roots": [
-        "logos"
+        "tome"
       ],
-      "primary_root": "logos",
-      "domain": "knowledge_and_perception",
+      "primary_root": "tome",
+      "domain": "structure_and_measure",
       "part_of_speech": "adjective",
       "definition": "Relating to atoms or atomic energy.",
       "example": "The discovery of atomic structure reshaped all of physics.",
@@ -3468,10 +2737,10 @@
     {
       "word": "epitome",
       "roots": [
-        "logos"
+        "tome"
       ],
-      "primary_root": "logos",
-      "domain": "knowledge_and_perception",
+      "primary_root": "tome",
+      "domain": "structure_and_measure",
       "part_of_speech": "noun",
       "definition": "A perfect example of a quality or type.",
       "example": "Her calm reply was the epitome of grace under pressure.",
@@ -3535,19 +2804,6 @@
       "gre_list": false
     },
     {
-      "word": "autonomy",
-      "roots": [
-        "autos",
-        "nomos"
-      ],
-      "primary_root": "autos",
-      "domain": "mind_and_emotion",
-      "part_of_speech": "noun",
-      "definition": "The right or condition of self-government; independence.",
-      "example": "The region demanded greater autonomy from the central government.",
-      "gre_list": false
-    },
-    {
       "word": "autonomous",
       "roots": [
         "autos",
@@ -3595,19 +2851,6 @@
       "part_of_speech": "noun",
       "definition": "The study of human society and social behavior.",
       "example": "Sociology examines why crowds behave differently than individuals.",
-      "gre_list": false
-    },
-    {
-      "word": "sociologist",
-      "roots": [
-        "socius",
-        "logos"
-      ],
-      "primary_root": "socius",
-      "domain": "people_and_society",
-      "part_of_speech": "noun",
-      "definition": "A scientist who studies society and social groups.",
-      "example": "The sociologist surveyed a thousand families about their daily routines.",
       "gre_list": false
     },
     {
@@ -3702,19 +2945,6 @@
       "part_of_speech": "noun",
       "definition": "A person with long experience in a field.",
       "example": "The veteran reporter had covered six presidents.",
-      "gre_list": false
-    },
-    {
-      "word": "chronology",
-      "roots": [
-        "chronos",
-        "logos"
-      ],
-      "primary_root": "chronos",
-      "domain": "time_and_change",
-      "part_of_speech": "noun",
-      "definition": "The arrangement of events in the order they occurred.",
-      "example": "The detective built a chronology of the suspect's movements that night.",
       "gre_list": false
     },
     {
@@ -3925,19 +3155,6 @@
       "gre_list": false
     },
     {
-      "word": "pathologist",
-      "roots": [
-        "pathos",
-        "logos"
-      ],
-      "primary_root": "pathos",
-      "domain": "mind_and_emotion",
-      "part_of_speech": "noun",
-      "definition": "A specialist who studies the nature and causes of disease.",
-      "example": "The pathologist examined the tissue under a microscope.",
-      "gre_list": false
-    },
-    {
       "word": "pathetic",
       "roots": [
         "pathos"
@@ -3960,19 +3177,6 @@
       "part_of_speech": "noun",
       "definition": "The study of family lines and descent.",
       "example": "Her genealogy traced the family back to a single farming village.",
-      "gre_list": false
-    },
-    {
-      "word": "genealogist",
-      "roots": [
-        "genesis",
-        "logos"
-      ],
-      "primary_root": "genesis",
-      "domain": "body_and_life",
-      "part_of_speech": "noun",
-      "definition": "A person who traces family histories.",
-      "example": "The genealogist untangled three generations from old church records.",
       "gre_list": false
     },
     {
@@ -4034,7 +3238,8 @@
       "definition": "So deeply ingrained it seems inborn.",
       "example": "He was a congenital worrier, anxious since childhood.",
       "gre_list": false,
-      "display_note": "alternate sense"
+      "display_note": "alternate sense",
+      "key": "congenital_alt"
     },
     {
       "word": "gregarious",
@@ -4145,18 +3350,6 @@
       "gre_list": true
     },
     {
-      "word": "prescience",
-      "roots": [
-        "sciens"
-      ],
-      "primary_root": "sciens",
-      "domain": "knowledge_and_perception",
-      "part_of_speech": "noun",
-      "definition": "Knowledge of things before they occur; foresight.",
-      "example": "The novel's prescience about the internet startled later readers.",
-      "gre_list": false
-    },
-    {
       "word": "nescient",
       "roots": [
         "sciens"
@@ -4179,19 +3372,6 @@
       "part_of_speech": "adjective",
       "definition": "Knowing everything.",
       "example": "The story is told by an omniscient narrator who sees into every mind.",
-      "gre_list": false
-    },
-    {
-      "word": "omniscience",
-      "roots": [
-        "omnis",
-        "sciens"
-      ],
-      "primary_root": "omnis",
-      "domain": "quantity_and_scale",
-      "part_of_speech": "noun",
-      "definition": "The state of knowing everything.",
-      "example": "No editor has the omniscience to catch every possible error.",
       "gre_list": false
     },
     {
@@ -4279,25 +3459,13 @@
       "gre_list": false
     },
     {
-      "word": "misanthropist",
-      "roots": [
-        "misein",
-        "anthropos"
-      ],
-      "primary_root": "misein",
-      "domain": "mind_and_emotion",
-      "part_of_speech": "noun",
-      "definition": "A person who hates or distrusts humankind.",
-      "example": "The famous misanthropist wrote brilliant essays but attended no parties.",
-      "gre_list": false
-    },
-    {
       "word": "monogram",
       "roots": [
-        "gamos"
+        "monos",
+        "graphein"
       ],
-      "primary_root": "gamos",
-      "domain": "kinship_and_gender",
+      "primary_root": "monos",
+      "domain": "quantity_and_scale",
       "part_of_speech": "noun",
       "definition": "A design combining a person's initials.",
       "example": "A silver monogram was stitched into the corner of each handkerchief.",
@@ -4317,24 +3485,12 @@
       "gre_list": false
     },
     {
-      "word": "gynecologist",
-      "roots": [
-        "gyne",
-        "logos"
-      ],
-      "primary_root": "gyne",
-      "domain": "kinship_and_gender",
-      "part_of_speech": "noun",
-      "definition": "A doctor who treats conditions of the female reproductive system.",
-      "example": "The gynecologist reassured her that the results were normal.",
-      "gre_list": false
-    },
-    {
       "word": "androgynous",
       "roots": [
+        "andros",
         "gyne"
       ],
-      "primary_root": "gyne",
+      "primary_root": "andros",
       "domain": "kinship_and_gender",
       "part_of_speech": "adjective",
       "definition": "Having both male and female characteristics; neither clearly male nor female.",
@@ -4401,7 +3557,8 @@
       "definition": "A state of losing touch with reality.",
       "example": "The sudden psychosis frightened his family into calling for help.",
       "gre_list": false,
-      "display_note": "alternate sense"
+      "display_note": "alternate sense",
+      "key": "psychosis_alt"
     },
     {
       "word": "neuralgic",
@@ -4524,7 +3681,8 @@
       "definition": "Lacking excitement; ordinary and uninspired.",
       "example": "The review called the film competent but pedestrian.",
       "gre_list": true,
-      "display_note": "alternate sense"
+      "display_note": "alternate sense",
+      "key": "pedestrian_alt"
     },
     {
       "word": "pedal",
@@ -4585,18 +3743,6 @@
       "definition": "Regularly found in a particular area or group.",
       "example": "Corruption had become endemic to the old regime.",
       "gre_list": true
-    },
-    {
-      "word": "binocular",
-      "roots": [
-        "oculus"
-      ],
-      "primary_root": "oculus",
-      "domain": "knowledge_and_perception",
-      "part_of_speech": "adjective",
-      "definition": "Involving both eyes.",
-      "example": "Binocular vision lets us judge depth and distance.",
-      "gre_list": false
     },
     {
       "word": "metric",
@@ -4819,19 +3965,6 @@
       "gre_list": false
     },
     {
-      "word": "autonomic",
-      "roots": [
-        "autos",
-        "nomos"
-      ],
-      "primary_root": "autos",
-      "domain": "mind_and_emotion",
-      "part_of_speech": "adjective",
-      "definition": "Acting involuntarily, like certain bodily functions.",
-      "example": "Breathing is largely controlled by the autonomic nervous system.",
-      "gre_list": false
-    },
-    {
       "word": "social",
       "roots": [
         "socius"
@@ -4853,19 +3986,6 @@
       "part_of_speech": "verb",
       "definition": "To connect in the mind, or to keep company with.",
       "example": "She came to associate the smell of pine with childhood winters.",
-      "gre_list": false
-    },
-    {
-      "word": "astronautics",
-      "roots": [
-        "astron",
-        "nautes"
-      ],
-      "primary_root": "astron",
-      "domain": "world_and_nature",
-      "part_of_speech": "noun",
-      "definition": "The science of space travel.",
-      "example": "Astronautics combines physics, engineering, and a good deal of nerve.",
       "gre_list": false
     },
     {
@@ -4990,7 +4110,8 @@
     {
       "word": "omnipotent",
       "roots": [
-        "omnis"
+        "omnis",
+        "potens"
       ],
       "primary_root": "omnis",
       "domain": "quantity_and_scale",
@@ -5081,18 +4202,6 @@
       "part_of_speech": "adjective",
       "definition": "Holding firmly; stubbornly persistent.",
       "example": "Her tenacious grip on the rope kept them both from falling.",
-      "gre_list": false
-    },
-    {
-      "word": "tenacity",
-      "roots": [
-        "tenere"
-      ],
-      "primary_root": "tenere",
-      "domain": "motion_and_force",
-      "part_of_speech": "noun",
-      "definition": "Persistent determination.",
-      "example": "It took sheer tenacity to finish the degree while working nights.",
       "gre_list": false
     },
     {
@@ -6998,20 +6107,135 @@
     }
   ],
   "root_word_index": {
-    "aequus": [
-      "adequate",
-      "equanimity",
-      "equilibrium",
-      "equitable",
-      "equivocate",
-      "iniquity",
-      "unequivocal"
+    "ego": [
+      "alter ego",
+      "ego",
+      "egocentric",
+      "egoism",
+      "egoist",
+      "egomaniacal",
+      "egotist",
+      "egotistical"
     ],
-    "agogos": [
-      "demagogue",
-      "demagoguery",
-      "pedagogue",
-      "pedagogy"
+    "misein": [
+      "misanthrope",
+      "misanthropic",
+      "misogamy",
+      "misogynous"
+    ],
+    "anthropos": [
+      "anthropological",
+      "misanthrope",
+      "misanthropic",
+      "philanthropy"
+    ],
+    "gyne": [
+      "androgynous",
+      "gynecology",
+      "misogynous",
+      "polygyny"
+    ],
+    "gamos": [
+      "bigamous",
+      "misogamy",
+      "monogamous",
+      "polygamous"
+    ],
+    "monos": [
+      "monogamous",
+      "monogram"
+    ],
+    "polys": [
+      "polyandrous",
+      "polygamous",
+      "polygyny"
+    ],
+    "andros": [
+      "androgynous",
+      "polyandrous"
+    ],
+    "logos": [
+      "anthropological",
+      "astrology",
+      "biological",
+      "cardiology",
+      "chronological",
+      "dermatology",
+      "entomology",
+      "genealogy",
+      "geology",
+      "gerontology",
+      "graphology",
+      "gynecology",
+      "neurology",
+      "ophthalmology",
+      "pathology",
+      "philology",
+      "psychological",
+      "sociology",
+      "zoology"
+    ],
+    "philein": [
+      "bibliophile",
+      "philander",
+      "philanderer",
+      "philanthropy",
+      "philology",
+      "philosophy"
+    ],
+    "derma": [
+      "dermatitis",
+      "dermatology",
+      "dermatosis",
+      "epidermis",
+      "hypodermic",
+      "pachyderm",
+      "taxidermy"
+    ],
+    "orthos": [
+      "orthodontia",
+      "orthodontic",
+      "orthodox",
+      "orthography",
+      "orthopedic"
+    ],
+    "odontos": [
+      "endodontist",
+      "exodontist",
+      "orthodontia",
+      "orthodontic",
+      "pedodontist",
+      "periodontist"
+    ],
+    "psyche": [
+      "psyche",
+      "psychiatric",
+      "psychic",
+      "psychoanalysis",
+      "psychoanalyst",
+      "psychogenic",
+      "psychological",
+      "psychopathic",
+      "psychosis",
+      "psychosis_alt",
+      "psychosomatic",
+      "psychotherapy",
+      "psychotic"
+    ],
+    "iatreia": [
+      "geriatric",
+      "pediatrics",
+      "podiatric",
+      "psychiatric"
+    ],
+    "neuron": [
+      "neuralgia",
+      "neuralgic",
+      "neuritis",
+      "neurology",
+      "neuroscience",
+      "neurosis",
+      "neurotic"
     ],
     "algos": [
       "analgesic",
@@ -7019,99 +6243,60 @@
       "neuralgic",
       "nostalgia"
     ],
-    "animus": [
-      "equanimity",
-      "magnanimous",
-      "pusillanimous"
-    ],
-    "anthropos": [
-      "anthropological",
-      "anthropologist",
-      "anthropology",
-      "misanthrope",
-      "misanthropic",
-      "misanthropist",
-      "misanthropy",
-      "philanthropic",
-      "philanthropist",
-      "philanthropy"
-    ],
-    "astron": [
-      "aster",
-      "asterisk",
-      "asteroid",
-      "astrology",
-      "astronaut",
-      "astronautics",
-      "astronomer",
-      "astronomical",
-      "astronomy",
-      "disaster",
-      "disastrous"
-    ],
-    "autos": [
+    "graphein": [
       "autobiography",
       "autograph",
-      "automatic",
-      "autonomic",
-      "autonomous",
-      "autonomy",
-      "autopsy"
-    ],
-    "biblion": [
-      "bible",
       "bibliography",
-      "bibliophile"
-    ],
-    "bios": [
-      "autobiography",
-      "biographer",
       "biography",
-      "biological",
-      "biologist",
-      "biology",
-      "biopsy",
-      "biosphere",
-      "symbiosis"
-    ],
-    "cedere": [
-      "accede",
-      "antecedent",
-      "concede",
-      "recede",
-      "secede",
-      "unprecedented"
-    ],
-    "cheir": [
+      "cacography",
+      "calligraphy",
+      "cardiogram",
+      "cardiograph",
       "chirography",
-      "chiromancy",
-      "chiromantic",
-      "chiropodist",
-      "chiropody",
-      "chiropractic",
-      "chiropractor"
+      "geography",
+      "graphology",
+      "monogram",
+      "orthography",
+      "paragraph",
+      "photograph",
+      "telegraph"
     ],
-    "chronos": [
-      "anachronism",
-      "anachronistic",
-      "chronic",
-      "chronicle",
-      "chronological",
-      "chronology",
+    "paidos": [
+      "orthopedic",
+      "pedagogue",
+      "pedagogy",
+      "pediatrics",
+      "pedodontist"
+    ],
+    "geras": [
+      "geriatric",
+      "gerontology"
+    ],
+    "opsis": [
+      "autopsy",
+      "biopsy",
+      "optical",
+      "optician",
+      "optometry",
+      "synopsis"
+    ],
+    "oculus": [
+      "binoculars",
+      "inoculate",
+      "monocle",
+      "ocular",
+      "oculist"
+    ],
+    "metron": [
+      "barometer",
       "chronometer",
-      "synchronize",
-      "synchronous"
-    ],
-    "clamare": [
-      "clamor",
-      "declaim",
-      "proclaim"
-    ],
-    "crescere": [
-      "accretion",
-      "accrue",
-      "crescendo",
-      "increment"
+      "diameter",
+      "geometric",
+      "metric",
+      "optometry",
+      "perimeter",
+      "symmetry",
+      "thermometer"
     ],
     "demos": [
       "demagogue",
@@ -7120,27 +6305,230 @@
       "endemic",
       "epidemic"
     ],
-    "derma": [
-      "dermatitis",
-      "dermatologist",
-      "dermatology",
-      "dermatosis",
-      "epidermis",
-      "hypodermic",
-      "pachyderm",
-      "taxidermist",
-      "taxidermy"
+    "agogos": [
+      "demagogue",
+      "demagoguery",
+      "pedagogue",
+      "pedagogy"
     ],
-    "ego": [
-      "alter ego",
-      "ego",
-      "egocentric",
-      "egoism",
-      "egoist",
-      "egomaniac",
-      "egomaniacal",
-      "egotist",
-      "egotistical"
+    "pathos": [
+      "antipathetic",
+      "antipathy",
+      "apathetic",
+      "apathy",
+      "empathetic",
+      "empathize",
+      "empathy",
+      "osteopathy",
+      "pathetic",
+      "pathology",
+      "psychopathic",
+      "sympathetic",
+      "sympathize",
+      "sympathy",
+      "telepathy"
+    ],
+    "soma": [
+      "chromosome",
+      "psychosomatic",
+      "somatic"
+    ],
+    "genesis": [
+      "congenital",
+      "congenital_alt",
+      "gene",
+      "genealogy",
+      "genesis",
+      "geneticist",
+      "genetics",
+      "progeny",
+      "psychogenic"
+    ],
+    "cheir": [
+      "chirography",
+      "chiromancy",
+      "chiromantic",
+      "chiropody",
+      "chiropractic"
+    ],
+    "podos": [
+      "chiropody",
+      "octopus",
+      "podiatric",
+      "podium",
+      "tripod"
+    ],
+    "kallos": [
+      "calligraphy",
+      "callipygian"
+    ],
+    "kakos": [
+      "cacography",
+      "cacophony"
+    ],
+    "phone": [
+      "cacophony",
+      "microphone",
+      "phonetics",
+      "symphony",
+      "telephone"
+    ],
+    "pyge": [
+      "callipygian"
+    ],
+    "senex": [
+      "senate",
+      "senescent",
+      "senile",
+      "senility",
+      "senior"
+    ],
+    "bios": [
+      "autobiography",
+      "biography",
+      "biological",
+      "biopsy",
+      "biosphere",
+      "symbiosis"
+    ],
+    "autos": [
+      "autobiography",
+      "autograph",
+      "automatic",
+      "autonomous",
+      "autopsy"
+    ],
+    "astron": [
+      "aster",
+      "asterisk",
+      "asteroid",
+      "astrology",
+      "astronaut",
+      "astronomical",
+      "disaster",
+      "disastrous"
+    ],
+    "nomos": [
+      "astronomical",
+      "autonomous"
+    ],
+    "nautes": [
+      "astronaut",
+      "cosmonaut",
+      "nautical"
+    ],
+    "geo": [
+      "geography",
+      "geology",
+      "geometric",
+      "geopolitical",
+      "geothermal"
+    ],
+    "zoion": [
+      "zodiac",
+      "zoology"
+    ],
+    "tome": [
+      "anatomical",
+      "atomic",
+      "dichotomy",
+      "epitome"
+    ],
+    "biblion": [
+      "bible",
+      "bibliography",
+      "bibliophile"
+    ],
+    "lingua": [
+      "bilingual",
+      "linguist",
+      "linguistics"
+    ],
+    "socius": [
+      "asocial",
+      "associate",
+      "social",
+      "sociology"
+    ],
+    "notus": [
+      "notoriety",
+      "notorious"
+    ],
+    "summus": [
+      "consummate",
+      "consummation"
+    ],
+    "vetus": [
+      "inveterate",
+      "veteran"
+    ],
+    "chronos": [
+      "anachronism",
+      "anachronistic",
+      "chronic",
+      "chronicle",
+      "chronological",
+      "chronometer",
+      "synchronize",
+      "synchronous"
+    ],
+    "grex": [
+      "aggregate",
+      "congregate",
+      "congregation",
+      "egregious",
+      "gregarious",
+      "gregariousness",
+      "segregate",
+      "segregation"
+    ],
+    "sciens": [
+      "nescient",
+      "neuroscience",
+      "omniscient",
+      "prescient"
+    ],
+    "omnis": [
+      "omnipotent",
+      "omnipresent",
+      "omniscient",
+      "omnivore"
+    ],
+    "pedis": [
+      "expedite",
+      "pedal",
+      "pedestrian",
+      "pedestrian_alt"
+    ],
+    "potens": [
+      "omnipotent"
+    ],
+    "tenere": [
+      "abstain",
+      "abstinence",
+      "countenance",
+      "detain",
+      "pertinent",
+      "retention",
+      "sustain",
+      "tenable",
+      "tenacious",
+      "tenacious-grip",
+      "tenet",
+      "tenure",
+      "untenable"
+    ],
+    "tendere": [
+      "attenuate",
+      "contend",
+      "contentious",
+      "distend",
+      "extenuate",
+      "ostentatious",
+      "portend",
+      "pretentious",
+      "tendentious",
+      "tenuous"
     ],
     "facere": [
       "artifact",
@@ -7155,545 +6543,19 @@
       "officious",
       "prolific"
     ],
-    "ferre": [
-      "confer",
-      "deference",
-      "fertile",
-      "infer",
-      "odoriferous",
-      "proffer",
-      "vociferous"
+    "aequus": [
+      "adequate",
+      "equanimity",
+      "equilibrium",
+      "equitable",
+      "equivocate",
+      "iniquity",
+      "unequivocal"
     ],
-    "gamos": [
-      "bigamist",
-      "bigamous",
-      "bigamy",
-      "misogamist",
-      "misogamy",
-      "monogamist",
-      "monogamous",
-      "monogamy",
-      "monogram",
-      "polyandrous",
-      "polyandry",
-      "polygamist",
-      "polygamous",
-      "polygamy",
-      "polygyny"
-    ],
-    "genesis": [
-      "congenital",
-      "congenital",
-      "gene",
-      "genealogist",
-      "genealogy",
-      "genesis",
-      "geneticist",
-      "genetics",
-      "progeny",
-      "psychogenic"
-    ],
-    "geo": [
-      "geographer",
-      "geography",
-      "geologist",
-      "geology",
-      "geometric",
-      "geometry",
-      "geopolitical",
-      "geothermal"
-    ],
-    "geras": [
-      "geriatric",
-      "geriatrician",
-      "geriatrics",
-      "gerontologist",
-      "gerontology"
-    ],
-    "gradi": [
-      "digress",
-      "egress",
-      "transgression"
-    ],
-    "graphein": [
-      "autobiography",
-      "autograph",
-      "bibliography",
-      "biographer",
-      "biography",
-      "cacography",
-      "calligrapher",
-      "calligraphy",
-      "cardiograph",
-      "chirography",
-      "geographer",
-      "geography",
-      "graphologist",
-      "graphology",
-      "orthography",
-      "paragraph",
-      "photograph",
-      "telegraph"
-    ],
-    "gratus": [
-      "gratify",
-      "gratuitous",
-      "ingrate",
-      "ingratiate"
-    ],
-    "grex": [
-      "aggregate",
-      "congregate",
-      "congregation",
-      "egregious",
-      "gregarious",
-      "gregariousness",
-      "segregate",
-      "segregation"
-    ],
-    "gyne": [
-      "androgynous",
-      "gynecologist",
-      "gynecology",
-      "misogynist",
-      "misogynous",
-      "misogyny",
-      "polygyny"
-    ],
-    "iatreia": [
-      "geriatric",
-      "geriatrician",
-      "geriatrics",
-      "pediatrician",
-      "pediatrics",
-      "podiatric",
-      "podiatrist",
-      "podiatry",
-      "psychiatric",
-      "psychiatrist",
-      "psychiatry"
-    ],
-    "kakos": [
-      "cacography",
-      "cacophony"
-    ],
-    "kallos": [
-      "calligrapher",
-      "calligraphy",
-      "callipygian"
-    ],
-    "levis": [
-      "alleviate",
-      "elevate",
-      "levity"
-    ],
-    "liber": [
-      "illiberal",
-      "liberate",
-      "libertine"
-    ],
-    "lingua": [
-      "bilingual",
-      "linguist",
-      "linguistics"
-    ],
-    "logos": [
-      "anatomical",
-      "anatomy",
-      "anthropological",
-      "anthropologist",
-      "anthropology",
-      "astrology",
-      "atom",
-      "atomic",
-      "biological",
-      "biologist",
-      "biology",
-      "cardiologist",
-      "cardiology",
-      "chronological",
-      "chronology",
-      "dermatologist",
-      "dermatology",
-      "dichotomous",
-      "dichotomy",
-      "entomologist",
-      "entomology",
-      "epitome",
-      "genealogist",
-      "genealogy",
-      "geologist",
-      "geology",
-      "gerontologist",
-      "gerontology",
-      "graphologist",
-      "graphology",
-      "gynecologist",
-      "gynecology",
-      "neurologist",
-      "neurology",
-      "ophthalmologist",
-      "ophthalmology",
-      "pathologist",
-      "pathology",
-      "philology",
-      "psychological",
-      "psychologist",
-      "psychology",
-      "sociologist",
-      "sociology",
-      "zoologist",
-      "zoology"
-    ],
-    "loqui": [
-      "circumlocution",
-      "colloquial",
-      "eloquent",
-      "grandiloquent",
-      "loquacious",
-      "soliloquy"
-    ],
-    "lux": [
-      "elucidate",
-      "lucid",
-      "luminous",
-      "pellucid",
-      "translucent"
-    ],
-    "magnus": [
-      "magnanimous"
-    ],
-    "metron": [
-      "barometer",
-      "chronometer",
-      "diameter",
-      "geometric",
-      "geometry",
-      "metric",
-      "optometrist",
-      "optometry",
-      "perimeter",
-      "symmetry",
-      "thermometer"
-    ],
-    "misein": [
-      "misanthrope",
-      "misanthropic",
-      "misanthropist",
-      "misanthropy",
-      "misogamist",
-      "misogamy",
-      "misogynist",
-      "misogynous",
-      "misogyny"
-    ],
-    "natus": [
-      "cognate",
-      "innate",
-      "naive",
-      "nascent",
-      "preternatural",
-      "renaissance"
-    ],
-    "nautes": [
-      "astronaut",
-      "astronautics",
-      "cosmonaut",
-      "nautical"
-    ],
-    "neuron": [
-      "neuralgia",
-      "neuralgic",
-      "neuritis",
-      "neurologist",
-      "neurology",
-      "neuroscience",
-      "neurosis",
-      "neurotic"
-    ],
-    "nomos": [
-      "astronomer",
-      "astronomical",
-      "astronomy",
-      "autonomic",
-      "autonomous",
-      "autonomy"
-    ],
-    "notus": [
-      "notoriety",
-      "notorious"
-    ],
-    "oculus": [
-      "binocular",
-      "binoculars",
-      "inoculate",
-      "monocle",
-      "ocular",
-      "oculist"
-    ],
-    "odontos": [
-      "endodontist",
-      "exodontist",
-      "orthodontia",
-      "orthodontic",
-      "orthodontist",
-      "pedodontist",
-      "periodontist"
-    ],
-    "omnis": [
-      "omnipotent",
-      "omnipresent",
-      "omniscience",
-      "omniscient",
-      "omnivore"
-    ],
-    "opsis": [
-      "autopsy",
-      "biopsy",
-      "optical",
-      "optician",
-      "optics",
-      "optometrist",
-      "optometry",
-      "synopsis"
-    ],
-    "orthos": [
-      "orthodontia",
-      "orthodontic",
-      "orthodontist",
-      "orthodox",
-      "orthography",
-      "orthopedic",
-      "orthopedics",
-      "orthopedist"
-    ],
-    "paidos": [
-      "orthopedic",
-      "orthopedics",
-      "orthopedist",
-      "pedagogue",
-      "pedagogy",
-      "pediatrician",
-      "pediatrics",
-      "pedodontist"
-    ],
-    "pathos": [
-      "antipathetic",
-      "antipathy",
-      "apathetic",
-      "apathy",
-      "empathetic",
-      "empathize",
-      "empathy",
-      "osteopath",
-      "osteopathy",
-      "pathetic",
-      "pathologist",
-      "pathology",
-      "psychopath",
-      "psychopathic",
-      "sympathetic",
-      "sympathize",
-      "sympathy",
-      "telepathy"
-    ],
-    "pedis": [
-      "expedite",
-      "pedal",
-      "pedestrian",
-      "pedestrian"
-    ],
-    "philein": [
-      "bibliophile",
-      "philander",
-      "philanderer",
-      "philanthropic",
-      "philanthropist",
-      "philanthropy",
-      "philology",
-      "philosophy"
-    ],
-    "phone": [
-      "cacophony",
-      "microphone",
-      "phonetics",
-      "symphony",
-      "telephone"
-    ],
-    "placere": [
-      "complacent",
-      "implacable",
-      "placate",
-      "placid"
-    ],
-    "plicare": [
-      "complicity",
-      "duplicity",
-      "explicit",
-      "implication",
-      "implicit",
-      "replicate",
-      "supplicate"
-    ],
-    "podos": [
-      "chiropodist",
-      "chiropody",
-      "octopus",
-      "podiatric",
-      "podiatrist",
-      "podiatry",
-      "podium",
-      "tripod"
-    ],
-    "ponere": [
-      "apposite",
-      "component",
-      "depose",
-      "exponent",
-      "juxtapose",
-      "posit",
-      "repository",
-      "supposition"
-    ],
-    "psyche": [
-      "psyche",
-      "psychiatric",
-      "psychiatrist",
-      "psychiatry",
-      "psychic",
-      "psychoanalysis",
-      "psychoanalyst",
-      "psychogenic",
-      "psychological",
-      "psychologist",
-      "psychology",
-      "psychopath",
-      "psychopathic",
-      "psychosis",
-      "psychosis",
-      "psychosomatic",
-      "psychotherapist",
-      "psychotherapy",
-      "psychotic"
-    ],
-    "pyge": [
-      "callipygian"
-    ],
-    "sciens": [
-      "nescient",
-      "neuroscience",
-      "omniscience",
-      "omniscient",
-      "prescience",
-      "prescient"
-    ],
-    "scribere": [
-      "ascribe",
-      "circumscribe",
-      "conscription",
-      "inscribe",
-      "proscribe"
-    ],
-    "senex": [
-      "senate",
-      "senescence",
-      "senescent",
-      "senile",
-      "senility",
-      "senior"
-    ],
-    "socius": [
-      "asocial",
-      "associate",
-      "social",
-      "sociologist",
-      "sociology"
-    ],
-    "solvere": [
-      "absolve",
-      "dissolute",
-      "dissolution",
-      "irresolute",
-      "soluble"
-    ],
-    "soma": [
-      "chromosome",
-      "psychosomatic",
-      "somatic"
-    ],
-    "specere": [
-      "auspicious",
-      "circumspect",
-      "conspicuous",
-      "despicable",
-      "introspection",
-      "perspective",
-      "perspicacious",
-      "retrospective",
-      "specious",
-      "spectrum"
-    ],
-    "stare": [
-      "circumstance",
-      "constituent",
-      "inconstancy",
-      "obstinate",
-      "stagnant",
-      "static",
-      "stature",
-      "substantiate"
-    ],
-    "summus": [
-      "consummate",
-      "consummation"
-    ],
-    "tendere": [
-      "attenuate",
-      "contend",
-      "contentious",
-      "distend",
-      "extenuate",
-      "ostentatious",
-      "portend",
-      "pretentious",
-      "tendentious",
-      "tenuous"
-    ],
-    "tenere": [
-      "abstain",
-      "abstinence",
-      "countenance",
-      "detain",
-      "pertinent",
-      "retention",
-      "sustain",
-      "tenable",
-      "tenacious",
-      "tenacious-grip",
-      "tenacity",
-      "tenet",
-      "tenure",
-      "untenable"
-    ],
-    "terra": [
-      "inter",
-      "subterranean",
-      "terrain",
-      "terrestrial"
-    ],
-    "vertere": [
-      "adverse",
-      "averse",
-      "aversion",
-      "divert",
-      "inadvertent",
-      "incontrovertible",
-      "subvert",
-      "versatile"
-    ],
-    "vetus": [
-      "inveterate",
-      "veteran"
+    "animus": [
+      "equanimity",
+      "magnanimous",
+      "pusillanimous"
     ],
     "vocare": [
       "advocate",
@@ -7707,10 +6569,157 @@
       "vocation",
       "vociferous"
     ],
-    "zoion": [
-      "zodiac",
-      "zoologist",
-      "zoology"
+    "specere": [
+      "auspicious",
+      "circumspect",
+      "conspicuous",
+      "despicable",
+      "introspection",
+      "perspective",
+      "perspicacious",
+      "retrospective",
+      "specious",
+      "spectrum"
+    ],
+    "ponere": [
+      "apposite",
+      "component",
+      "depose",
+      "exponent",
+      "juxtapose",
+      "posit",
+      "repository",
+      "supposition"
+    ],
+    "plicare": [
+      "complicity",
+      "duplicity",
+      "explicit",
+      "implication",
+      "implicit",
+      "replicate",
+      "supplicate"
+    ],
+    "ferre": [
+      "confer",
+      "deference",
+      "fertile",
+      "infer",
+      "odoriferous",
+      "proffer",
+      "vociferous"
+    ],
+    "vertere": [
+      "adverse",
+      "averse",
+      "aversion",
+      "divert",
+      "inadvertent",
+      "incontrovertible",
+      "subvert",
+      "versatile"
+    ],
+    "stare": [
+      "circumstance",
+      "constituent",
+      "inconstancy",
+      "obstinate",
+      "stagnant",
+      "static",
+      "stature",
+      "substantiate"
+    ],
+    "natus": [
+      "cognate",
+      "innate",
+      "naive",
+      "nascent",
+      "preternatural",
+      "renaissance"
+    ],
+    "solvere": [
+      "absolve",
+      "dissolute",
+      "dissolution",
+      "irresolute",
+      "soluble"
+    ],
+    "placere": [
+      "complacent",
+      "implacable",
+      "placate",
+      "placid"
+    ],
+    "gratus": [
+      "gratify",
+      "gratuitous",
+      "ingrate",
+      "ingratiate"
+    ],
+    "crescere": [
+      "accretion",
+      "accrue",
+      "crescendo",
+      "increment"
+    ],
+    "cedere": [
+      "accede",
+      "antecedent",
+      "concede",
+      "recede",
+      "secede",
+      "unprecedented"
+    ],
+    "scribere": [
+      "ascribe",
+      "circumscribe",
+      "conscription",
+      "inscribe",
+      "proscribe"
+    ],
+    "loqui": [
+      "circumlocution",
+      "colloquial",
+      "eloquent",
+      "grandiloquent",
+      "loquacious",
+      "soliloquy"
+    ],
+    "clamare": [
+      "clamor",
+      "declaim",
+      "proclaim"
+    ],
+    "lux": [
+      "elucidate",
+      "lucid",
+      "luminous",
+      "pellucid",
+      "translucent"
+    ],
+    "levis": [
+      "alleviate",
+      "elevate",
+      "levity"
+    ],
+    "gradi": [
+      "digress",
+      "egress",
+      "transgression"
+    ],
+    "magnus": [
+      "magnanimous"
+    ],
+    "liber": [
+      "illiberal",
+      "liberate",
+      "libertine"
+    ],
+    "terra": [
+      "inter",
+      "subterranean",
+      "terrain",
+      "terrestrial"
     ]
   }
 }

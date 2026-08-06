@@ -13,6 +13,14 @@
   --accent-soft: hsl(var(--h) 55% 62% / 0.16);
   --radius: 10px;
   font-size: 16px;
+
+  /* Duolingo's published type scale — one typeface, weight carries the
+     hierarchy. https://styles.refero.design/style/7088d695 */
+  --fs-caption: 13px;   /* line-height 1.23 */
+  --fs-nav: 15px;       /* line-height 1.33, weight 700 when uppercase */
+  --fs-body: 17px;      /* line-height 1.18 */
+  --fs-subhead: 19px;   /* line-height 1.4, weight 700 */
+  --fs-heading-sm: 32px; /* line-height 1.2, weight 700 */
 }
 
 * { box-sizing: border-box; }
@@ -28,7 +36,7 @@ body {
 }
 #app { max-width: 780px; margin: 0 auto; padding: 16px 16px 64px; }
 
-h1, h2, .brand, .quiz-word, .root-name, .card-title {
+h1, h2, .brand, .quiz-word, .root-name {
   font-family: "Fraunces", Georgia, "Times New Roman", serif;
   font-weight: 600;
   letter-spacing: 0.01em;
@@ -41,13 +49,11 @@ h1, h2, .brand, .quiz-word, .root-name, .card-title {
 .stats { display: flex; gap: 14px; color: var(--paper-dim); font-size: 0.85rem; font-variant-numeric: tabular-nums; }
 
 /* hero */
-.hero h1 { font-size: clamp(1.5rem, 4vw, 2.1rem); margin: 0 0 4px; }
-.lede { color: var(--paper-dim); margin: 0 0 14px; font-size: 0.9rem; }
 .hero-progress { margin-top: 6px; }
-.hero-progress-labels { display: flex; align-items: baseline; gap: 6px; margin-bottom: 7px; font-size: 0.84rem; }
+.hero-progress-labels { display: flex; align-items: baseline; gap: 6px; margin-bottom: 7px; font-size: var(--fs-body); }
 .hero-mastered-num { font-family: "Fraunces", Georgia, serif; font-size: 1.6rem; font-weight: 600; color: var(--gold); line-height: 1; }
 .hero-mastered-label { color: var(--paper-dim); }
-.hero-pct { margin-left: auto; color: var(--paper-dim); font-size: 0.78rem; }
+.hero-pct { margin-left: auto; color: var(--paper-dim); font-size: var(--fs-caption); }
 .hero-bar { height: 5px; background: #1c2440; border-radius: 3px; overflow: hidden; }
 .hero-bar-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, hsl(220 65% 55%), var(--gold)); transition: width 0.6s ease; }
 
@@ -55,6 +61,9 @@ h1, h2, .brand, .quiz-word, .root-name, .card-title {
 .sky-line { stroke: hsl(var(--h) 50% 60% / 0.28); stroke-width: 1; }
 .star { fill: hsl(var(--h) 40% 70% / 0.5); }
 .star.dim { fill: hsl(var(--h) 30% 55% / 0.35); }
+/* unconnected background stars — pure texture, no meaning, gives the mini
+   constellation a "field of stars" density instead of a sparse diagram */
+.bg-star { fill: hsl(var(--h) 35% 78% / 0.4); }
 .star.lit { fill: var(--gold); filter: drop-shadow(0 0 4px hsl(43 76% 60% / 0.8)); }
 @keyframes star-twinkle {
   0%, 100% { opacity: 1; filter: drop-shadow(0 0 5px hsl(43 80% 60% / 0.9)); }
@@ -62,39 +71,9 @@ h1, h2, .brand, .quiz-word, .root-name, .card-title {
 }
 .star.mini-lit { fill: var(--gold); animation: star-twinkle 2.4s ease-in-out infinite; animation-delay: calc(var(--i, 0) * 0.3s); }
 
-/* cards */
-.cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
-.card { background: var(--ink-2); border: 1px solid #232c49; border-radius: var(--radius); padding: 14px; cursor: pointer; transition: border-color 0.15s; }
-.card:hover { border-color: var(--gold); }
-.card.done { opacity: 0.6; }
-.card-kicker { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--gold); }
-.card-title { font-size: 1.3rem; margin: 2px 0; }
-.card-note { color: var(--paper-dim); font-size: 0.83rem; }
-
-/* domain grid */
-.section-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--paper-dim); margin: 4px 0 10px; font-weight: 400; }
-.domain-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
-.domain-card {
-  display: flex; flex-direction: column; text-align: left; position: relative;
-  background: var(--ink-2); color: var(--paper);
-  border: 1px solid #232c49; border-top: 3px solid var(--accent);
-  border-radius: var(--radius); padding: 0; cursor: pointer; font: inherit;
-  transition: border-color 0.15s, background 0.15s;
-  overflow: hidden;
-}
-.domain-card:hover { background: var(--ink-3); border-top-color: var(--gold); }
-.domain-card-sky { background: linear-gradient(180deg, #0b1020, #101828); border-bottom: 1px solid #1a2138; }
 .mini-sky { width: 100%; height: auto; display: block; }
-.domain-card-body { padding: 8px 12px 12px; flex: 1; position: relative; }
-.domain-card-name { font-weight: 600; font-size: 0.9rem; }
-.domain-card-meta { color: var(--paper-dim); font-size: 0.76rem; margin-top: 2px; }
 @keyframes tag-pulse { 0%, 100% { box-shadow: 0 0 0 0 hsl(43 76% 60% / 0.5); } 60% { box-shadow: 0 0 0 6px hsl(43 76% 60% / 0); } }
 .tag { position: absolute; top: 8px; right: 10px; font-size: 0.68rem; color: var(--ink); background: var(--gold); padding: 2px 7px; border-radius: 999px; font-weight: 600; animation: tag-pulse 2s ease-out infinite; }
-
-/* meters */
-.meter { display: block; height: 3px; background: #232c49; border-radius: 2px; margin-top: 8px; overflow: hidden; }
-.meter span { display: block; height: 100%; background: var(--accent); border-radius: 2px; }
-.level.mastered .meter span, .domain-card .meter span { background: linear-gradient(90deg, var(--accent), var(--gold)); }
 
 /* crumbs */
 .crumbs { color: var(--paper-dim); font-size: 0.85rem; margin-bottom: 14px; }
@@ -152,6 +131,22 @@ h1, h2, .brand, .quiz-word, .root-name, .card-title {
 .roots-reveal { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
 .example { color: var(--paper-dim); font-style: italic; font-size: 0.92rem; }
 
+/* On phone, the quiz graph / roots-reveal / example text above it can push
+   Next/Continue/Done below the fold — pin it to the bottom of the screen
+   instead of wherever it happens to land, so answering never requires a
+   scroll just to find the button. body.has-sticky-next is set right when
+   the feedback button appears (quiz, review, daily, bridge run) and reset
+   by header() on every other screen. */
+@media (max-width: 560px) {
+  body.has-sticky-next #app { padding-bottom: 84px; }
+  body.has-sticky-next .feedback .btn.primary {
+    position: fixed; left: 12px; right: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    z-index: 60;
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.5);
+  }
+}
+
 /* results */
 .results { text-align: center; padding-top: 32px; }
 .score-line { font-size: 1.1rem; }
@@ -183,14 +178,10 @@ h1, h2, .brand, .quiz-word, .root-name, .card-title {
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 
 @media (max-width: 560px) {
-  .cards { grid-template-columns: 1fr; }
   #app { padding: 12px 12px 48px; }
 }
 
 /* ---------- phase 2: header nav ---------- */
-.topnav { display: flex; gap: 16px; margin-left: auto; margin-right: 16px; }
-.topnav a { color: var(--paper-dim); cursor: pointer; font-size: 0.88rem; }
-.topnav a:hover { color: var(--gold); }
 .top { gap: 8px; }
 
 /* ---------- phase 2: bridge run ---------- */
@@ -218,34 +209,107 @@ h1, h2, .brand, .quiz-word, .root-name, .card-title {
 .tile.right .tile-root { color: #4cc27a; }
 .tile-meaning { color: var(--paper-dim); font-size: 0.8rem; }
 .bridge-word { font-family: "Fraunces", Georgia, serif; font-size: 1.6rem; margin: 6px 0; }
-.card.bridge .card-kicker { color: hsl(205 70% 62%); }
 
 /* ---------- phase 2: web view ---------- */
-.webview-bar { display: flex; flex-direction: column; gap: 2px; margin-bottom: 10px; }
+.webview { position: relative; }
+.webview-bar { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+.webview-bar-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.webview-bar-top .phase-kicker { margin-bottom: 0; }
+.web-home-btn {
+  all: unset; cursor: pointer; touch-action: manipulation; box-sizing: border-box;
+  display: inline-flex; align-items: center; gap: 5px;
+  background: var(--ink-2); border: 1px solid #2a3454; border-radius: 999px;
+  padding: 6px 12px; font-size: 0.8rem; font-weight: 600; color: var(--paper);
+  min-height: 32px;
+}
+.web-home-btn:active { border-color: var(--gold); }
+@media (hover: hover) { .web-home-btn:hover { border-color: var(--gold); color: var(--gold); } }
 .webview-hint { color: var(--paper-dim); font-size: 0.8rem; }
-#web-stage { background: linear-gradient(180deg, #0a0f1d, #101726); border: 1px solid #232c49; border-radius: var(--radius); overflow: hidden; }
-#web-stage svg { display: block; cursor: grab; }
+#web-stage {
+  position: relative;
+  background: linear-gradient(180deg, #0a0f1d, #101726);
+  border: 1px solid #232c49; border-radius: var(--radius); overflow: hidden;
+}
+/* the canvas owns every touch gesture — pinch and drag must not scroll the page */
+#web-stage svg { display: block; cursor: grab; touch-action: none; -webkit-user-select: none; user-select: none; }
 #web-stage svg:active { cursor: grabbing; }
-.web-edge { stroke: #3a4570; stroke-width: 1.4; cursor: pointer; }
-.web-edge:hover { stroke: var(--gold); stroke-width: 2; }
-.web-root { fill: hsl(var(--h) 60% 55%); stroke: hsl(var(--h) 60% 75%); stroke-width: 1; cursor: pointer; }
+.web-bg { fill: transparent; pointer-events: all; }
+
+/* visible marks are painted only — the invisible .web-hit / .web-edge-hit
+   shapes above them carry all the pointer events, sized in screen px by js */
+.web-edge { stroke: #3a4570; stroke-width: 1.4; pointer-events: none; }
+.web-edge.hover { stroke: hsl(43 60% 62%); }
+.web-edge.sel { stroke: var(--gold); }
+.web-edge-hit { fill: none; stroke: transparent; stroke-linecap: round; pointer-events: stroke; cursor: pointer; }
+.web-hit { fill: transparent; stroke: none; pointer-events: all; cursor: pointer; }
+.web-root { fill: hsl(var(--h) 60% 55%); stroke: hsl(var(--h) 60% 75%); stroke-width: 1; pointer-events: none; }
 .web-root.lit { fill: var(--gold); stroke: #fff0c9; filter: drop-shadow(0 0 5px hsl(43 76% 60% / 0.7)); }
-.web-root:hover { stroke-width: 2.5; }
-.web-label { fill: var(--paper-dim); font-size: 9.5px; text-anchor: middle; font-family: "IBM Plex Mono", ui-monospace, monospace; pointer-events: none; }
-.web-word { fill: hsl(var(--h) 35% 40%); cursor: default; }
+.web-root.hover { stroke-width: 2.5; }
+.web-root.sel { stroke: var(--gold); stroke-width: 3; }
+.web-label { fill: var(--paper-dim); text-anchor: middle; font-family: "IBM Plex Mono", ui-monospace, monospace; pointer-events: none; paint-order: stroke; stroke: #0a0f1d; stroke-width: 2.5px; stroke-linejoin: round; }
+.web-word { fill: hsl(var(--h) 35% 40%); pointer-events: none; }
 .web-word.learned { fill: #4cc27a; }
-.web-word-edge { stroke: hsl(220 30% 30%); stroke-width: 0.7; }
-.web-word-label { fill: #6b7290; font-size: 7.5px; font-family: "Public Sans", sans-serif; pointer-events: none; }
-.web-panel { margin-top: 12px; background: var(--ink-2); border: 1px solid #232c49; border-radius: var(--radius); padding: 14px 16px; }
-.panel-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.web-word-edge { stroke: hsl(220 30% 30%); stroke-width: 0.7; pointer-events: none; }
+.web-word-label { fill: #8b93b4; font-family: "Public Sans", sans-serif; pointer-events: none; paint-order: stroke; stroke: #0a0f1d; stroke-width: 2px; stroke-linejoin: round; }
+
+/* zoom controls — 40px targets, always reachable without a pinch */
+.web-zoom { position: absolute; right: 10px; bottom: 10px; z-index: 3; display: flex; flex-direction: column; gap: 6px; }
+.web-zoom-btn {
+  width: 40px; height: 40px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  background: hsl(224 40% 14% / 0.88); border: 1px solid #2a3454; color: var(--paper);
+  font: inherit; font-size: 1.15rem; line-height: 1; cursor: pointer;
+  touch-action: manipulation; -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+}
+.web-zoom-btn:active { background: var(--ink-3); border-color: var(--gold); }
+
+.web-panel { position: relative; margin-top: 12px; background: var(--ink-2); border: 1px solid #232c49; border-radius: var(--radius); padding: 14px 16px; }
+.web-panel-close {
+  position: absolute; top: 8px; right: 8px; width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  background: none; border: 1px solid #2a3454; border-radius: 50%;
+  color: var(--paper-dim); font: inherit; font-size: 1.2rem; line-height: 1;
+  cursor: pointer; touch-action: manipulation;
+}
+.web-panel-close:active { color: var(--paper); border-color: var(--gold); }
+.panel-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; padding-right: 40px; }
 .panel-head .root-name { font-size: 1.2rem; }
 .panel-words { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
 .panel-words .chip.learned { border-color: #4cc27a; color: #9fe0b8; }
 .bridge-item { width: 100%; font-size: 0.9rem; color: var(--paper-dim); }
 .bridge-item strong { color: var(--paper); }
 
+@keyframes sheet-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+@media (max-width: 640px) {
+  /* full-bleed canvas: the stage fills the viewport, so nothing scrolls under the fingers */
+  body.web-open { overflow: hidden; }
+  body.web-open #app { padding-bottom: 0; }
+  .webview-bar { gap: 4px; margin-bottom: 6px; }
+  .web-home-btn { padding: 5px 10px; font-size: 0.76rem; min-height: 30px; }
+  .webview-hint { font-size: 0.7rem; line-height: 1.35; }
+  /* top-right, out from under the bottom sheet */
+  .web-zoom { top: 10px; bottom: auto; }
+
+  /* results arrive as a bottom sheet — no scrolling away from the web to read them */
+  .web-panel {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; margin: 0;
+    max-height: 56vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
+    border-radius: 18px 18px 0 0; border-bottom: none;
+    padding: 16px 16px calc(18px + env(safe-area-inset-bottom, 0px));
+    box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.6);
+    animation: sheet-up 0.22s ease;
+  }
+  .web-panel::before {
+    content: ""; display: block; width: 38px; height: 4px; border-radius: 2px;
+    background: #2f3a5e; margin: -4px auto 12px;
+  }
+  .web-panel .btn { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) { .web-panel { animation: none; } }
+
 @media (max-width: 560px) {
-  .topnav { gap: 10px; margin-right: 8px; }
   .tiles { grid-template-columns: 1fr 1fr; }
 }
 
@@ -325,7 +389,6 @@ h1, h2, .brand, .quiz-word, .root-name, .card-title {
   .path-row, .path-row.r { flex-direction: row; text-align: left; }
   .path-row.r .path-info { align-items: flex-start; }
   .path-node { width: 50px; height: 50px; font-size: 1.2rem; }
-  .domain-grid { grid-template-columns: 1fr; }
 }
 
 /* ---------- tutorial modal ---------- */
@@ -435,16 +498,6 @@ h1, h2, .brand, .quiz-word, .root-name, .card-title {
 
 .tut-visual-web { justify-content: center; padding: 10px; }
 
-/* ---------- help button in header ---------- */
-.help-btn {
-  background: none; border: 1px solid #2a3454; border-radius: 50%;
-  width: 22px; height: 22px;
-  display: inline-flex; align-items: center; justify-content: center;
-  font-size: 0.72rem; font-weight: 600; cursor: pointer;
-  color: var(--paper-dim); padding: 0; line-height: 1;
-}
-.help-btn:hover { border-color: var(--gold); color: var(--gold); }
-
 /* ---------- in-quiz knowledge graph ---------- */
 .quiz-graph {
   background: linear-gradient(160deg, #080c18 0%, #0c1422 100%);
@@ -457,18 +510,370 @@ h1, h2, .brand, .quiz-word, .root-name, .card-title {
 }
 .quiz-graph svg { display: block; }
 
-/* ---------- root web featured card (home) ---------- */
-.card.web-featured {
-  background: linear-gradient(120deg, #0f1838 0%, #0a1020 55%, #0f1838 100%);
-  border-color: hsl(220 50% 38% / 0.55);
-  position: relative; overflow: hidden;
+/* ---------- phone layout ---------- */
+body { -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; }
+button, a, .option, .tile, .path-node, .level { touch-action: manipulation; }
+
+/* hover is a lie on a touchscreen — it sticks after a tap */
+@media (hover: none) {
+  .path-node:hover:not(.locked) { transform: none; }
+  .level:hover { background: var(--ink-2); }
+  .option:hover:not(:disabled) { background: var(--ink-2); border-color: #2a3454; }
+  .tile:hover:not(:disabled) { border-color: #2a3454; }
+  .btn:hover { border-color: #2a3454; }
 }
-.card.web-featured::after {
-  content: "✦";
-  position: absolute; right: 18px; top: 50%; transform: translateY(-50%);
-  font-size: 3.2rem; color: hsl(220 60% 60% / 0.1);
-  pointer-events: none; line-height: 1;
+
+@media (max-width: 560px) {
+  #app {
+    padding-left: max(12px, env(safe-area-inset-left, 0px));
+    padding-right: max(12px, env(safe-area-inset-right, 0px));
+    padding-bottom: calc(48px + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* brand on one row, the stat strip spread across the next — trimmed a
+     little tighter than desktop so the map screen has more room below */
+  .top { flex-wrap: wrap; align-items: center; row-gap: 6px; padding: 6px 0 10px; }
+  .brand { font-size: 1.05rem; }
+  .stats { order: 3; width: 100%; justify-content: space-between; gap: 6px; font-size: 0.8rem; }
+  .sound-toggle { width: 30px; height: 30px; font-size: 0.85rem; }
+
+  /* the map screen: text sizes come from the Duolingo-scale tokens now
+     (set once, not overridden per breakpoint) — trimmed elsewhere below so
+     at least 3 galaxies still stay visible before the page needs to scroll */
+  .quest-bubble { padding: 9px 12px; margin: 2px 0 12px; }
+
+  /* thumb-sized controls */
+  .btn { min-height: 46px; padding: 12px 20px; }
+  .btn.ghost { min-height: 38px; padding: 8px 14px; }
+  .option { min-height: 52px; padding: 14px; font-size: 0.98rem; }
+  .options { gap: 12px; }
+  .tile { min-height: 58px; padding: 12px; }
+  .btn-row { flex-wrap: wrap; }
+  .btn-row .btn { flex: 1 1 140px; }
+
+  .quiz-word { margin: 4px 0 10px; }
+  .chip { font-size: 0.8rem; padding: 4px 10px; }
+  .quiz-graph { height: 130px; }
 }
-.card.web-featured:hover { border-color: hsl(220 68% 62%); }
-.card.web-featured .card-kicker { color: hsl(220 70% 65%); }
-.card.web-featured .card-title { font-size: 1.15rem; }
+
+/* tall-and-narrow phones: keep the tutorial card on screen */
+@media (max-width: 560px), (max-height: 700px) {
+  .tutorial-card { max-height: calc(100vh - 32px); overflow-y: auto; padding: 20px 18px 16px; border-radius: 16px; }
+  .tutorial-body { font-size: 0.85rem; line-height: 1.6; }
+  .tut-visual-phases { flex-wrap: wrap; }
+  .tut-skip { min-height: 44px; }
+  .tutorial-card .btn { min-height: 46px; }
+}
+
+/* ---------- phase 4: bottom tab bar ---------- */
+/* Map / Practice / Web / You each own a real destination now, so the tab
+   bar (not the header) is the app's one persistent nav surface. */
+.tabbar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 80;
+  margin: 0 auto; max-width: 780px;
+  display: flex; justify-content: space-around; align-items: center;
+  padding: 8px 6px calc(8px + env(safe-area-inset-bottom, 0px));
+  background: rgba(13, 18, 32, 0.92);
+  border-top: 1px solid #232c49;
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+}
+.tab {
+  all: unset; cursor: pointer; box-sizing: border-box; touch-action: manipulation;
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  width: 72px; padding: 6px 4px; border-radius: 12px; color: var(--paper-dim);
+  font: inherit;
+}
+.tab .tab-icon { font-size: 1.28rem; line-height: 1; }
+.tab .tab-label { font-size: 0.72rem; letter-spacing: 0.02em; }
+.tab.active { color: var(--gold); }
+.tab .tab-dot { width: 4px; height: 4px; border-radius: 50%; background: transparent; margin-top: -1px; }
+.tab.active .tab-dot { background: var(--gold); }
+@media (hover: hover) {
+  .tab:hover { color: var(--paper); }
+  .tab.active:hover { color: var(--gold); }
+}
+/* content on any tab-bar screen needs clearance so the last row isn't hidden behind it */
+body.has-tabbar #app { padding-bottom: 88px; }
+
+/* ---------- phase 4: the journey map (galaxy) ---------- */
+.quest-bubble {
+  all: unset; cursor: pointer; box-sizing: border-box; width: 100%; touch-action: manipulation;
+  display: flex; align-items: center; gap: 11px;
+  background: linear-gradient(135deg, #241a3a, #1a1430);
+  border: 1px solid #3d2f66; border-radius: 16px;
+  padding: 11px 14px; margin: 4px 0 18px;
+}
+.quest-bubble .qb-icon {
+  flex: none; width: 38px; height: 38px; border-radius: 11px;
+  background: hsl(43 65% 55% / 0.16); border: 1px solid hsl(43 65% 55% / 0.4);
+  display: flex; align-items: center; justify-content: center; font-size: 1.15rem;
+}
+.quest-bubble .qb-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.quest-bubble .qb-label {
+  font-size: var(--fs-nav); line-height: 1.33; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.053em; color: var(--gold);
+}
+.quest-bubble .qb-word { font-size: var(--fs-body); line-height: 1.18; margin-top: 2px; color: var(--paper); }
+.quest-bubble .qb-go { color: var(--paper-dim); font-size: 1.1rem; flex: none; }
+@media (hover: hover) { .quest-bubble:hover { border-color: hsl(43 60% 50% / 0.7); } }
+.quest-bubble.done { opacity: 0.7; }
+.quest-bubble.done .qb-icon { opacity: 0.7; }
+
+/* No spine connecting them — galaxies don't sit on a route. Two explicit
+   flex columns (balanced by estimated height in JS, not CSS column-count —
+   auto column-count doesn't reliably handle a panel that grows after
+   layout, like the tap-to-expand below). align-items is set per cell
+   inline (left/center/right lean) for texture within each column. */
+.journey { position: relative; padding: 6px 6px 6px; display: flex; gap: 12px; align-items: flex-start; }
+.journey-col { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; }
+.system-cell {
+  position: relative; z-index: 1; display: flex; flex-direction: column;
+  margin-bottom: 18px;
+}
+
+/* Fixed width — the label needs a consistent, wide-enough box to wrap a
+   full domain name into no matter how big or small that domain's galaxy
+   is. Size still varies, just on .system-field alone (set inline per
+   domain's root count), not on this outer column. 220px is safe in both
+   layout modes: single column gets the whole screen width on phone, and
+   two columns only turn on (>=620px viewport, see showHome) once each
+   column has plenty of room left over for the per-card lean to still
+   show. */
+.system {
+  all: unset; cursor: pointer; box-sizing: border-box; touch-action: manipulation;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  width: 220px; max-width: 100%; padding: 4px 4px 6px;
+}
+/* No landmass, no hard edge — a star system fades into space instead of
+   being clipped, so the same mini-constellation SVG just floats over three
+   stacked glow layers tinted by hue: a wide dim halo, a brighter mid glow,
+   and a small bright core (the "galactic bulge"). Three "kinds"
+   (cluster/spiral/nebula) vary the shape so domains don't all read the
+   same. */
+.system-field {
+  position: relative; display: block; aspect-ratio: 160 / 70; max-width: 100%; /* width set inline per domain's root count */
+  transition: transform 0.15s ease;
+}
+.system:active .system-field { transform: scale(0.95); }
+/* The field itself is wide (160:70, matching the star layout underneath),
+   but the glow doesn't have to fill it edge to edge — insetting the sides
+   more than the top/bottom pulls the visible glow toward round/square
+   regardless of how wide the box is. Stars out near the left/right edges
+   just sit in the dimmer outer fringe instead of the bright core, which
+   reads as an outer disk rather than looking cut off. */
+.system-halo {
+  position: absolute; inset: -22% 21%; border-radius: 50%;
+  background: radial-gradient(circle, hsl(var(--h) 62% 55% / 0.28), hsl(var(--h) 55% 45% / 0.1) 55%, transparent 78%);
+}
+.system-glow {
+  position: absolute; inset: 4% 30%; border-radius: 50%;
+  background: radial-gradient(circle at 48% 44%, hsl(var(--h) 78% 64% / 0.44) 0%, hsl(var(--h) 65% 45% / 0.18) 42%, transparent 72%);
+}
+.system-core {
+  position: absolute; inset: 26% 42%; border-radius: 50%; filter: blur(0.5px);
+  background: radial-gradient(circle at 50% 46%, hsl(var(--h) 90% 82% / 0.7) 0%, hsl(var(--h) 82% 68% / 0.28) 55%, transparent 80%);
+}
+.system-field .mini-sky { position: relative; z-index: 1; }
+.system.mastered .system-halo { background: radial-gradient(circle, hsl(43 85% 65% / 0.4), hsl(43 75% 55% / 0.14) 55%, transparent 78%); }
+.system.mastered .system-glow {
+  background: radial-gradient(circle at 48% 44%, hsl(43 88% 72% / 0.56) 0%, hsl(43 70% 50% / 0.2) 42%, transparent 72%);
+}
+.system.mastered .system-core {
+  background: radial-gradient(circle at 50% 46%, hsl(45 98% 92% / 0.85) 0%, hsl(43 90% 75% / 0.35) 55%, transparent 80%);
+}
+.system.next .system-halo { animation: system-pulse 2.6s ease-in-out infinite; }
+@keyframes system-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.16); opacity: 0.7; }
+}
+
+/* cluster: tight, bright core — the default look, nothing extra needed */
+
+/* spiral: elongated and tilted, plus two rotated arms crossing the core so
+   it reads as a real spiral silhouette rather than one blurry streak */
+.system.spiral .system-halo { transform: rotate(-16deg) scaleX(2.5); }
+.system.spiral .system-glow { transform: rotate(-16deg) scaleX(2.3); }
+/* the bulge stays round even on a spiral — real spiral galaxies have a
+   round core, it's the disk/arms around it that are flattened and tilted */
+.system-arm {
+  position: absolute; left: 50%; top: 50%; width: 98%; height: 24%;
+  transform: translate(-50%, -50%) rotate(22deg); border-radius: 50%;
+  background: radial-gradient(ellipse at center, hsl(var(--h) 70% 62% / 0.22), transparent 75%);
+}
+.system-arm2 {
+  position: absolute; left: 50%; top: 50%; width: 98%; height: 20%;
+  transform: translate(-50%, -50%) rotate(-40deg); border-radius: 50%;
+  background: radial-gradient(ellipse at center, hsl(var(--h) 70% 62% / 0.16), transparent 75%);
+}
+.system.mastered .system-arm { background: radial-gradient(ellipse at center, hsl(43 80% 65% / 0.3), transparent 75%); }
+.system.mastered .system-arm2 { background: radial-gradient(ellipse at center, hsl(43 80% 65% / 0.22), transparent 75%); }
+
+/* nebula: bigger, softer and round — a diffuse cloud, not a flattened disk,
+   so it keeps (an even bigger version of) the round base shape rather than
+   spiral's elongation */
+.system.nebula .system-halo { inset: -32% 12%; filter: blur(1.5px); }
+.system.nebula .system-glow { inset: -2% 20%; background-image: radial-gradient(circle at 48% 44%, hsl(var(--h) 68% 62% / 0.3) 0%, hsl(var(--h) 60% 45% / 0.14) 48%, transparent 76%); }
+.system.nebula .system-core { opacity: 0.45; filter: blur(2px); }
+.system.nebula.mastered .system-glow { background-image: radial-gradient(circle at 48% 44%, hsl(43 78% 70% / 0.4) 0%, hsl(43 65% 50% / 0.16) 48%, transparent 76%); }
+
+.system-flag {
+  position: absolute; top: -2px; right: 8%; z-index: 2;
+  font-size: 0.9rem; color: var(--gold); text-shadow: 0 0 6px hsl(43 80% 60% / 0.8);
+}
+/* wraps freely — the fixed 148px column above is sized to fit every real
+   domain name in at most two lines, so nothing gets cut off */
+.system-name {
+  font-size: var(--fs-subhead); line-height: 1.2; font-weight: 700; text-align: center; color: var(--paper);
+  max-width: 100%; overflow-wrap: break-word;
+}
+.system.next .system-name { color: var(--gold); }
+.system-meta { font-size: var(--fs-caption); line-height: 1.15; color: var(--paper-dim); font-variant-numeric: tabular-nums; }
+.system-start-tag {
+  font-size: var(--fs-nav); line-height: 1.33; text-transform: uppercase; letter-spacing: 0.053em;
+  background: var(--gold); color: #241a05; padding: 1px 8px; border-radius: 999px;
+  font-weight: 700;
+}
+
+/* tapping a system unfolds this in place — no full-screen jump for a peek.
+   A fixed max-height would clip the "Enter galaxy" button for any domain
+   with enough roots to grow a long level-chip list (body_and_life's 13
+   roots, for instance), so this caps by viewport height instead and lets
+   the panel scroll internally past that — the button is always reachable
+   even for the biggest domains. */
+.system-expand {
+  width: 100%; box-sizing: border-box;
+  max-height: 0; overflow: hidden; opacity: 0;
+  transition: max-height 0.24s ease, opacity 0.2s ease, margin 0.24s ease;
+  margin: 0;
+}
+.system-expand.open {
+  max-height: 55vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  opacity: 1; margin: 6px 0 0;
+}
+.system-expand-inner {
+  background: var(--ink-2); border: 1px solid #232c49; border-left: 3px solid hsl(var(--h) 55% 50%);
+  border-radius: 12px; padding: 12px 14px;
+}
+.system-expand-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+.system-expand-head .pct { color: var(--paper-dim); font-size: 0.75rem; }
+.system-levels { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.system-level-chip {
+  font-size: 0.72rem; padding: 4px 9px; border-radius: 999px;
+  background: var(--ink-3); border: 1px solid #2a3454; color: var(--paper-dim);
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+}
+.system-level-chip.done { color: #9fe0b8; border-color: #2f5a44; }
+.system-enter-btn {
+  all: unset; display: block; width: 100%; box-sizing: border-box; text-align: center; cursor: pointer;
+  touch-action: manipulation;
+  background: hsl(var(--h) 55% 45%); color: #0d1220; font-weight: 700;
+  border-radius: 9px; padding: 10px; font-size: 0.86rem;
+}
+
+/* a quick radial flash in the destination's hue when warping into a system */
+.warp-flash {
+  position: fixed; inset: 0; z-index: 150; pointer-events: none;
+  background: radial-gradient(circle at var(--wx, 50%) var(--wy, 50%), #fff 0%, hsl(var(--h, 220) 70% 70% / 0.9) 8%, transparent 42%);
+  opacity: 0; transform: scale(0.3);
+}
+.warp-flash.go { animation: warp-burst 0.5s ease-out forwards; }
+@keyframes warp-burst {
+  0% { opacity: 0; transform: scale(0.2); }
+  35% { opacity: 1; }
+  100% { opacity: 0; transform: scale(2.2); }
+}
+@media (prefers-reduced-motion: reduce) { .warp-flash.go { animation: none; } }
+
+/* ---------- phase 4: practice hub ---------- */
+.practice-head { padding: 4px 2px 2px; }
+.practice-sub { color: var(--paper-dim); font-size: 0.86rem; margin: 4px 0 0; }
+.practice-list { display: flex; flex-direction: column; gap: 10px; margin: 16px 0; }
+.prac-row {
+  all: unset; cursor: pointer; box-sizing: border-box; width: 100%; touch-action: manipulation;
+  display: flex; align-items: center; gap: 13px;
+  background: var(--ink-2); border: 1px solid #232c49; border-radius: 16px;
+  padding: 14px 15px; min-height: 74px;
+}
+.prac-row:active { border-color: var(--gold); }
+@media (hover: hover) { .prac-row:hover { border-color: #2a3454; } }
+.prac-icon {
+  flex: none; width: 44px; height: 44px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center; font-size: 1.3rem;
+}
+.prac-icon.daily { background: hsl(43 55% 45% / 0.18); }
+.prac-icon.bridge { background: hsl(205 55% 50% / 0.18); }
+.prac-icon.review { background: hsl(280 45% 55% / 0.18); }
+.prac-text { flex: 1; min-width: 0; display: flex; flex-direction: column; text-align: left; }
+.prac-title { font-size: 0.98rem; color: var(--paper); }
+.prac-note { font-size: 0.78rem; color: var(--paper-dim); margin-top: 1px; }
+.prac-badge {
+  flex: none; font-size: 0.72rem; font-weight: 700; padding: 3px 9px; border-radius: 999px;
+  background: hsl(0 65% 55% / 0.18); color: #ff9797; font-variant-numeric: tabular-nums;
+}
+.prac-badge.done { background: hsl(140 45% 45% / 0.18); color: #7bd6a0; }
+
+/* ---------- phase 4: profile ("You") ---------- */
+.profile-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 16px 0; }
+.stat-tile {
+  background: var(--ink-2); border: 1px solid #232c49; border-radius: var(--radius);
+  padding: 14px; display: flex; flex-direction: column; gap: 2px;
+}
+.stat-num { font-family: "Fraunces", Georgia, serif; font-weight: 600; font-size: 1.5rem; color: var(--paper); }
+.stat-tile:first-child .stat-num { color: var(--gold); }
+.stat-label { color: var(--paper-dim); font-size: 0.78rem; }
+.profile-actions { display: flex; flex-direction: column; gap: 10px; margin: 20px 0; }
+.profile-actions .btn { width: 100%; }
+
+@media (prefers-reduced-motion: reduce) {
+  .system.next .system-halo { animation: none; }
+  .star.mini-lit { animation: none; }
+  body::before { animation: none; }
+  .results.supernova::before { animation: none; opacity: 0.3; }
+}
+
+/* ---------- phase 5: one universe ---------- */
+/* A faint drifting starfield sits behind every screen (not just the map),
+   so the app reads as one continuous place instead of the map being the
+   only screen that looks like space. z-index -1 keeps it behind all normal
+   content without needing to touch any screen's own markup. */
+body::before {
+  content: "";
+  position: fixed; inset: -20% -10%; z-index: -1; pointer-events: none;
+  background-image:
+    radial-gradient(1px 1px at 8% 12%, #fff8 50%, transparent 52%),
+    radial-gradient(1px 1px at 22% 4%, #fff6 50%, transparent 52%),
+    radial-gradient(1.5px 1.5px at 40% 18%, #fffa 50%, transparent 52%),
+    radial-gradient(1px 1px at 58% 6%, #fff5 50%, transparent 52%),
+    radial-gradient(1px 1px at 74% 22%, #fff7 50%, transparent 52%),
+    radial-gradient(1.5px 1.5px at 90% 10%, #fff9 50%, transparent 52%),
+    radial-gradient(1px 1px at 12% 40%, #fff5 50%, transparent 52%),
+    radial-gradient(1px 1px at 33% 55%, #fff7 50%, transparent 52%),
+    radial-gradient(1.5px 1.5px at 52% 44%, #fffb 50%, transparent 52%),
+    radial-gradient(1px 1px at 68% 60%, #fff6 50%, transparent 52%),
+    radial-gradient(1px 1px at 85% 48%, #fff8 50%, transparent 52%),
+    radial-gradient(1.5px 1.5px at 6% 72%, #fffa 50%, transparent 52%),
+    radial-gradient(1px 1px at 28% 85%, #fff6 50%, transparent 52%),
+    radial-gradient(1px 1px at 47% 92%, #fff7 50%, transparent 52%),
+    radial-gradient(1.5px 1.5px at 64% 80%, #fff9 50%, transparent 52%),
+    radial-gradient(1px 1px at 82% 90%, #fff5 50%, transparent 52%);
+  animation: star-drift 160s linear infinite;
+}
+@keyframes star-drift { from { transform: translateY(0); } to { transform: translateY(-40px); } }
+
+/* ---------- phase 5: supernova (full-galaxy mastery, once) ---------- */
+.results.supernova { position: relative; }
+.results.supernova h2 { text-shadow: 0 0 24px hsl(43 80% 60% / 0.6); }
+.results.supernova::before {
+  content: "";
+  position: absolute; left: 50%; top: 40px; width: 280px; height: 280px;
+  transform: translateX(-50%);
+  background: radial-gradient(circle, hsl(var(--h) 70% 60% / 0.35), transparent 70%);
+  filter: blur(10px);
+  z-index: -1;
+  animation: supernova-pulse 1.8s ease-out;
+}
+@keyframes supernova-pulse {
+  0% { opacity: 0; transform: translateX(-50%) scale(0.3); }
+  30% { opacity: 1; }
+  100% { opacity: 0.4; transform: translateX(-50%) scale(1); }
+}

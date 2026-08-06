@@ -13,6 +13,7 @@
     roots: {}, // rootId -> { correct: {word:true}, decoded: bool }
     review: [], // { word, box, due } due = ms epoch
     daily: {}, // dateStr -> true
+    celebratedDomains: {}, // domainId -> true, so the supernova only fires once
     hearts: 5,
     heartsMax: 5,
     nextHeartAt: null, // ms epoch when next heart regenerates
@@ -52,21 +53,24 @@
     const level = GAME.domains.flatMap((d) => d.levels).find((lv) => lv.roots.includes(rootId) && lv.kind === "root");
     const rs = rootState(rootId);
     if (level) {
-      const all = level.teachWords.every((w) => rs.correct[w.word]);
+      const all = level.teachWords.every((w) => rs.correct[w.key || w.word]);
       const dec = level.decodeWords.length === 0 || rs.decoded;
       return all && dec;
     }
-    // bundled root: mastered when all its words answered correctly
+    // bundled root: mastered when all its words answered correctly.
+    // root_word_index stores keys (unique per sense), so this is already
+    // consistent with however rs.correct[] gets written elsewhere.
     const words = window.WORDWEB_DATA.root_word_index[rootId] || [];
-    return words.length > 0 && words.every((w) => rs.correct[w]);
+    return words.length > 0 && words.every((k) => rs.correct[k]);
   }
   function levelProgress(level) {
     const seen = new Set();
     let done = 0;
     level.teachWords.forEach((w) => {
+      const key = w.key || w.word;
       level.roots.forEach((r) => {
-        if (rootState(r).correct[w.word] && !seen.has(w.word)) {
-          seen.add(w.word);
+        if (rootState(r).correct[key] && !seen.has(key)) {
+          seen.add(key);
           done++;
         }
       });
@@ -296,7 +300,7 @@
 
   function addWordToGraph(word, isDecode) {
     if (!run || !run.graph) return;
-    const wid = "word:" + word.word;
+    const wid = "word:" + (word.key || word.word);
     if (run.graph.nodes.some((n) => n.id === wid)) return;
     const parentRids = (word.roots || []).filter((rid) =>
       run.graph.nodes.some((n) => n.id === "root:" + rid)
@@ -387,24 +391,79 @@
     });
   }
 
-  function miniConstellationSVG(dom) {
+  function miniConstellationSVG(dom, kind) {
     const W = 160, H = 70;
     const cx = W / 2, cy = H / 2;
+    const idx = window.WORDWEB_DATA.root_word_index;
+
     const pts = dom.rootIds.map((rid, j) => {
-      const a = (L.hash(rid) % 360) * (Math.PI / 180);
-      const r = 12 + (L.hash(rid + "r") % 22);
+      const wordBoost = Math.min(2.2, Math.sqrt((idx[rid] || []).length) * 0.75);
+      const m = rootMastered(rid);
+      let x, y, arm = 0;
+      if (kind === "spiral") {
+        // Two arms: roots alternate between them, angle and radius both
+        // growing along each arm, so the stars actually trace a spiral —
+        // the CSS glow just lights the shape they draw, instead of a random
+        // scatter sitting inside an unrelated spiral-shaped blob.
+        arm = j % 2;
+        const t = Math.floor(j / 2);
+        const jitter = ((L.hash(rid + "sj") % 100) / 100 - 0.5) * 0.4;
+        const angle = (arm ? Math.PI : 0) + t * 0.85 + jitter;
+        const radius = 5 + t * 6.5 + (L.hash(rid + "sr") % 4);
+        x = cx + Math.cos(angle) * radius;
+        y = cy + Math.sin(angle) * (radius * 0.62);
+      } else if (kind === "cluster") {
+        // Denser toward the center, tapering off — a real cluster's
+        // profile — via a squared radius falloff instead of a flat scatter.
+        const a = (L.hash(rid) % 360) * (Math.PI / 180);
+        const rt = (L.hash(rid + "r") % 100) / 100;
+        const r = 4 + rt * rt * 26;
+        x = cx + Math.cos(a + j) * r;
+        y = cy + Math.sin(a + j) * (r * 0.6);
+      } else {
+        // nebula: loose, even scatter — a diffuse cloud, no organized shape
+        const a = (L.hash(rid) % 360) * (Math.PI / 180);
+        const r = 12 + (L.hash(rid + "r") % 24);
+        x = cx + Math.cos(a + j) * r;
+        y = cy + Math.sin(a + j) * (r * 0.6);
+      }
       return {
-        x: Math.min(W - 8, Math.max(8, cx + Math.cos(a + j) * r)),
-        y: Math.min(H - 8, Math.max(8, cy + Math.sin(a + j) * (r * 0.6))),
-        m: rootMastered(rid),
+        x: Math.min(W - 8, Math.max(8, x)),
+        y: Math.min(H - 8, Math.max(8, y)),
+        arm,
+        m,
+        radius: (m ? 3.4 : 2) + wordBoost,
       };
     });
+
     let out = `<svg viewBox="0 0 ${W} ${H}" class="mini-sky" aria-hidden="true">`;
-    for (let j = 1; j < pts.length; j++) {
-      out += `<line x1="${pts[j - 1].x.toFixed(1)}" y1="${pts[j - 1].y.toFixed(1)}" x2="${pts[j].x.toFixed(1)}" y2="${pts[j].y.toFixed(1)}" class="sky-line" style="--h:${dom.hue}"/>`;
+    // A scatter of small unconnected background stars — pure texture, no
+    // meaning — so the field reads as a dense starscape rather than a bare
+    // wireframe of just the taught roots. Deterministic per domain, so it's
+    // stable across re-renders instead of jittering on every screen visit.
+    for (let k = 0; k < 26; k++) {
+      const bx = ((L.hash(dom.id + "bgx" + k) % 1000) / 1000) * (W - 8) + 4;
+      const by = ((L.hash(dom.id + "bgy" + k) % 1000) / 1000) * (H - 8) + 4;
+      const br = 0.35 + ((L.hash(dom.id + "bgr" + k) % 100) / 100) * 0.85;
+      out += `<circle cx="${bx.toFixed(1)}" cy="${by.toFixed(1)}" r="${br.toFixed(2)}" class="bg-star" style="--h:${dom.hue}"/>`;
     }
-    pts.forEach((p) => {
-      out += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${p.m ? 5 : 2.5}" class="star ${p.m ? "lit mini-lit" : "dim"}" style="--h:${dom.hue}"/>`;
+    if (kind === "spiral") {
+      // Connect each arm's own points in outward order — connecting by
+      // plain index would zigzag between the two arms instead of tracing
+      // either of them.
+      [0, 1].forEach((armId) => {
+        const armPts = pts.filter((p) => p.arm === armId);
+        for (let j = 1; j < armPts.length; j++) {
+          out += `<line x1="${armPts[j - 1].x.toFixed(1)}" y1="${armPts[j - 1].y.toFixed(1)}" x2="${armPts[j].x.toFixed(1)}" y2="${armPts[j].y.toFixed(1)}" class="sky-line" style="--h:${dom.hue}"/>`;
+        }
+      });
+    } else {
+      for (let j = 1; j < pts.length; j++) {
+        out += `<line x1="${pts[j - 1].x.toFixed(1)}" y1="${pts[j - 1].y.toFixed(1)}" x2="${pts[j].x.toFixed(1)}" y2="${pts[j].y.toFixed(1)}" class="sky-line" style="--h:${dom.hue}"/>`;
+      }
+    }
+    pts.forEach((p, j) => {
+      out += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${p.radius.toFixed(1)}" class="star ${p.m ? "lit mini-lit" : "dim"}" style="--h:${dom.hue};--i:${j}"/>`;
     });
     out += `</svg>`;
     return out;
@@ -413,36 +472,130 @@
   /* ---------- screens ---------- */
   function header() {
     refreshHearts();
+    // Each top-level screen redraws its own chrome; these default off and
+    // whichever screen wants them re-adds them right after this returns.
+    document.body.classList.remove("web-open");
+    document.body.classList.remove("has-tabbar");
+    document.body.classList.remove("has-sticky-next");
     const hearts = Array.from({ length: save.heartsMax }, (_, i) =>
       i < save.hearts ? '<span class="heart full">♥</span>' : '<span class="heart empty">♡</span>'
     ).join("");
     return `<header class="top">
       <div class="brand" data-nav="home"><span class="brand-mark">✳</span> Word Web</div>
-      <nav class="topnav">
-        <a data-nav="web" title="Explore the root web">Web</a>
-        <a data-nav="share" title="Copy your progress">Share</a>
-      </nav>
       <div class="stats">
         <span class="streak-pill" title="Day streak">🔥 ${save.streakDays}</span>
         <span class="hearts" title="${save.hearts < save.heartsMax ? "Next heart in " + heartTimeLeft() : "Full hearts"}">${hearts}</span>
         <span title="Total points">${save.points} pts</span>
         <button class="sound-toggle" data-nav="sound" title="${save.soundOn ? "Mute" : "Unmute"} sound">${save.soundOn ? "🔊" : "🔇"}</button>
-        <button class="help-btn" data-nav="tutorial" title="How to play">?</button>
       </div>
     </header>`;
   }
 
+  /* Map / Practice / Web / You — the app's one persistent nav surface.
+     Only shown on the four hub screens; hidden during quizzes, review,
+     the daily word, bridge runs and the domain path so focused tasks
+     keep the full screen. */
+  function tabBarHTML(active) {
+    const tabs = [
+      { id: "home", icon: "🗺️", label: "Map" },
+      { id: "practice", icon: "🎯", label: "Practice" },
+      { id: "web", icon: "⬡", label: "Web" },
+      { id: "you", icon: "👤", label: "You" },
+    ];
+    return `<nav class="tabbar">${tabs
+      .map(
+        (t) => `<button class="tab${t.id === active ? " active" : ""}" data-nav="${t.id}">
+          <span class="tab-icon">${t.icon}</span><span class="tab-label">${t.label}</span><span class="tab-dot"></span>
+        </button>`
+      )
+      .join("")}</nav>`;
+  }
+
   function showHome() {
     touchStreak();
-    const due = dueReviews();
     const daily = dailyWord();
     const dailyDone = save.daily[todayStr()];
     const masteredRoots = GAME.domains.reduce((acc, d) => acc + d.rootIds.filter((rid) => rootMastered(rid)).length, 0);
     const masteryPct = GAME.meta.root_count ? Math.round((100 * masteredRoots) / GAME.meta.root_count) : 0;
+    // The first not-yet-mastered domain gets the "continue" nudge — every
+    // system stays tappable regardless, nothing is ever locked.
+    const nextDomain = GAME.domains.find((d) => {
+      const m = domainMastery(d);
+      return m.mastered < m.total;
+    });
+    // Size still comes from how many roots a domain has.
+    const rootCounts = GAME.domains.map((d) => d.rootIds.length);
+    const minRoots = Math.min(...rootCounts);
+    const maxRoots = Math.max(...rootCounts);
+    const KINDS = ["cluster", "spiral", "nebula"];
+    const LEANS = ["flex-start", "center", "flex-end"];
+
+    // Two columns only make sense once there's actually room for both a
+    // big card AND slack left over for the lean below — on a phone-width
+    // screen that's a contradiction (halving the width either shrinks the
+    // galaxies or flattens the stagger), so two columns only kick in once
+    // the viewport is wide enough that each column gets it all anyway.
+    // Single column keeps domains in curriculum order; two explicit flex
+    // columns (not CSS column-count, which doesn't reliably handle the
+    // tap-to-expand panel growing after layout) balanced by estimated
+    // height give the two-column case its stagger.
+    const numCols = window.innerWidth >= 620 ? 2 : 1;
+    const domainMeta = GAME.domains.map((dom) => {
+      const sizeT = maxRoots > minRoots ? (dom.rootIds.length - minRoots) / (maxRoots - minRoots) : 0.5;
+      const fieldW = Math.round(105 + sizeT * 85); // 105–190px
+      const fieldH = (fieldW * 70) / 160;
+      const kind = KINDS[L.hash(dom.id + "kind") % KINDS.length];
+      const lean = LEANS[L.hash(dom.id + "lean") % LEANS.length];
+      return { dom, fieldW, kind, lean, estHeight: fieldH + 96 };
+    });
+    const columns = numCols === 1 ? [domainMeta] : [[], []];
+    if (numCols === 2) {
+      const colHeights = [0, 0];
+      domainMeta.forEach((meta) => {
+        const c = colHeights[0] <= colHeights[1] ? 0 : 1;
+        columns[c].push(meta);
+        colHeights[c] += meta.estHeight;
+      });
+    }
+
+    const renderCell = ({ dom, fieldW, kind, lean }) => {
+      const m = domainMastery(dom);
+      const isMastered = m.total > 0 && m.mastered === m.total;
+      const isNext = !!nextDomain && dom.id === nextDomain.id;
+      return `<div class="system-cell" style="align-items:${lean}">
+          <button class="system ${kind} ${isMastered ? "mastered" : ""} ${isNext ? "next" : ""}" style="--h:${dom.hue}" data-system="${dom.id}">
+            <span class="system-field" style="width:${fieldW}px">
+              <span class="system-halo"></span>
+              <span class="system-glow"></span>
+              ${kind === "spiral" ? '<span class="system-arm"></span><span class="system-arm2"></span>' : ""}
+              <span class="system-core"></span>
+              ${isMastered ? '<span class="system-flag">★</span>' : ""}
+              ${miniConstellationSVG(dom, kind)}
+            </span>
+            <span class="system-name">${esc(dom.name)}</span>
+            ${isNext ? '<span class="system-start-tag">continue</span>' : `<span class="system-meta">${m.mastered}/${m.total} mastered</span>`}
+          </button>
+          <div class="system-expand" id="exp-${dom.id}">
+            <div class="system-expand-inner" style="--h:${dom.hue}">
+              <div class="system-expand-head">
+                <span class="root-name" style="font-size:19px;font-weight:700">${esc(dom.name)}</span>
+                <span class="pct">${m.mastered}/${m.total} mastered</span>
+              </div>
+              <div class="system-levels">${dom.levels
+                .map((lv) => {
+                  const st = save.levels[lv.id];
+                  const done = !!(st && st.completed);
+                  return `<span class="system-level-chip ${done ? "done" : ""}">${esc(lv.title)}${done ? " ✓" : ""}</span>`;
+                })
+                .join("")}</div>
+              <button class="system-enter-btn" data-domain="${dom.id}" style="--h:${dom.hue}">Enter galaxy</button>
+            </div>
+          </div>
+        </div>`;
+    };
+
     app.innerHTML = `${header()}
       <section class="hero">
-        <h1>Learn the root. Unlock the words.</h1>
-        <p class="lede">${GAME.meta.root_count} roots · ${GAME.meta.word_count} words · ${GAME.meta.words_on_gre_list} on the GRE list</p>
         <div class="hero-progress">
           <div class="hero-progress-labels">
             <span class="hero-mastered-num">${masteredRoots}</span><span class="hero-mastered-label"> of ${GAME.meta.root_count} roots mastered</span>
@@ -451,52 +604,135 @@
           <div class="hero-bar"><div class="hero-bar-fill" style="width:${masteryPct}%"></div></div>
         </div>
       </section>
-      <section class="cards">
-        <div class="card daily ${dailyDone ? "done" : ""}" data-nav="daily">
-          <div class="card-kicker">Word of the day</div>
-          <div class="card-title">${dailyDone ? esc(daily.word) : "?????"}</div>
-          <div class="card-note">${dailyDone ? "Solved. New word tomorrow." : "One untaught word. 30 points."}</div>
-        </div>
-        <div class="card bridge" data-nav="bridges">
-          <div class="card-kicker">Bridge run</div>
-          <div class="card-title">Build words</div>
-          <div class="card-note">Assemble bridge words from root tiles. 30 points each.</div>
-        </div>
-        <div class="card review ${due.length ? "" : "done"}" data-nav="review">
-          <div class="card-kicker">Review sprint</div>
-          <div class="card-title">${due.length} due</div>
-          <div class="card-note">${due.length ? "Missed words come back. Clear the queue." : "Queue is clear."}</div>
-        </div>
-        <div class="card web-featured" data-nav="web">
-          <div class="card-kicker">Root Web ✦</div>
-          <div class="card-title">Explore all ${GAME.meta.root_count} roots</div>
-          <div class="card-note">See every root linked by shared words. Drag, zoom, tap. Mastered roots glow gold.</div>
-        </div>
-      </section>
-      <p class="section-label">Explore by domain</p>
-      <section class="domain-grid">
-        ${GAME.domains
-          .map((dom, i) => {
-            const m = domainMastery(dom);
-            const pct = m.total ? Math.round((100 * m.mastered) / m.total) : 0;
-            return `<button class="domain-card" data-domain="${dom.id}" style="--h:${dom.hue};--accent:hsl(${dom.hue} 65% 60%)">
-              <div class="domain-card-sky">${miniConstellationSVG(dom)}</div>
-              <div class="domain-card-body">
-                ${i === 0 && m.mastered === 0 ? '<span class="tag">start here</span>' : ""}
-                <div class="domain-card-name">${esc(dom.name)}</div>
-                <div class="domain-card-meta">${dom.levels.length} levels · ${m.mastered}/${m.total} mastered</div>
-                <span class="meter"><span style="width:${pct}%"></span></span>
-              </div>
-            </button>`;
-          })
-          .join("")}
-      </section>
-      <footer class="foot">Progress is saved in this browser.</footer>`;
+      ${
+        dailyDone
+          ? `<div class="quest-bubble done" style="cursor:default">
+              <span class="qb-icon">📅</span>
+              <span class="qb-text">
+                <span class="qb-label">Word of the day</span>
+                <span class="qb-word">${esc(daily.word)} — solved. New word tomorrow.</span>
+              </span>
+            </div>`
+          : `<button class="quest-bubble" data-nav="daily">
+              <span class="qb-icon">📅</span>
+              <span class="qb-text">
+                <span class="qb-label">Word of the day</span>
+                <span class="qb-word">? ? ? ? ? ?  ·  30 pts</span>
+              </span>
+              <span class="qb-go">›</span>
+            </button>`
+      }
+      <div class="journey">
+        ${columns.map((col) => `<div class="journey-col">${col.map(renderCell).join("")}</div>`).join("")}
+      </div>
+      <footer class="foot">Progress is saved in this browser.</footer>
+      <div class="warp-flash" id="warp-flash"></div>
+      ${tabBarHTML("home")}`;
+
+    app.querySelectorAll("[data-system]").forEach((btn) =>
+      btn.addEventListener("click", () => {
+        const expand = document.querySelector("#exp-" + btn.dataset.system);
+        const wasOpen = expand.classList.contains("open");
+        app.querySelectorAll(".system-expand.open").forEach((el) => el.classList.remove("open"));
+        if (!wasOpen) expand.classList.add("open");
+      })
+    );
     app.querySelectorAll("[data-domain]").forEach((el) =>
-      el.addEventListener("click", () => showDomain(el.dataset.domain))
+      el.addEventListener("click", () => warpToDomain(el.dataset.domain, el))
     );
     wireNav();
+    document.body.classList.add("has-tabbar");
     if (!save.tutorialDone) setTimeout(() => showTutorial(), 400);
+  }
+
+  /* A quick radial flash in the destination's hue before the domain path
+     screen replaces the map — reads as "traveling" instead of a hard cut. */
+  function warpToDomain(domId, btnEl) {
+    const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const flash = $("#warp-flash");
+    if (reduceMotion || !flash || !btnEl) {
+      showDomain(domId);
+      return;
+    }
+    const dom = GAME.domains.find((d) => d.id === domId);
+    const r = btnEl.getBoundingClientRect();
+    flash.style.setProperty("--wx", r.left + r.width / 2 + "px");
+    flash.style.setProperty("--wy", r.top + r.height / 2 + "px");
+    flash.style.setProperty("--h", dom ? dom.hue : 220);
+    flash.classList.remove("go");
+    void flash.offsetWidth; // restart the animation
+    flash.classList.add("go");
+    setTimeout(() => showDomain(domId), 340);
+  }
+
+  function showPractice() {
+    const due = dueReviews();
+    const dailyDone = save.daily[todayStr()];
+    app.innerHTML = `${header()}
+      <section class="practice">
+        <div class="practice-head">
+          <span class="phase-kicker">Practice</span>
+          <p class="practice-sub">Short, focused reps — no island required.</p>
+        </div>
+        <div class="practice-list">
+          <button class="prac-row" data-nav="daily">
+            <span class="prac-icon daily">📅</span>
+            <span class="prac-text">
+              <span class="prac-title">Word of the day</span>
+              <span class="prac-note">${dailyDone ? "Solved. New word tomorrow." : "One untaught word · 30 points"}</span>
+            </span>
+            <span class="prac-badge ${dailyDone ? "done" : ""}">${dailyDone ? "✓" : "NEW"}</span>
+          </button>
+          <button class="prac-row" data-nav="bridges">
+            <span class="prac-icon bridge">🌉</span>
+            <span class="prac-text">
+              <span class="prac-title">Build words</span>
+              <span class="prac-note">Assemble bridge words from root tiles · 30 pts each</span>
+            </span>
+          </button>
+          <button class="prac-row" data-nav="review">
+            <span class="prac-icon review">🔄</span>
+            <span class="prac-text">
+              <span class="prac-title">Review sprint</span>
+              <span class="prac-note">${due.length ? "Missed words, spaced for recall" : "Queue is clear"}</span>
+            </span>
+            ${due.length ? `<span class="prac-badge">${due.length}</span>` : '<span class="prac-badge done">✓</span>'}
+          </button>
+        </div>
+      </section>
+      ${tabBarHTML("practice")}`;
+    wireNav();
+    document.body.classList.add("has-tabbar");
+  }
+
+  function showProfile() {
+    const allRoots = GAME.domains.flatMap((d) => d.rootIds);
+    const mastered = allRoots.filter(rootMastered).length;
+    const learned = new Set();
+    Object.values(save.roots).forEach((rs) => Object.keys(rs.correct).forEach((w) => learned.add(w)));
+    const masteryPct = GAME.meta.root_count ? Math.round((100 * mastered) / GAME.meta.root_count) : 0;
+    app.innerHTML = `${header()}
+      <section class="profile">
+        <div class="practice-head">
+          <span class="phase-kicker">Your stats</span>
+        </div>
+        <div class="profile-stats">
+          <div class="stat-tile"><span class="stat-num">${mastered}</span><span class="stat-label">roots mastered</span></div>
+          <div class="stat-tile"><span class="stat-num">${learned.size}</span><span class="stat-label">words learned</span></div>
+          <div class="stat-tile"><span class="stat-num">${save.bestStreak}</span><span class="stat-label">best streak</span></div>
+          <div class="stat-tile"><span class="stat-num">${save.points}</span><span class="stat-label">points</span></div>
+        </div>
+        <div class="hero-bar"><div class="hero-bar-fill" style="width:${masteryPct}%"></div></div>
+        <p class="hero-pct" style="margin:6px 0 0;text-align:right">${masteryPct}% of all roots mastered</p>
+        <div class="profile-actions">
+          <button class="btn" data-nav="share">Share progress</button>
+          <button class="btn" data-nav="tutorial">How to play</button>
+        </div>
+        <footer class="foot">Progress is saved in this browser.</footer>
+      </section>
+      ${tabBarHTML("you")}`;
+    wireNav();
+    document.body.classList.add("has-tabbar");
   }
 
   function showDomain(domId) {
@@ -526,7 +762,8 @@
             </div>`;
           })
           .join("")}
-      </section>`;
+      </section>
+      ${tabBarHTML("home")}`;
     app.querySelectorAll("[data-level]").forEach((el) =>
       el.addEventListener("click", () => {
         if (el.dataset.locked) {
@@ -538,6 +775,7 @@
       })
     );
     wireNav();
+    document.body.classList.add("has-tabbar");
   }
 
   /* ---------- level play ---------- */
@@ -708,8 +946,9 @@
           if (word.gre_list) gained += 5;
           run.score += gained;
           save.points += gained;
-          (word.roots || []).forEach((rid) => (rootState(rid).correct[word.word] = true));
-          run.level.roots.forEach((rid) => (rootState(rid).correct[word.word] = rootState(rid).correct[word.word] || (word.roots || []).includes(rid)));
+          const wordKey = word.key || word.word;
+          (word.roots || []).forEach((rid) => (rootState(rid).correct[wordKey] = true));
+          run.level.roots.forEach((rid) => (rootState(rid).correct[wordKey] = rootState(rid).correct[wordKey] || (word.roots || []).includes(rid)));
           popEl(btn);
           addWordToGraph(word, isDecode);
           renderQuizGraph();
@@ -717,8 +956,9 @@
           if (window.WordWebSFX) window.WordWebSFX.correct();
         } else {
           run.streak = 0;
-          if (!save.review.some((r) => r.word === word.word)) {
-            save.review.push({ word: word.word, box: 0, due: Date.now() });
+          const wordKey = word.key || word.word;
+          if (!save.review.some((r) => r.word === wordKey)) {
+            save.review.push({ word: wordKey, box: 0, due: Date.now() });
           }
           shakeEl(btn);
           if (window.WordWebSFX) window.WordWebSFX.wrong();
@@ -740,6 +980,10 @@
           .join("")}</div>
         <p class="example">“${esc(word.example)}”</p>
         <button class="btn primary" id="next">${isDecode ? "Continue" : "Next"}</button>`;
+        // Pinned to the bottom of the screen on phone — with the quiz-graph
+        // and roots-reveal both above it, this button could otherwise land
+        // below the fold and need a scroll to find.
+        document.body.classList.add("has-sticky-next");
         $("#next").addEventListener("click", () => {
           if (isDecode) {
             run.decodeIdx++;
@@ -758,15 +1002,26 @@
     const st = (save.levels[level.id] = save.levels[level.id] || { completed: false, bestScore: 0 });
     st.completed = true;
     st.bestScore = Math.max(st.bestScore, score);
-    persist();
     const dom = GAME.domains.find((d) => d.id === level.domain);
     const mastered = level.roots.every(rootMastered);
+    // A whole galaxy going fully gold is rarer than any single root — worth
+    // a bigger, one-time moment instead of the routine level-complete screen.
+    const domMastery = domainMastery(dom);
+    const supernova = domMastery.mastered === domMastery.total && !save.celebratedDomains[dom.id];
+    if (supernova) save.celebratedDomains[dom.id] = true;
+    persist();
     app.innerHTML = `${header()}
-      <section class="results" style="--h:${dom.hue}">
-        <div class="phase-kicker">${mastered ? "Root mastered" : "Level complete"}</div>
-        <h2>${esc(level.title)}</h2>
+      <section class="results ${supernova ? "supernova" : ""}" style="--h:${dom.hue}">
+        <div class="phase-kicker ${supernova ? "boss" : ""}">${supernova ? "Galaxy fully charted" : mastered ? "Root mastered" : "Level complete"}</div>
+        <h2>${supernova ? esc(dom.name) : esc(level.title)}</h2>
         <p class="score-line">+${score} points · ${correct}/${queue.length + level.decodeWords.length} correct</p>
-        ${mastered ? '<p class="mastered-note">This constellation is lit on your map.</p>' : '<p class="mastered-note dim">Answer every word (and the boss) correctly to master this root.</p>'}
+        ${
+          supernova
+            ? '<p class="mastered-note">Every root in this galaxy is lit. ✦</p>'
+            : mastered
+            ? '<p class="mastered-note">This constellation is lit on your map.</p>'
+            : '<p class="mastered-note dim">Answer every word (and the boss) correctly to master this root.</p>'
+        }
         <div class="btn-row">
           <button class="btn" id="replay">Play again</button>
           <button class="btn primary" id="back">Back to ${esc(dom.name)}</button>
@@ -775,8 +1030,15 @@
     $("#replay").addEventListener("click", () => startLevel(level.id));
     $("#back").addEventListener("click", () => showDomain(dom.id));
     wireNav();
-    if (window.WordWebSFX) window.WordWebSFX.levelup();
-    confettiBurst($(".results h2"));
+    if (supernova) {
+      if (window.WordWebSFX) window.WordWebSFX.supernova();
+      confettiBurst($(".results h2"));
+      setTimeout(() => confettiBurst($(".results h2")), 220);
+      setTimeout(() => confettiBurst($(".results h2")), 440);
+    } else {
+      if (window.WordWebSFX) window.WordWebSFX.levelup();
+      confettiBurst($(".results h2"));
+    }
     run = null;
   }
 
@@ -784,11 +1046,14 @@
   function showReview() {
     const due = dueReviews();
     if (!due.length) {
-      showHome();
+      showPractice();
       return;
     }
     const item = due[0];
-    const word = GAME.wordsByName[item.word];
+    // item.word actually holds a key (see showQuestion) — wordsByKey
+    // resolves it to the exact sense that was answered wrong, not just
+    // whichever same-spelled word happened to load last.
+    const word = GAME.wordsByKey[item.word];
     if (!word) {
       save.review = save.review.filter((r) => r !== item);
       persist();
@@ -839,9 +1104,10 @@
         fb.innerHTML = `<div class="verdict ${correct ? "yes" : "no"}"><span class="mascot">${correct ? "✳" : "…"}</span> ${reactionLine(correct)} ${correct ? "<b>+5</b>" + (heartGained ? " · +1 heart" : "") : ""}</div>
           <p class="example">“${esc(word.example)}”</p>
           <button class="btn primary" id="next">Next</button>`;
+        document.body.classList.add("has-sticky-next");
         $("#next").addEventListener("click", () => {
           if (dueReviews().length) showReview();
-          else showHome();
+          else showPractice();
         });
         $("#next").focus();
       })
@@ -856,7 +1122,7 @@
   function showDaily() {
     const word = dailyWord();
     if (save.daily[todayStr()]) {
-      showHome();
+      showPractice();
       return;
     }
     const q = L.optionsFor(word, GAME, rng);
@@ -886,8 +1152,9 @@
           confettiBurst(btn);
           if (window.WordWebSFX) window.WordWebSFX.correct();
         } else {
-          if (!save.review.some((r) => r.word === word.word))
-            save.review.push({ word: word.word, box: 0, due: Date.now() });
+          const wordKey = word.key || word.word;
+          if (!save.review.some((r) => r.word === wordKey))
+            save.review.push({ word: wordKey, box: 0, due: Date.now() });
           shakeEl(btn);
           if (window.WordWebSFX) window.WordWebSFX.wrong();
         }
@@ -899,7 +1166,8 @@
         fb.innerHTML = `<div class="verdict ${correct ? "yes" : "no"}"><span class="mascot">${correct ? "✳" : "…"}</span> ${reactionLine(correct)} ${correct ? "<b>+30</b>" : ""}</div>
           <p class="example">“${esc(word.example)}”</p>
           <button class="btn primary" id="next">Done</button>`;
-        $("#next").addEventListener("click", showHome);
+        document.body.classList.add("has-sticky-next");
+        $("#next").addEventListener("click", showPractice);
         $("#next").focus();
       })
     );
@@ -929,6 +1197,8 @@
       el.addEventListener("click", () => {
         const t = el.dataset.nav;
         if (t === "home") showHome();
+        if (t === "practice") showPractice();
+        if (t === "you") showProfile();
         if (t === "review") showReview();
         if (t === "daily") showDaily();
         if (t === "bridges" && window.WordWebBridges) window.WordWebBridges.show();
@@ -961,10 +1231,13 @@
     rootState,
     rootMastered,
     showHome,
+    showPractice,
+    showProfile,
     showDomain,
     startLevel,
     wireNav,
     header,
+    tabBarHTML,
     esc,
     DAY,
     addReview(word) {

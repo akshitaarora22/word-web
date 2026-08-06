@@ -169,6 +169,7 @@
         .join("")}</div>
       <p class="example">“${esc(word.example)}”</p>
       <button class="btn primary" id="next">Next</button>`;
+    document.body.classList.add("has-sticky-next");
     document.querySelector("#next").addEventListener("click", () => {
       run.idx++;
       puzzle();
@@ -177,7 +178,7 @@
   }
 
   function results() {
-    const { header, wireNav, showHome } = api();
+    const { header, wireNav, showPractice } = api();
     const app = document.querySelector("#app");
     app.innerHTML = `${header()}
       <section class="results">
@@ -186,12 +187,12 @@
         <p class="score-line">+${run.score} points</p>
         <div class="btn-row">
           <button class="btn" id="again">Run again</button>
-          <button class="btn primary" id="home">Back to map</button>
+          <button class="btn primary" id="home">Back to practice</button>
         </div>
       </section>`;
     wireNav();
     document.querySelector("#again").addEventListener("click", show);
-    document.querySelector("#home").addEventListener("click", showHome);
+    document.querySelector("#home").addEventListener("click", showPractice);
     run = null;
   }
 

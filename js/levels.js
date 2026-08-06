@@ -56,10 +56,21 @@
   function buildGame(data) {
     const rootsById = {};
     data.roots.forEach((r) => (rootsById[r.id] = r));
+    // A few words share a spelling but teach a distinct sense (e.g. two
+    // "pedestrian" entries — noun and adjective — marked alternate sense in
+    // the dataset). wordsByName is keyed by the display word and silently
+    // collides for those; wordsByKey is keyed by w.key (falls back to
+    // w.word for every other entry) and never collides. Use wordsByKey
+    // anywhere a word needs to be tracked/looked-up as a unique item —
+    // wordsByName stays around for display-only lookups where any one
+    // same-spelled sense is an acceptable answer (e.g. bridge words, which
+    // are always multi-root and never one of these single-root pairs).
     const wordsByName = {};
     data.words.forEach((w) => (wordsByName[w.word] = w));
+    const wordsByKey = {};
+    data.words.forEach((w) => (wordsByKey[w.key || w.word] = w));
 
-    const index = data.root_word_index; // rootId -> [word,...]
+    const index = data.root_word_index; // rootId -> [key,...]
 
     // Group roots (that have words) by the domain of the ROOT itself
     const domainRoots = {};
@@ -70,6 +81,17 @@
       (domainRoots[dom] = domainRoots[dom] || []).push(rootId);
     });
 
+    // "Big" (4+ words) roots always get their own dedicated level — that's
+    // a property of the root itself, independent of domain. Precompute
+    // globally (not per-domain) so a small root in one domain correctly
+    // sees that its word is already fully taught by a big root over in a
+    // *different* domain (e.g. "potens" in power_and_conflict shouldn't
+    // re-teach "omnipotent" just because "omnis", the root that already
+    // teaches it, happens to live in quantity_and_scale).
+    const bigRootIds = new Set(Object.keys(index).filter((r) => index[r].length >= 4));
+    const bigTaughtWords = new Set();
+    bigRootIds.forEach((r) => index[r].forEach((k) => bigTaughtWords.add(k)));
+
     const domains = [];
 
     DOMAIN_ORDER.forEach((domId) => {
@@ -78,26 +100,36 @@
 
       // Big roots (4+ words) become their own level, largest first
       const big = rootIds
-        .filter((r) => index[r].length >= 4)
+        .filter((r) => bigRootIds.has(r))
         .sort((a, b) => index[b].length - index[a].length);
       const small = rootIds
-        .filter((r) => index[r].length < 4)
+        .filter((r) => !bigRootIds.has(r))
         .sort((a, b) => index[b].length - index[a].length);
 
       const levels = [];
+      // Seeded with every word any big root teaches, anywhere in the game —
+      // a small root's medley must never re-teach those. From here it also
+      // accumulates this domain's own big-root and medley words, so two
+      // small roots that happen to share a word (e.g. "kallos" and "pyge"
+      // both touching "callipygian") only teach it once. Two *big* roots
+      // sharing a word (e.g. "misein" + "gamos" on "misogamy") still both
+      // teach it — that's the intentional bridge-word mechanic, and this
+      // set is never consulted by the big-root loop below.
+      const domainTaught = new Set(bigTaughtWords);
 
       big.forEach((rootId) => {
         const words = index[rootId]
-          .map((w) => wordsByName[w])
+          .map((k) => wordsByKey[k])
           .filter(Boolean);
+        words.forEach((w) => domainTaught.add(w.key || w.word));
         // Decode holdout: ~20% (max 2), preferring GRE-listed multi-root words.
         const n = Math.min(2, Math.max(1, Math.floor(words.length * 0.2)));
         const ranked = words
           .slice()
           .sort((a, b) => decodeScore(b) - decodeScore(a) || hash(a.word) - hash(b.word));
         const decodeWords = ranked.slice(0, n);
-        const decodeSet = new Set(decodeWords.map((w) => w.word));
-        const teachWords = words.filter((w) => !decodeSet.has(w.word));
+        const decodeSet = new Set(decodeWords.map((w) => w.key || w.word));
+        const teachWords = words.filter((w) => !decodeSet.has(w.key || w.word));
         const root = rootsById[rootId];
         levels.push({
           id: domId + "::" + rootId,
@@ -111,18 +143,36 @@
         });
       });
 
-      // Bundle small roots into levels of ~5–9 words, no decode boss
+      // Bundle small roots into levels of ~5–9 words, no decode boss. Each
+      // small root only contributes words not already claimed above —
+      // otherwise a root added purely for hint accuracy (e.g. "potens" on
+      // "omnipotent", already fully taught under "omnis") would re-teach
+      // the same word a second time in an unrelated, low-content medley,
+      // and two small roots that happen to share a word (e.g. "kallos" and
+      // "pyge" both touching "callipygian") would each re-teach it too.
+      const remainingFor = (rid) => index[rid].filter((k) => !domainTaught.has(k));
+
       let bundle = [];
       let bundleWords = 0;
       const flushBundle = () => {
         if (!bundle.length) return;
         const words = [];
         bundle.forEach((rid) =>
-          index[rid].forEach((w) => {
-            const wo = wordsByName[w];
-            if (wo && !words.some((x) => x.word === wo.word)) words.push(wo);
+          remainingFor(rid).forEach((k) => {
+            const wo = wordsByKey[k];
+            const woKey = wo && (wo.key || wo.word);
+            if (wo && !words.some((x) => (x.key || x.word) === woKey)) {
+              words.push(wo);
+              domainTaught.add(woKey);
+            }
           })
         );
+        if (!words.length) {
+          // every word this batch would teach is already covered elsewhere
+          bundle = [];
+          bundleWords = 0;
+          return;
+        }
         levels.push({
           id: domId + "::bundle-" + levels.length,
           kind: "bundle",
@@ -137,8 +187,10 @@
         bundleWords = 0;
       };
       small.forEach((rid) => {
+        const rem = remainingFor(rid);
+        if (!rem.length) return; // fully redundant with what's already taught — no medley entry
         bundle.push(rid);
-        bundleWords += index[rid].length;
+        bundleWords += rem.length;
         if (bundleWords >= 5) flushBundle();
       });
       flushBundle();
@@ -149,6 +201,26 @@
         hue: DOMAIN_HUES[domId] ?? 220,
         levels,
         rootIds,
+      });
+    });
+
+    // A one-word medley barely counts as a lesson — drop it, unless that
+    // word has no other level teaching it anywhere (dropping it then would
+    // make the word completely unreachable in play, which is worse than a
+    // thin medley).
+    const allLevels = domains.flatMap((d) => d.levels);
+    const levelCountForWord = {};
+    allLevels.forEach((lv) =>
+      lv.teachWords.concat(lv.decodeWords).forEach((w) => {
+        const k = w.key || w.word;
+        levelCountForWord[k] = (levelCountForWord[k] || 0) + 1;
+      })
+    );
+    domains.forEach((d) => {
+      d.levels = d.levels.filter((lv) => {
+        if (lv.kind !== "bundle" || lv.teachWords.length !== 1) return true;
+        const k = lv.teachWords[0].key || lv.teachWords[0].word;
+        return levelCountForWord[k] <= 1; // keep only if this is its sole level
       });
     });
 
@@ -163,7 +235,7 @@
       .filter((w) => !w.roots || w.roots.length === 0)
       .sort((a, b) => a.word.localeCompare(b.word));
 
-    return { domains, rootsById, wordsByName, defsByDomain, daily, meta: data.meta };
+    return { domains, rootsById, wordsByName, wordsByKey, defsByDomain, daily, meta: data.meta };
   }
 
   function decodeScore(w) {

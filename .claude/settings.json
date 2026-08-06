@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c ' *)",
+      "Bash(python .balance_check.py js/game.js js/web.js js/levels.js js/bridges.js js/audio.js)",
+      "Bash(python -c ' *)",
+      "Bash(rm .balance_check.py)",
+      "Bash(python3)",
+      "Bash(python .balance_check.py js/levels.js)",
+      "Bash(python .balance_check.py js/game.js js/bridges.js)"
+    ]
+  }
+}
