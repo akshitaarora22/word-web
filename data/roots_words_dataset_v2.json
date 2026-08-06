@@ -4,17 +4,17 @@
     "version": 2,
     "organizing_principle": "Roots selected by measured productivity across a GRE-level corpus, then grouped into 13 semantic domains defined for this project. Grouping and ordering are original to this dataset.",
     "content_note": "Root-to-meaning mappings are factual linguistic data. All definitions, example sentences, domain groupings, and notes are original work written for this project. No text from any published vocabulary book is reproduced.",
-    "root_count": 140,
-    "word_count": 405,
+    "root_count": 142,
+    "word_count": 398,
     "domain_count": 13,
     "roots_per_domain": {
-      "speech_and_writing": 10,
+      "speech_and_writing": 11,
       "mind_and_emotion": 12,
       "knowledge_and_perception": 11,
       "motion_and_force": 12,
       "structure_and_measure": 14,
       "time_and_change": 7,
-      "people_and_society": 8,
+      "people_and_society": 9,
       "power_and_conflict": 9,
       "value_and_judgment": 12,
       "body_and_life": 19,
@@ -23,7 +23,7 @@
       "quantity_and_scale": 10
     },
     "words_per_domain": {
-      "mind_and_emotion": 58,
+      "mind_and_emotion": 52,
       "unrooted": 29,
       "quantity_and_scale": 10,
       "kinship_and_gender": 7,
@@ -33,7 +33,7 @@
       "knowledge_and_perception": 24,
       "speech_and_writing": 38,
       "value_and_judgment": 11,
-      "time_and_change": 19,
+      "time_and_change": 18,
       "world_and_nature": 26,
       "motion_and_force": 38,
       "power_and_conflict": 3
@@ -1220,6 +1220,22 @@
       "meaning": "buttocks",
       "domain": "value_and_judgment",
       "note": "A narrow root, retained for callipygian."
+    },
+    {
+      "id": "tele",
+      "root": "tele",
+      "origin": "Greek",
+      "meaning": "distant, far",
+      "domain": "speech_and_writing",
+      "note": "Distance: telepathy, telegraph, telephone."
+    },
+    {
+      "id": "syn",
+      "root": "syn, sym",
+      "origin": "Greek",
+      "meaning": "together, with",
+      "domain": "people_and_society",
+      "note": "Together: sympathy, symphony, synchronous."
     }
   ],
   "words": [
@@ -3010,21 +3026,10 @@
       "gre_list": false
     },
     {
-      "word": "synchronize",
-      "roots": [
-        "chronos"
-      ],
-      "primary_root": "chronos",
-      "domain": "time_and_change",
-      "part_of_speech": "verb",
-      "definition": "To make things happen at the same time.",
-      "example": "The dancers synchronized their steps to a single heartbeat of a drum.",
-      "gre_list": false
-    },
-    {
       "word": "synchronous",
       "roots": [
-        "chronos"
+        "chronos",
+        "syn"
       ],
       "primary_root": "chronos",
       "domain": "time_and_change",
@@ -3036,25 +3041,14 @@
     {
       "word": "sympathy",
       "roots": [
-        "pathos"
+        "pathos",
+        "syn"
       ],
       "primary_root": "pathos",
       "domain": "mind_and_emotion",
       "part_of_speech": "noun",
       "definition": "Shared feeling, especially sorrow for another's misfortune.",
       "example": "She sent a card of sympathy after hearing of his loss.",
-      "gre_list": false
-    },
-    {
-      "word": "sympathetic",
-      "roots": [
-        "pathos"
-      ],
-      "primary_root": "pathos",
-      "domain": "mind_and_emotion",
-      "part_of_speech": "adjective",
-      "definition": "Feeling or showing compassion for others.",
-      "example": "A sympathetic nurse sat with the frightened child until dawn.",
       "gre_list": false
     },
     {
@@ -3070,18 +3064,6 @@
       "gre_list": false
     },
     {
-      "word": "empathetic",
-      "roots": [
-        "pathos"
-      ],
-      "primary_root": "pathos",
-      "domain": "mind_and_emotion",
-      "part_of_speech": "adjective",
-      "definition": "Able to understand and share the feelings of others.",
-      "example": "His empathetic reply showed he truly grasped her fear.",
-      "gre_list": false
-    },
-    {
       "word": "apathy",
       "roots": [
         "pathos"
@@ -3092,18 +3074,6 @@
       "definition": "A lack of interest, feeling, or concern.",
       "example": "Voter apathy left half the seats decided by a tiny minority.",
       "gre_list": true
-    },
-    {
-      "word": "apathetic",
-      "roots": [
-        "pathos"
-      ],
-      "primary_root": "pathos",
-      "domain": "mind_and_emotion",
-      "part_of_speech": "adjective",
-      "definition": "Showing no interest or concern.",
-      "example": "The apathetic crowd barely looked up as the speaker began.",
-      "gre_list": false
     },
     {
       "word": "antipathy",
@@ -3118,21 +3088,10 @@
       "gre_list": false
     },
     {
-      "word": "antipathetic",
-      "roots": [
-        "pathos"
-      ],
-      "primary_root": "pathos",
-      "domain": "mind_and_emotion",
-      "part_of_speech": "adjective",
-      "definition": "Feeling or arousing strong dislike.",
-      "example": "The plan was antipathetic to everything the committee stood for.",
-      "gre_list": false
-    },
-    {
       "word": "telepathy",
       "roots": [
-        "pathos"
+        "pathos",
+        "tele"
       ],
       "primary_root": "pathos",
       "domain": "mind_and_emotion",
@@ -3601,7 +3560,8 @@
     {
       "word": "symbiosis",
       "roots": [
-        "bios"
+        "bios",
+        "syn"
       ],
       "primary_root": "bios",
       "domain": "body_and_life",
@@ -3625,7 +3585,8 @@
     {
       "word": "synopsis",
       "roots": [
-        "opsis"
+        "opsis",
+        "syn"
       ],
       "primary_root": "opsis",
       "domain": "knowledge_and_perception",
@@ -3759,7 +3720,8 @@
     {
       "word": "symmetry",
       "roots": [
-        "metron"
+        "metron",
+        "syn"
       ],
       "primary_root": "metron",
       "domain": "structure_and_measure",
@@ -3817,30 +3779,6 @@
       "gre_list": false
     },
     {
-      "word": "sympathize",
-      "roots": [
-        "pathos"
-      ],
-      "primary_root": "pathos",
-      "domain": "mind_and_emotion",
-      "part_of_speech": "verb",
-      "definition": "To share or understand another's feelings.",
-      "example": "I sympathize with anyone who has waited all day for a delayed flight.",
-      "gre_list": false
-    },
-    {
-      "word": "empathize",
-      "roots": [
-        "pathos"
-      ],
-      "primary_root": "pathos",
-      "domain": "mind_and_emotion",
-      "part_of_speech": "verb",
-      "definition": "To understand and share another person's feelings.",
-      "example": "Having failed himself, he could empathize with the struggling students.",
-      "gre_list": false
-    },
-    {
       "word": "orthodontic",
       "roots": [
         "orthos",
@@ -3893,7 +3831,8 @@
     {
       "word": "telegraph",
       "roots": [
-        "graphein"
+        "graphein",
+        "tele"
       ],
       "primary_root": "graphein",
       "domain": "speech_and_writing",
@@ -4147,7 +4086,8 @@
     {
       "word": "symphony",
       "roots": [
-        "phone"
+        "phone",
+        "syn"
       ],
       "primary_root": "phone",
       "domain": "speech_and_writing",
@@ -4171,7 +4111,8 @@
     {
       "word": "telephone",
       "roots": [
-        "phone"
+        "phone",
+        "tele"
       ],
       "primary_root": "phone",
       "domain": "speech_and_writing",
@@ -6312,19 +6253,13 @@
       "pedagogy"
     ],
     "pathos": [
-      "antipathetic",
       "antipathy",
-      "apathetic",
       "apathy",
-      "empathetic",
-      "empathize",
       "empathy",
       "osteopathy",
       "pathetic",
       "pathology",
       "psychopathic",
-      "sympathetic",
-      "sympathize",
       "sympathy",
       "telepathy"
     ],
@@ -6469,8 +6404,20 @@
       "chronicle",
       "chronological",
       "chronometer",
-      "synchronize",
       "synchronous"
+    ],
+    "syn": [
+      "symbiosis",
+      "symmetry",
+      "sympathy",
+      "symphony",
+      "synchronous",
+      "synopsis"
+    ],
+    "tele": [
+      "telegraph",
+      "telepathy",
+      "telephone"
     ],
     "grex": [
       "aggregate",

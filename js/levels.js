@@ -81,6 +81,21 @@
       (domainRoots[dom] = domainRoots[dom] || []).push(rootId);
     });
 
+    // A root that is NEVER any word's primary_root (only ever tagged on
+    // as a secondary root, e.g. "syn" appended to sympathy/symphony/... for
+    // hint accuracy) has no content of its own — every word it touches is
+    // already owned by that word's real primary root. Such a root must
+    // never drive level generation itself, no matter how many words it's
+    // tagged on: it should stay a hint-only tag, visible in a word's root
+    // chips but silent in the level list. (Its constellation star still
+    // lights up normally — finish() marks *every* root a word carries as
+    // correct, not just the level's root, so mastery completes passively
+    // once the word is learned via its actual primary root.)
+    const everPrimary = new Set();
+    data.words.forEach((w) => {
+      if (w.roots && w.roots.length) everPrimary.add(w.roots[0]);
+    });
+
     // "Big" (4+ words) roots always get their own dedicated level — that's
     // a property of the root itself, independent of domain. Precompute
     // globally (not per-domain) so a small root in one domain correctly
@@ -88,7 +103,9 @@
     // *different* domain (e.g. "potens" in power_and_conflict shouldn't
     // re-teach "omnipotent" just because "omnis", the root that already
     // teaches it, happens to live in quantity_and_scale).
-    const bigRootIds = new Set(Object.keys(index).filter((r) => index[r].length >= 4));
+    const bigRootIds = new Set(
+      Object.keys(index).filter((r) => index[r].length >= 4 && everPrimary.has(r))
+    );
     const bigTaughtWords = new Set();
     bigRootIds.forEach((r) => index[r].forEach((k) => bigTaughtWords.add(k)));
 
@@ -103,7 +120,7 @@
         .filter((r) => bigRootIds.has(r))
         .sort((a, b) => index[b].length - index[a].length);
       const small = rootIds
-        .filter((r) => !bigRootIds.has(r))
+        .filter((r) => !bigRootIds.has(r) && everPrimary.has(r))
         .sort((a, b) => index[b].length - index[a].length);
 
       const levels = [];
