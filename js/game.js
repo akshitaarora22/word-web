@@ -21,6 +21,7 @@
     lastPlayDate: null, // dateStr
     soundOn: true,
     tutorialDone: false,
+    hardMode: false, // "Pro mode": distractors prefer root-siblings over unrelated words
   });
   let save = load();
   function load() {
@@ -725,6 +726,8 @@
         <div class="hero-bar"><div class="hero-bar-fill" style="width:${masteryPct}%"></div></div>
         <p class="hero-pct" style="margin:6px 0 0;text-align:right">${masteryPct}% of all roots mastered</p>
         <div class="profile-actions">
+          <button class="btn ${save.hardMode ? "primary" : ""}" data-nav="hardmode">🎯 Pro mode: ${save.hardMode ? "ON" : "OFF"}</button>
+          <p class="discover-hint" style="margin:-4px 0 0">Pro mode swaps in trickier answer choices — other words sharing a root with the correct one — so you can't just spot a keyword.</p>
           <button class="btn" data-nav="share">Share progress</button>
           <button class="btn" data-nav="tutorial">How to play</button>
         </div>
@@ -880,7 +883,7 @@
 
   function showQuestion(word, isDecode) {
     const dom = GAME.domains.find((d) => d.id === run.level.domain);
-    const q = L.optionsFor(word, GAME, rng);
+    const q = L.optionsFor(word, GAME, rng, save.hardMode);
     let hintUsed = false;
     let answered = false;
     const total = run.queue.length + run.level.decodeWords.length;
@@ -1060,7 +1063,7 @@
       showReview();
       return;
     }
-    const q = L.optionsFor(word, GAME, rng);
+    const q = L.optionsFor(word, GAME, rng, save.hardMode);
     app.innerHTML = `${header()}
       <section class="quiz review-quiz">
         <div class="quiz-top"><span class="phase-kicker">Review</span><span class="quiz-count">${due.length} left</span></div>
@@ -1125,7 +1128,7 @@
       showPractice();
       return;
     }
-    const q = L.optionsFor(word, GAME, rng);
+    const q = L.optionsFor(word, GAME, rng, save.hardMode);
     app.innerHTML = `${header()}
       <section class="quiz daily-quiz">
         <div class="quiz-top"><span class="phase-kicker boss">Word of the day</span></div>
@@ -1212,6 +1215,13 @@
           const icon = el.querySelector ? el : el;
           el.textContent = save.soundOn ? "🔊" : "🔇";
           el.title = (save.soundOn ? "Mute" : "Unmute") + " sound";
+        }
+        if (t === "hardmode") {
+          save.hardMode = !save.hardMode;
+          persist();
+          if (window.WordWebSFX) window.WordWebSFX.tap();
+          el.classList.toggle("primary", save.hardMode);
+          el.textContent = `🎯 Pro mode: ${save.hardMode ? "ON" : "OFF"}`;
         }
       })
     );

@@ -262,29 +262,52 @@
     return s;
   }
 
-  /* Build 4 answer options for a word: its definition + 3 plausible distractors
-     drawn from the same domain (different roots), falling back to the full list. */
-  function optionsFor(word, game, rng) {
-    const pool = (game.defsByDomain[word.domain] || [])
-      .concat(game.defsByDomain["unrooted"] || [])
-      .filter(
-        (w) =>
-          w.word !== word.word &&
-          w.definition !== word.definition &&
-          !(w.roots || []).some((r) => (word.roots || []).includes(r))
-      );
-    const picked = [];
-    const used = new Set();
-    let guard = 0;
-    while (picked.length < 3 && guard++ < 200) {
-      const src = pool.length >= 3 ? pool : game.defsByDomain[word.domain] || pool;
-      const cand = src.length
-        ? src[Math.floor(rng() * src.length)]
-        : null;
-      if (!cand) break;
+  // Shuffle-then-take-N-unique-by-definition — shared by both option tiers below.
+  function fillUnique(src, picked, used, need, rng) {
+    const shuffled = src.slice();
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(rng() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    for (let i = 0; i < shuffled.length && picked.length < need; i++) {
+      const cand = shuffled[i];
       if (used.has(cand.definition)) continue;
       used.add(cand.definition);
       picked.push(cand.definition);
+    }
+  }
+
+  /* Build 4 answer options for a word: its definition + 3 distractors.
+     Normal mode draws distractors from the same domain but explicitly avoids
+     any word sharing a root with the target, so the wrong answers read as
+     obviously unrelated. Hard mode does the opposite on purpose: it prefers
+     "half-root" siblings — other words that share one of this word's roots
+     (e.g. pediatrics/pedagogy both carry "paidos") — so every option looks
+     plausible at a glance and the player actually has to read them. */
+  function optionsFor(word, game, rng, hard) {
+    const notSelf = (w) => w.word !== word.word && w.definition !== word.definition;
+    const picked = [];
+    const used = new Set();
+    if (hard) {
+      const siblingKeys = new Set();
+      (word.roots || []).forEach((rid) => {
+        (window.WORDWEB_DATA.root_word_index[rid] || []).forEach((k) => siblingKeys.add(k));
+      });
+      const siblings = Array.from(siblingKeys)
+        .map((k) => game.wordsByKey[k])
+        .filter((w) => w && notSelf(w));
+      const domainPool = (game.defsByDomain[word.domain] || []).filter(notSelf);
+      const everyone = Object.values(game.defsByDomain).flat().filter(notSelf);
+      fillUnique(siblings, picked, used, 3, rng);
+      fillUnique(domainPool, picked, used, 3, rng);
+      fillUnique(everyone, picked, used, 3, rng);
+    } else {
+      const pool = (game.defsByDomain[word.domain] || [])
+        .concat(game.defsByDomain["unrooted"] || [])
+        .filter((w) => notSelf(w) && !(w.roots || []).some((r) => (word.roots || []).includes(r)));
+      const domainPool = game.defsByDomain[word.domain] || pool;
+      fillUnique(pool, picked, used, 3, rng);
+      fillUnique(domainPool, picked, used, 3, rng);
     }
     const options = picked.concat([word.definition]);
     // shuffle
