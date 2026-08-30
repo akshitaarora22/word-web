@@ -74,7 +74,7 @@
       <section class="quiz bridge-quiz" style="--h:${dom.hue}">
         <div class="quiz-top">
           <span class="phase-kicker boss">Bridge run</span>
-          <span class="quiz-count">${run.idx + 1}/${run.words.length}</span>
+          <span><span class="quiz-count">${run.idx + 1}/${run.words.length}</span><button class="back-btn" data-nav="home">Back</button></span>
         </div>
         <p class="bridge-def">“${esc(word.definition)}” <span class="pos">${esc(word.part_of_speech || "")}</span>${word.gre_list ? '<span class="gre">GRE</span>' : ""}</p>
         <p class="discover-hint">Pick the ${need} roots this word is built from.</p>
@@ -188,6 +188,7 @@
         <div class="btn-row">
           <button class="btn" id="again">Run again</button>
           <button class="btn primary" id="home">Back to practice</button>
+          <button class="back-btn" data-nav="home">Back</button>
         </div>
       </section>`;
     wireNav();

@@ -93,7 +93,7 @@
         <div class="webview-bar">
           <div class="webview-bar-top">
             <span class="phase-kicker">The root web</span>
-            <button class="web-home-btn" data-nav="home">🗺️ Map</button>
+            <button class="web-home-btn" data-nav="home">Back to main</button>
           </div>
           <span class="webview-hint">${
             phone()

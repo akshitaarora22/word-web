@@ -76,7 +76,7 @@ h1, h2, .brand, .quiz-word, .root-name {
 .tag { position: absolute; top: 8px; right: 10px; font-size: 0.68rem; color: var(--ink); background: var(--gold); padding: 2px 7px; border-radius: 999px; font-weight: 600; animation: tag-pulse 2s ease-out infinite; }
 
 /* crumbs */
-.crumbs { color: var(--paper-dim); font-size: 0.85rem; margin-bottom: 14px; }
+.crumbs { color: var(--paper-dim); font-size: 0.85rem; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; }
 .crumbs a { color: var(--paper); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
 
 /* level list */
@@ -97,6 +97,19 @@ h1, h2, .brand, .quiz-word, .root-name {
 /* discover */
 .phase-kicker { display: inline-block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--accent); margin-bottom: 10px; }
 .phase-kicker.boss { color: var(--gold); }
+
+/* header area used by practice/profile — include a back button */
+.practice-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.practice-sub { margin: 0; color: var(--paper-dim); }
+.back-btn {
+  all: unset; cursor: pointer; touch-action: manipulation; box-sizing: border-box;
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--ink-2); border: 1px solid #2a3454; border-radius: 999px;
+  padding: 6px 12px; font-size: 0.9rem; font-weight: 600; color: var(--paper);
+  min-height: 32px;
+}
+.back-btn:active { border-color: var(--gold); }
+@media (hover: hover) { .back-btn:hover { border-color: var(--gold); color: var(--gold); } }
 .root-card { background: var(--accent-soft); border: 1px solid hsl(var(--h) 55% 62% / 0.35); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 10px; }
 .root-name { font-size: 1.5rem; color: var(--accent); font-family: "IBM Plex Mono", ui-monospace, monospace; }
 .root-origin { color: var(--paper); margin-top: 2px; }
@@ -170,6 +183,12 @@ h1, h2, .brand, .quiz-word, .root-name {
 .btn.primary:hover { filter: brightness(1.1); }
 .btn.ghost { background: transparent; color: var(--paper-dim); border-style: dashed; padding: 6px 12px; font-weight: 400; font-size: 0.85rem; }
 .btn.ghost:hover { color: var(--paper); }
+
+/* static mode indicator shown in profile when Pro mode is enforced */
+.mode-indicator {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--accent); color: #0d1220; padding: 8px 12px; border-radius: 999px; font-weight: 700;
+}
 
 .foot { color: var(--paper-dim); font-size: 0.78rem; text-align: center; margin-top: 28px; }
 

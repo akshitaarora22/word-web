@@ -21,7 +21,7 @@
     lastPlayDate: null, // dateStr
     soundOn: true,
     tutorialDone: false,
-    hardMode: false, // "Pro mode": distractors prefer root-siblings over unrelated words
+    hardMode: true, // "Pro mode" default: distractors prefer root-siblings over unrelated words
   });
   let save = load();
   function load() {
@@ -44,6 +44,7 @@
   const rng = Math.random;
   const todayStr = () => new Date().toISOString().slice(0, 10);
   const DAY = 24 * 60 * 60 * 1000;
+  const REVISION_COUNT = 12; // number of words in revision mode
   const esc = (s) =>
     String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
@@ -674,6 +675,7 @@
         <div class="practice-head">
           <span class="phase-kicker">Practice</span>
           <p class="practice-sub">Short, focused reps — no island required.</p>
+          <button class="back-btn" data-nav="home">Back</button>
         </div>
         <div class="practice-list">
           <button class="prac-row" data-nav="daily">
@@ -689,6 +691,13 @@
             <span class="prac-text">
               <span class="prac-title">Build words</span>
               <span class="prac-note">Assemble bridge words from root tiles · 30 pts each</span>
+            </span>
+          </button>
+          <button class="prac-row" data-nav="revision">
+            <span class="prac-icon review">🔁</span>
+            <span class="prac-text">
+              <span class="prac-title">Revision</span>
+              <span class="prac-note">Random words you've already played · quick review</span>
             </span>
           </button>
           <button class="prac-row" data-nav="review">
@@ -716,6 +725,7 @@
       <section class="profile">
         <div class="practice-head">
           <span class="phase-kicker">Your stats</span>
+          <button class="back-btn" data-nav="home">Back</button>
         </div>
         <div class="profile-stats">
           <div class="stat-tile"><span class="stat-num">${mastered}</span><span class="stat-label">roots mastered</span></div>
@@ -741,7 +751,7 @@
   function showDomain(domId) {
     const dom = GAME.domains.find((d) => d.id === domId);
     app.innerHTML = `${header()}
-      <section class="crumbs"><a data-nav="home">Map</a> / ${esc(dom.name)}</section>
+      <section class="crumbs"><span><a data-nav="home">Map</a> / ${esc(dom.name)}</span><button class="back-btn" data-nav="home">Back</button></section>
       <section class="path" style="--h:${dom.hue}">
         ${dom.levels
           .map((lv, i) => {
@@ -822,7 +832,7 @@
     const { level } = run;
     const dom = GAME.domains.find((d) => d.id === level.domain);
     app.innerHTML = `${header()}
-      <section class="crumbs"><a data-nav="home">Map</a> / <a data-domain-link="${dom.id}">${esc(dom.name)}</a> / ${esc(level.title)}</section>
+      <section class="crumbs"><span><a data-nav="home">Map</a> / <a data-domain-link="${dom.id}">${esc(dom.name)}</a> / ${esc(level.title)}</span><button class="back-btn" data-nav="home">Back</button></section>
       <section class="discover" style="--h:${dom.hue}">
         <div class="phase-kicker">Discover</div>
         ${level.roots
@@ -864,6 +874,7 @@
     const dom = GAME.domains.find((d) => d.id === run.level.domain);
     app.innerHTML = `${header()}
       <section class="decode-intro" style="--h:${dom.hue}">
+        <button class="back-btn" data-nav="home">Back</button>
         <div class="phase-kicker boss">Boss word</div>
         <h2>You were never taught this one.</h2>
         <p>Use the roots you just learned to decode it. 50 points on the line — no hints, no penalty for guessing.</p>
@@ -893,7 +904,10 @@
       <section class="quiz" style="--h:${dom.hue}">
         <div class="quiz-top">
           <span class="phase-kicker ${isDecode ? "boss" : ""}">${isDecode ? "Decode" : esc(run.level.title)}</span>
-          <span class="quiz-count">${num}/${total}${run.streak > 1 ? ` · <span class="streak-live">🔥${run.streak}</span>` : ""}</span>
+          <span>
+            <span class="quiz-count">${num}/${total}${run.streak > 1 ? ` · <span class="streak-live">🔥${run.streak}</span>` : ""}</span>
+            <button class="back-btn" data-nav="home">Back</button>
+          </span>
         </div>
         <h2 class="quiz-word">${esc(word.word)} <span class="pos">${esc(word.part_of_speech || "")}</span>
           ${word.gre_list ? '<span class="gre">GRE</span>' : ""}</h2>
@@ -1028,6 +1042,7 @@
         <div class="btn-row">
           <button class="btn" id="replay">Play again</button>
           <button class="btn primary" id="back">Back to ${esc(dom.name)}</button>
+          <button class="back-btn" data-nav="home">Back</button>
         </div>
       </section>`;
     $("#replay").addEventListener("click", () => startLevel(level.id));
@@ -1066,7 +1081,7 @@
     const q = L.optionsFor(word, GAME, rng, save.hardMode);
     app.innerHTML = `${header()}
       <section class="quiz review-quiz">
-        <div class="quiz-top"><span class="phase-kicker">Review</span><span class="quiz-count">${due.length} left</span></div>
+        <div class="quiz-top"><span class="phase-kicker">Review</span><span><span class="quiz-count">${due.length} left</span><button class="back-btn" data-nav="home">Back</button></span></div>
         <h2 class="quiz-word">${esc(word.word)} <span class="pos">${esc(word.part_of_speech || "")}</span></h2>
         <div class="options">${q.options.map((o, i) => `<button class="option" data-i="${i}">${esc(o)}</button>`).join("")}</div>
         <div id="feedback" class="feedback" hidden></div>
@@ -1117,6 +1132,70 @@
     );
   }
 
+  /* ---------- revision mode (practice random previously-played words) ---------- */
+  function playedWords() {
+    const keys = new Set();
+    Object.values(save.roots).forEach((rs) => Object.keys(rs.correct || {}).forEach((k) => keys.add(k)));
+    return Array.from(keys).map((k) => GAME.wordsByKey[k]).filter(Boolean);
+  }
+
+  function showRevision() {
+    const all = playedWords();
+    if (!all.length) {
+      app.innerHTML = `${header()}<section class="discover"><div class="phase-kicker">Revision</div><p class="discover-hint">You haven't played any words yet — try a Practice run first.</p><button class="btn" data-nav="practice">Back to practice</button></section>`;
+      wireNav();
+      return;
+    }
+    // shuffle and take up to REVISION_COUNT
+    for (let i = all.length - 1; i > 0; i--) {
+      const j = Math.floor(rng() * (i + 1));
+      [all[i], all[j]] = [all[j], all[i]];
+    }
+    const queue = all.slice(0, Math.min(REVISION_COUNT, all.length));
+    let idx = 0;
+
+    function renderItem() {
+      const word = queue[idx];
+      const q = L.optionsFor(word, GAME, rng, save.hardMode);
+      app.innerHTML = `${header()}<section class="quiz review-quiz"><div class="quiz-top"><span class="phase-kicker">Revision</span><span class="quiz-count">${idx + 1}/${queue.length}</span></div><h2 class="quiz-word">${esc(word.word)} <span class="pos">${esc(word.part_of_speech || "")}</span></h2><div class="options">${q.options.map((o, i) => `<button class="option" data-i="${i}">${esc(o)}</button>`).join("")}</div><div id="feedback" class="feedback" hidden></div></section>`;
+      wireNav();
+      let answered = false;
+      app.querySelectorAll(".option").forEach((btn) =>
+        btn.addEventListener("click", () => {
+          if (answered) return;
+          answered = true;
+          const correct = Number(btn.dataset.i) === q.correctIndex;
+          app.querySelectorAll(".option").forEach((b, bi) => {
+            if (bi === q.correctIndex) b.classList.add("right");
+            else if (b === btn) b.classList.add("wrong");
+            b.disabled = true;
+          });
+          if (correct) {
+            save.points += 5;
+            persist();
+            if (window.WordWebSFX) window.WordWebSFX.correct();
+          } else {
+            const wordKey = word.key || word.word;
+            if (!save.review.some((r) => r.word === wordKey)) save.review.push({ word: wordKey, box: 0, due: Date.now() });
+            if (window.WordWebSFX) window.WordWebSFX.wrong();
+          }
+          const fb = $("#feedback");
+          fb.hidden = false;
+          fb.innerHTML = `<div class="verdict ${correct ? "yes" : "no"}"><span class="mascot">${correct ? "✳" : "…"}</span> ${reactionLine(correct)} ${correct ? "<b>+5</b>" : ""}</div><p class="example">“${esc(word.example)}”</p><button class="btn primary" id="next">${idx + 1 < queue.length ? "Next" : "Done"}</button>`;
+          document.body.classList.add("has-sticky-next");
+          $("#next").addEventListener("click", () => {
+            document.body.classList.remove("has-sticky-next");
+            idx++;
+            if (idx < queue.length) renderItem();
+            else showPractice();
+          });
+        })
+      );
+    }
+
+    renderItem();
+  }
+
   /* ---------- daily word ---------- */
   function dailyWord() {
     const days = Math.floor(Date.now() / DAY);
@@ -1131,7 +1210,7 @@
     const q = L.optionsFor(word, GAME, rng, save.hardMode);
     app.innerHTML = `${header()}
       <section class="quiz daily-quiz">
-        <div class="quiz-top"><span class="phase-kicker boss">Word of the day</span></div>
+        <div class="quiz-top"><span class="phase-kicker boss">Word of the day</span><span><button class="back-btn" data-nav="home">Back</button></span></div>
         <h2 class="quiz-word">${esc(word.word)} <span class="pos">${esc(word.part_of_speech || "")}</span>${word.gre_list ? '<span class="gre">GRE</span>' : ""}</h2>
         <p class="discover-hint">No roots to lean on — this one you just have to know. 30 points.</p>
         <div class="options">${q.options.map((o, i) => `<button class="option" data-i="${i}">${esc(o)}</button>`).join("")}</div>
@@ -1203,6 +1282,7 @@
         if (t === "practice") showPractice();
         if (t === "you") showProfile();
         if (t === "review") showReview();
+        if (t === "revision") showRevision();
         if (t === "daily") showDaily();
         if (t === "bridges" && window.WordWebBridges) window.WordWebBridges.show();
         if (t === "web" && window.WordWebView) window.WordWebView.show();
