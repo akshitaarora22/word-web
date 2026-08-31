@@ -1157,7 +1157,7 @@
     function renderItem() {
       const word = queue[idx];
       const q = L.optionsFor(word, GAME, rng, save.hardMode);
-      app.innerHTML = `${header()}<section class="quiz review-quiz"><div class="quiz-top"><span class="phase-kicker">Revision</span><span class="quiz-count">${idx + 1}/${queue.length}</span></div><h2 class="quiz-word">${esc(word.word)} <span class="pos">${esc(word.part_of_speech || "")}</span></h2><div class="options">${q.options.map((o, i) => `<button class="option" data-i="${i}">${esc(o)}</button>`).join("")}</div><div id="feedback" class="feedback" hidden></div></section>`;
+      app.innerHTML = `${header()}<section class="quiz review-quiz"><div class="quiz-top"><span class="phase-kicker">Revision</span><span><span class="quiz-count">${idx + 1}/${queue.length}</span><button class="back-btn" data-nav="home">Back</button></span></div><h2 class="quiz-word">${esc(word.word)} <span class="pos">${esc(word.part_of_speech || "")}</span></h2><div class="options">${q.options.map((o, i) => `<button class="option" data-i="${i}">${esc(o)}</button>`).join("")}</div><div id="feedback" class="feedback" hidden></div></section>`;
       wireNav();
       let answered = false;
       app.querySelectorAll(".option").forEach((btn) =>

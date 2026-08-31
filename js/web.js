@@ -26,7 +26,7 @@
   const ease = (ms) => (calm() ? 0 : ms);
 
   function buildGraph() {
-    const { GAME } = api();
+    const { GAME, rootMastered, rootState } = api();
     const data = window.WORDWEB_DATA;
     const idx = data.root_word_index;
     const domHue = {};
@@ -34,6 +34,12 @@
 
     const nodes = Object.keys(idx).map((rid) => {
       const r = GAME.rootsById[rid];
+      const mastered = rootMastered(rid);
+      // "started" = at least one word answered correctly, but not yet mastered.
+      // Computed once here (not per simulation tick) since rootMastered walks
+      // every domain/level.
+      const rs = rootState(rid);
+      const started = !mastered && idx[rid].some((k) => rs.correct[k]);
       return {
         id: rid,
         type: "root",
@@ -42,6 +48,8 @@
         domain: r.domain,
         hue: domHue[r.domain] ?? 220,
         wordCount: idx[rid].length,
+        mastered,
+        started,
       };
     });
 
@@ -94,6 +102,10 @@
           <div class="webview-bar-top">
             <span class="phase-kicker">The root web</span>
             <button class="web-home-btn" data-nav="home">Back to main</button>
+          </div>
+          <div class="web-search">
+            <input type="search" id="web-search-input" class="web-search-input" placeholder="Search a root…" autocomplete="off" aria-label="Search roots" />
+            <div id="web-search-results" class="web-search-results" hidden></div>
           </div>
           <span class="webview-hint">${
             phone()
@@ -181,7 +193,8 @@
 
     function radius(d) {
       if (d.type === "word") return touch ? 4 : 3.5;
-      return (touch ? 6 : 5) + Math.min(10, Math.sqrt(d.wordCount) * 2);
+      const base = (touch ? 6 : 5) + Math.min(10, Math.sqrt(d.wordCount) * 2);
+      return d.mastered ? base + 2 : base; // mastered roots read as slightly bigger stars
     }
 
     sim = d3
@@ -218,7 +231,7 @@
       .data(nodes)
       .join("circle")
       .attr("r", radius)
-      .attr("class", (d) => "web-root" + (rootMastered(d.id) ? " lit" : ""))
+      .attr("class", (d) => "web-root" + (d.mastered ? " lit" : d.started ? " started" : ""))
       .attr("style", (d) => `--h:${d.hue}`);
 
     const nodeHitSel = nodeHitLayer
@@ -516,6 +529,114 @@
           })
           .join("")}</div>`);
     }
+
+    /* ---------- search ---------- */
+    const searchInput = document.querySelector("#web-search-input");
+    const searchResults = document.querySelector("#web-search-results");
+    let searchMatches = [];
+    let searchActive = -1;
+
+    function findRoots(query) {
+      const q = query.trim().toLowerCase();
+      if (!q) return [];
+      const { GAME } = api();
+      return nodes
+        .filter((d) => {
+          const r = GAME.rootsById[d.id];
+          return d.label.toLowerCase().includes(q) || r.root.toLowerCase().includes(q) || r.meaning.toLowerCase().includes(q);
+        })
+        .sort((a, b) => {
+          // exact/prefix label matches float to the top of the list
+          const rank = (d) => {
+            const l = d.label.toLowerCase();
+            return l === q ? 0 : l.startsWith(q) ? 1 : 2;
+          };
+          return rank(a) - rank(b) || a.label.localeCompare(b.label);
+        })
+        .slice(0, 8);
+    }
+
+    function renderSearchResults() {
+      const has = searchInput.value.trim().length > 0;
+      if (!searchMatches.length) {
+        searchResults.innerHTML = has ? '<div class="web-search-empty">No roots match</div>' : "";
+        searchResults.hidden = !has;
+        return;
+      }
+      const { GAME } = api();
+      searchResults.innerHTML = searchMatches
+        .map((d, i) => {
+          const r = GAME.rootsById[d.id];
+          const tier = d.mastered ? " mastered" : d.started ? " started" : "";
+          return `<button type="button" class="web-search-result${i === searchActive ? " active" : ""}${tier}" data-i="${i}" style="--h:${d.hue}">
+              <span class="web-search-root">${esc(r.root)}</span>
+              <span class="web-search-meaning">${esc(r.meaning)}</span>
+            </button>`;
+        })
+        .join("");
+      searchResults.hidden = false;
+    }
+
+    function pickSearchResult(d) {
+      selNode = d;
+      selEdge = null;
+      markSelection();
+      if (!expanded.has(d.id)) toggleWords(d);
+      showRootPanel(d);
+      focusOn(d, Math.max(zk, 1.3));
+      searchInput.value = "";
+      searchMatches = [];
+      searchActive = -1;
+      renderSearchResults();
+      searchInput.blur();
+    }
+
+    searchInput.addEventListener("input", () => {
+      searchMatches = findRoots(searchInput.value);
+      searchActive = searchMatches.length ? 0 : -1;
+      renderSearchResults();
+    });
+
+    searchInput.addEventListener("keydown", (ev) => {
+      if (ev.key === "Escape") {
+        searchInput.value = "";
+        searchMatches = [];
+        searchActive = -1;
+        renderSearchResults();
+        searchInput.blur();
+        return;
+      }
+      if (!searchMatches.length) return;
+      if (ev.key === "ArrowDown") {
+        ev.preventDefault();
+        searchActive = (searchActive + 1) % searchMatches.length;
+        renderSearchResults();
+      } else if (ev.key === "ArrowUp") {
+        ev.preventDefault();
+        searchActive = (searchActive - 1 + searchMatches.length) % searchMatches.length;
+        renderSearchResults();
+      } else if (ev.key === "Enter") {
+        ev.preventDefault();
+        pickSearchResult(searchMatches[Math.max(0, searchActive)]);
+      }
+    });
+
+    searchInput.addEventListener("focus", () => {
+      if (searchMatches.length) renderSearchResults();
+    });
+
+    // A click on a result fires after this, so give it time to land before hiding.
+    searchInput.addEventListener("blur", () => {
+      setTimeout(() => {
+        searchResults.hidden = true;
+      }, 150);
+    });
+
+    searchResults.addEventListener("click", (ev) => {
+      const btn = ev.target.closest("[data-i]");
+      if (!btn) return;
+      pickSearchResult(searchMatches[Number(btn.dataset.i)]);
+    });
 
     /* ---------- viewport changes ---------- */
     let resizeTimer = null;

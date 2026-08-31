@@ -244,6 +244,35 @@ h1, h2, .brand, .quiz-word, .root-name {
 .web-home-btn:active { border-color: var(--gold); }
 @media (hover: hover) { .web-home-btn:hover { border-color: var(--gold); color: var(--gold); } }
 .webview-hint { color: var(--paper-dim); font-size: 0.8rem; }
+.web-search { position: relative; }
+.web-search-input {
+  all: unset; box-sizing: border-box; display: block; width: 100%;
+  background: var(--ink-2); border: 1px solid #2a3454; border-radius: 999px;
+  padding: 7px 14px; font-size: 0.85rem; color: var(--paper); touch-action: manipulation;
+}
+.web-search-input::placeholder { color: var(--paper-dim); }
+.web-search-input:focus { border-color: var(--accent); }
+.web-search-results {
+  position: absolute; left: 0; right: 0; top: calc(100% + 6px); z-index: 5;
+  background: var(--ink-2); border: 1px solid #232c49; border-radius: var(--radius);
+  max-height: 280px; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45); padding: 4px;
+}
+.web-search-result {
+  all: unset; box-sizing: border-box; display: flex; align-items: baseline; gap: 8px;
+  width: 100%; padding: 8px 10px; border-radius: 8px; cursor: pointer;
+  font-family: inherit; touch-action: manipulation;
+}
+.web-search-result::before {
+  content: ""; width: 8px; height: 8px; border-radius: 50%; flex: none; align-self: center;
+  background: hsl(var(--h) 60% 55%);
+}
+.web-search-result.started::before { background: #3f9a63; }
+.web-search-result.mastered::before { background: var(--gold); box-shadow: 0 0 4px hsl(43 90% 62% / 0.8); }
+.web-search-result.active, .web-search-result:hover { background: var(--ink-3); }
+.web-search-root { font-family: "IBM Plex Mono", ui-monospace, monospace; font-weight: 600; color: var(--paper); }
+.web-search-meaning { color: var(--paper-dim); font-size: 0.82rem; }
+.web-search-empty { padding: 10px 12px; color: var(--paper-dim); font-size: 0.82rem; }
 #web-stage {
   position: relative;
   background: linear-gradient(180deg, #0a0f1d, #101726);
@@ -261,8 +290,10 @@ h1, h2, .brand, .quiz-word, .root-name {
 .web-edge.sel { stroke: var(--gold); }
 .web-edge-hit { fill: none; stroke: transparent; stroke-linecap: round; pointer-events: stroke; cursor: pointer; }
 .web-hit { fill: transparent; stroke: none; pointer-events: all; cursor: pointer; }
-.web-root { fill: hsl(var(--h) 60% 55%); stroke: hsl(var(--h) 60% 75%); stroke-width: 1; pointer-events: none; }
-.web-root.lit { fill: var(--gold); stroke: #fff0c9; filter: drop-shadow(0 0 5px hsl(43 76% 60% / 0.7)); }
+/* Untouched roots stay dim so mastered ones read as the standout gold stars. */
+.web-root { fill: hsl(var(--h) 30% 32%); stroke: hsl(var(--h) 30% 45%); stroke-width: 1; pointer-events: none; }
+.web-root.started { fill: #3f9a63; stroke: #6bd696; }
+.web-root.lit { fill: var(--gold); stroke: #fff0c9; stroke-width: 1.5; filter: drop-shadow(0 0 7px hsl(43 90% 62% / 0.95)) drop-shadow(0 0 2px hsl(43 90% 75% / 0.9)); }
 .web-root.hover { stroke-width: 2.5; }
 .web-root.sel { stroke: var(--gold); stroke-width: 3; }
 .web-label { fill: var(--paper-dim); text-anchor: middle; font-family: "IBM Plex Mono", ui-monospace, monospace; pointer-events: none; paint-order: stroke; stroke: #0a0f1d; stroke-width: 2.5px; stroke-linejoin: round; }
@@ -307,6 +338,8 @@ h1, h2, .brand, .quiz-word, .root-name {
   .webview-bar { gap: 4px; margin-bottom: 6px; }
   .web-home-btn { padding: 5px 10px; font-size: 0.76rem; min-height: 30px; }
   .webview-hint { font-size: 0.7rem; line-height: 1.35; }
+  .web-search-input { padding: 6px 12px; font-size: 0.8rem; }
+  .web-search-results { max-height: 46vh; }
   /* top-right, out from under the bottom sheet */
   .web-zoom { top: 10px; bottom: auto; }
 
