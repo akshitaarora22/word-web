@@ -27,8 +27,17 @@
     return window.WordWeb && window.WordWeb.getSave().soundOn !== false;
   }
 
+  // Reuses the sound toggle — there's no separate haptics setting, and on
+  // desktop navigator.vibrate is simply absent so this is a no-op there.
+  function buzz(pattern) {
+    try {
+      if (enabled() && navigator.vibrate) navigator.vibrate(pattern);
+    } catch (e) {}
+  }
+
   const sfx = {
     correct() {
+      buzz(15);
       try {
         if (!enabled()) return;
         tone(523.25, 0, 0.11, "sine");
@@ -37,6 +46,7 @@
       } catch (e) {}
     },
     wrong() {
+      buzz([30, 40, 30]);
       try {
         if (!enabled()) return;
         tone(220, 0, 0.14, "sawtooth", 0.09);
@@ -50,18 +60,21 @@
       } catch (e) {}
     },
     levelup() {
+      buzz([20, 30, 20, 30, 40]);
       try {
         if (!enabled()) return;
         [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => tone(f, i * 0.09, 0.22, "sine"));
       } catch (e) {}
     },
     supernova() {
+      buzz([30, 40, 30, 40, 30, 40, 60]);
       try {
         if (!enabled()) return;
         [392, 523.25, 659.25, 783.99, 1046.5, 1318.5].forEach((f, i) => tone(f, i * 0.07, 0.32, "sine", 0.14));
       } catch (e) {}
     },
     heartLost() {
+      buzz(60);
       try {
         if (!enabled()) return;
         tone(300, 0, 0.2, "sawtooth", 0.07);

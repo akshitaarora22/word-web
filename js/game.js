@@ -22,6 +22,9 @@
     soundOn: true,
     tutorialDone: false,
     hardMode: true, // "Pro mode" default: distractors prefer root-siblings over unrelated words
+    bossDecoded: 0, // lifetime count of correctly-decoded boss words
+    badges: {}, // badgeId -> ms epoch when unlocked
+    badgesBackfilled: false, // true once existing progress has been checked once, silently
   });
   let save = load();
   function load() {
@@ -86,6 +89,76 @@
   function dueReviews() {
     const now = Date.now();
     return save.review.filter((r) => r.due <= now);
+  }
+
+  /* ---------- achievements ---------- */
+  // Each badge is a pure predicate over a small snapshot of save state
+  // (achievementContext), so checking them is cheap enough to call after
+  // every point-awarding action without worrying about ordering.
+  const ACHIEVEMENTS = [
+    { id: "first-root", icon: "🌱", title: "First Root", desc: "Master your first root.", check: (c) => c.masteredRoots >= 1 },
+    { id: "root-5", icon: "🌿", title: "Root Runner", desc: "Master 5 roots.", check: (c) => c.masteredRoots >= 5 },
+    { id: "root-25", icon: "🌳", title: "Rooted", desc: "Master 25 roots.", check: (c) => c.masteredRoots >= 25 },
+    { id: "root-all", icon: "🌌", title: "Deep Rooted", desc: "Master every root in the game.", check: (c) => c.masteredRoots >= c.totalRoots && c.totalRoots > 0 },
+    { id: "domain-1", icon: "✦", title: "Galaxy Charted", desc: "Fully master a whole domain.", check: (c) => c.domainsMastered >= 1 },
+    { id: "decode-1", icon: "🔓", title: "First Decode", desc: "Decode a boss word cold.", check: (c) => c.bossDecoded >= 1 },
+    { id: "decode-10", icon: "🧩", title: "Codebreaker", desc: "Decode 10 boss words.", check: (c) => c.bossDecoded >= 10 },
+    { id: "streak-3", icon: "🔥", title: "Warming Up", desc: "Play 3 days in a row.", check: (c) => c.streakDays >= 3 },
+    { id: "streak-7", icon: "🔥", title: "Week One", desc: "Play 7 days in a row.", check: (c) => c.streakDays >= 7 },
+    { id: "streak-30", icon: "🔥", title: "Committed", desc: "Play 30 days in a row.", check: (c) => c.streakDays >= 30 },
+    { id: "words-50", icon: "📖", title: "Word Hoarder", desc: "Learn 50 words.", check: (c) => c.learnedWords >= 50 },
+    { id: "words-150", icon: "📚", title: "Lexicon Builder", desc: "Learn 150 words.", check: (c) => c.learnedWords >= 150 },
+    { id: "points-1000", icon: "💎", title: "1000 Points", desc: "Earn 1000 points total.", check: (c) => c.points >= 1000 },
+  ];
+  function achievementContext() {
+    const allRoots = GAME.domains.flatMap((d) => d.rootIds);
+    const learned = new Set();
+    Object.values(save.roots).forEach((rs) => Object.keys(rs.correct).forEach((w) => learned.add(w)));
+    return {
+      masteredRoots: allRoots.filter(rootMastered).length,
+      totalRoots: allRoots.length,
+      learnedWords: learned.size,
+      bossDecoded: save.bossDecoded || 0,
+      domainsMastered: Object.keys(save.celebratedDomains).length,
+      streakDays: save.streakDays,
+      points: save.points,
+    };
+  }
+  // Evaluates every not-yet-earned badge and unlocks any that now pass.
+  // `silent` skips the toast/confetti/sound — used once on load to backfill
+  // badges for progress made before this feature shipped, so a returning
+  // player isn't hit with a wall of toasts for things they did last month.
+  function checkAchievements(silent) {
+    save.badges = save.badges || {};
+    const ctx = achievementContext();
+    const newly = ACHIEVEMENTS.filter((a) => !save.badges[a.id] && a.check(ctx));
+    if (!newly.length) return;
+    newly.forEach((a) => (save.badges[a.id] = Date.now()));
+    persist();
+    if (!silent) showBadgeToast(newly);
+  }
+  function showBadgeToast(list) {
+    let i = 0;
+    function next() {
+      if (i >= list.length) return;
+      const a = list[i++];
+      const el = document.createElement("div");
+      el.className = "badge-toast";
+      el.innerHTML = `<span class="badge-toast-icon">${a.icon}</span>
+        <span class="badge-toast-text"><span class="badge-toast-label">Badge unlocked</span><span class="badge-toast-title">${esc(a.title)}</span></span>`;
+      document.body.appendChild(el);
+      requestAnimationFrame(() => el.classList.add("show"));
+      if (window.WordWebSFX) window.WordWebSFX.levelup();
+      setTimeout(() => confettiBurst(el), 120);
+      setTimeout(() => {
+        el.classList.remove("show");
+        setTimeout(() => {
+          el.remove();
+          next();
+        }, 320);
+      }, 2200);
+    }
+    next();
   }
 
   /* ---------- hearts ---------- */
@@ -166,6 +239,24 @@
     el.classList.remove("pop");
     void el.offsetWidth;
     el.classList.add("pop");
+  }
+  // Counts a number up from `from` to `to` over `dur`ms — used for the XP
+  // tally on the lesson-complete screen. Snaps straight to the end value
+  // under reduced motion.
+  function animateCount(el, from, to, dur) {
+    if (!el) return;
+    if ((window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) || !dur) {
+      el.textContent = to;
+      return;
+    }
+    const t0 = performance.now();
+    function step(t) {
+      const p = Math.min(1, (t - t0) / dur);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(from + (to - from) * eased);
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
   }
   const ENCOURAGE = ["Nice!", "Got it.", "Exactly right.", "You know this one.", "Clean.", "Nailed it."];
   const CONSOLE_LINES = ["Not this time.", "Close — check the roots below.", "That one's tricky.", "Filed for review."];
@@ -721,6 +812,7 @@
     const learned = new Set();
     Object.values(save.roots).forEach((rs) => Object.keys(rs.correct).forEach((w) => learned.add(w)));
     const masteryPct = GAME.meta.root_count ? Math.round((100 * mastered) / GAME.meta.root_count) : 0;
+    const earnedCount = ACHIEVEMENTS.filter((a) => save.badges[a.id]).length;
     app.innerHTML = `${header()}
       <section class="profile">
         <div class="practice-head">
@@ -735,6 +827,19 @@
         </div>
         <div class="hero-bar"><div class="hero-bar-fill" style="width:${masteryPct}%"></div></div>
         <p class="hero-pct" style="margin:6px 0 0;text-align:right">${masteryPct}% of all roots mastered</p>
+        <div class="badge-shelf-head">
+          <span class="phase-kicker" style="margin:0">Badges</span>
+          <span class="badge-count">${earnedCount}/${ACHIEVEMENTS.length}</span>
+        </div>
+        <div class="badge-shelf">
+          ${ACHIEVEMENTS.map((a) => {
+            const earned = !!save.badges[a.id];
+            return `<div class="badge-tile ${earned ? "earned" : "locked"}" title="${esc(a.desc)}">
+              <span class="badge-tile-icon">${earned ? a.icon : "🔒"}</span>
+              <span class="badge-tile-title">${esc(a.title)}</span>
+            </div>`;
+          }).join("")}
+        </div>
         <div class="profile-actions">
           <button class="btn ${save.hardMode ? "primary" : ""}" data-nav="hardmode">🎯 Pro mode: ${save.hardMode ? "ON" : "OFF"}</button>
           <p class="discover-hint" style="margin:-4px 0 0">Pro mode swaps in trickier answer choices — other words sharing a root with the correct one — so you can't just spot a keyword.</p>
@@ -802,12 +907,34 @@
       return;
     }
     const level = GAME.domains.flatMap((d) => d.levels).find((l) => l.id === levelId);
-    const queue = level.teachWords.slice();
+    const st = save.levels[level.id];
+    // Resuming a level you never finished skips words you already got right
+    // (and the boss word if it's already decoded) instead of replaying the
+    // whole thing — nothing here touches an already-completed level, so
+    // "Play again" still replays it in full for practice/points.
+    const resuming = !(st && st.completed);
+    let queue = level.teachWords.slice();
+    let skipped = 0;
+    if (resuming) {
+      const before = queue.length;
+      queue = queue.filter((w) => {
+        const key = w.key || w.word;
+        return !level.roots.some((rid) => rootState(rid).correct[key]);
+      });
+      skipped = before - queue.length;
+    }
     for (let i = queue.length - 1; i > 0; i--) {
       const j = Math.floor(rng() * (i + 1));
       [queue[i], queue[j]] = [queue[j], queue[i]];
     }
-    run = { level, queue, idx: -1, score: 0, streak: 0, correct: 0, phase: "discover", decodeIdx: 0 };
+    const decodeIdx = resuming && level.decodeWords.length && level.roots.some((rid) => rootState(rid).decoded) ? level.decodeWords.length : 0;
+    // decodeTotal is this run's planned decode-question count (0 if the boss
+    // word was already decoded in an earlier session) — finishLevel uses it
+    // instead of level.decodeWords.length so the "x/y correct" tally on the
+    // recap screen reflects what this run actually asked, not the level's
+    // full lifetime total.
+    const decodeTotal = level.decodeWords.length - decodeIdx;
+    run = { level, queue, idx: -1, score: 0, streak: 0, correct: 0, phase: "discover", decodeIdx, decodeTotal, skipped, xp: { base: 0, streak: 0, gre: 0 } };
     initQuizGraph(level);
     showDiscover();
   }
@@ -831,6 +958,16 @@
   function showDiscover() {
     const { level } = run;
     const dom = GAME.domains.find((d) => d.id === level.domain);
+    const wordsLeft = run.queue.length;
+    const decodeLeft = level.decodeWords.length - run.decodeIdx;
+    let hint;
+    if (wordsLeft === 0 && decodeLeft === 0) {
+      hint = "You've already answered everything here — this just wraps up the level.";
+    } else if (wordsLeft === 0) {
+      hint = `You already know every word here — straight to the boss word${decodeLeft > 1 ? "s" : ""}.`;
+    } else {
+      hint = `${wordsLeft} word${wordsLeft === 1 ? "" : "s"} ahead${decodeLeft ? `, then ${decodeLeft} you'll decode cold` : ""}. Answer without the hint for double points.`;
+    }
     app.innerHTML = `${header()}
       <section class="crumbs"><span><a data-nav="home">Map</a> / <a data-domain-link="${dom.id}">${esc(dom.name)}</a> / ${esc(level.title)}</span><button class="back-btn" data-nav="home">Back</button></section>
       <section class="discover" style="--h:${dom.hue}">
@@ -845,7 +982,8 @@
             </div>`;
           })
           .join("")}
-        <p class="discover-hint">${level.teachWords.length} words ahead${level.decodeWords.length ? `, then ${level.decodeWords.length} you'll decode cold` : ""}. Answer without the hint for double points.</p>
+        ${run.skipped ? `<p class="discover-hint resume-note">↺ Picking up where you left off — skipping ${run.skipped} word${run.skipped === 1 ? "" : "s"} you already know.</p>` : ""}
+        <p class="discover-hint">${hint}</p>
         <button class="btn primary" id="begin">Begin</button>
       </section>`;
     $("#begin").addEventListener("click", nextQuestion);
@@ -897,7 +1035,7 @@
     const q = L.optionsFor(word, GAME, rng, save.hardMode);
     let hintUsed = false;
     let answered = false;
-    const total = run.queue.length + run.level.decodeWords.length;
+    const total = run.queue.length + run.decodeTotal;
     const num = isDecode ? run.queue.length + run.decodeIdx + 1 : run.idx + 1;
     app.innerHTML = `${header()}
       ${progressBar(num - 1, total)}
@@ -916,8 +1054,8 @@
         <div class="options">
           ${q.options.map((o, i) => `<button class="option" data-i="${i}">${esc(o)}</button>`).join("")}
         </div>
-        <div id="quiz-graph" class="quiz-graph"></div>
         <div id="feedback" class="feedback" hidden></div>
+        <div id="quiz-graph" class="quiz-graph"></div>
       </section>`;
     wireNav();
     renderQuizGraph();
@@ -955,12 +1093,20 @@
           save.bestStreak = Math.max(save.bestStreak, run.streak);
           if (isDecode) {
             gained = 50;
+            run.xp.base += 50;
             run.level.roots.forEach((rid) => (rootState(rid).decoded = true));
+            save.bossDecoded = (save.bossDecoded || 0) + 1;
           } else {
-            gained = hintUsed ? 10 : 20;
-            gained += Math.min(10, (run.streak - 1) * 2);
+            const base = hintUsed ? 10 : 20;
+            const streakBonus = Math.min(10, (run.streak - 1) * 2);
+            gained = base + streakBonus;
+            run.xp.base += base;
+            run.xp.streak += streakBonus;
           }
-          if (word.gre_list) gained += 5;
+          if (word.gre_list) {
+            gained += 5;
+            run.xp.gre += 5;
+          }
           run.score += gained;
           save.points += gained;
           const wordKey = word.key || word.word;
@@ -984,6 +1130,7 @@
         }
         touchStreak();
         persist();
+        if (correct) checkAchievements();
         const fb = $("#feedback");
         fb.hidden = false;
         fb.innerHTML = `<div class="verdict ${correct ? "yes" : "no"}"><span class="mascot">${correct ? "✳" : "…"}</span> ${reactionLine(correct)} ${
@@ -1015,7 +1162,7 @@
 
   function finishLevel() {
     if (graphSim) { graphSim.stop(); graphSim = null; }
-    const { level, score, correct, queue } = run;
+    const { level, score, correct, queue, xp, decodeTotal } = run;
     const st = (save.levels[level.id] = save.levels[level.id] || { completed: false, bestScore: 0 });
     st.completed = true;
     st.bestScore = Math.max(st.bestScore, score);
@@ -1027,11 +1174,27 @@
     const supernova = domMastery.mastered === domMastery.total && !save.celebratedDomains[dom.id];
     if (supernova) save.celebratedDomains[dom.id] = true;
     persist();
+    checkAchievements();
+
+    // XP breakdown: only the buckets that actually contributed get a row,
+    // so a level with no streak/GRE bonus doesn't show empty "+0" lines.
+    const xpRows = [{ label: "Words answered", val: xp.base }];
+    if (xp.streak) xpRows.push({ label: "Streak bonus", val: xp.streak });
+    if (xp.gre) xpRows.push({ label: "GRE bonus", val: xp.gre });
+    const STAGGER = 160; // ms between each row's reveal
+    const rowsHTML = xpRows
+      .map((r, i) => `<div class="xp-row" style="--d:${i}"><span>${esc(r.label)}</span><span>+${r.val}</span></div>`)
+      .join("");
+
     app.innerHTML = `${header()}
-      <section class="results ${supernova ? "supernova" : ""}" style="--h:${dom.hue}">
-        <div class="phase-kicker ${supernova ? "boss" : ""}">${supernova ? "Galaxy fully charted" : mastered ? "Root mastered" : "Level complete"}</div>
+      <section class="results recap ${supernova ? "supernova" : ""}" style="--h:${dom.hue}">
+        <div class="phase-kicker ${supernova ? "boss" : ""}">${supernova ? "Galaxy fully charted" : mastered ? "Root mastered" : "Lesson complete!"}</div>
         <h2>${supernova ? esc(dom.name) : esc(level.title)}</h2>
-        <p class="score-line">+${score} points · ${correct}/${queue.length + level.decodeWords.length} correct</p>
+        <p class="score-line">${correct}/${queue.length + decodeTotal} correct</p>
+        <div class="xp-breakdown">
+          ${rowsHTML}
+          <div class="xp-row xp-total" style="--d:${xpRows.length}"><span>Total XP</span><span id="xp-total-num">0</span></div>
+        </div>
         ${
           supernova
             ? '<p class="mastered-note">Every root in this galaxy is lit. ✦</p>'
@@ -1057,6 +1220,9 @@
       if (window.WordWebSFX) window.WordWebSFX.levelup();
       confettiBurst($(".results h2"));
     }
+    // Each XP row ticks in on its own beat, then the total counts up to match.
+    xpRows.forEach((_, i) => setTimeout(() => window.WordWebSFX && window.WordWebSFX.tap(), i * STAGGER));
+    setTimeout(() => animateCount($("#xp-total-num"), 0, score, 650), (xpRows.length + 1) * STAGGER);
     run = null;
   }
 
@@ -1117,6 +1283,7 @@
         }
         touchStreak();
         persist();
+        if (correct) checkAchievements();
         const fb = $("#feedback");
         fb.hidden = false;
         fb.innerHTML = `<div class="verdict ${correct ? "yes" : "no"}"><span class="mascot">${correct ? "✳" : "…"}</span> ${reactionLine(correct)} ${correct ? "<b>+5</b>" + (heartGained ? " · +1 heart" : "") : ""}</div>
@@ -1173,6 +1340,7 @@
           if (correct) {
             save.points += 5;
             persist();
+            checkAchievements();
             if (window.WordWebSFX) window.WordWebSFX.correct();
           } else {
             const wordKey = word.key || word.word;
@@ -1243,6 +1411,7 @@
         save.daily[todayStr()] = true;
         touchStreak();
         persist();
+        if (correct) checkAchievements();
         const fb = $("#feedback");
         fb.hidden = false;
         fb.innerHTML = `<div class="verdict ${correct ? "yes" : "no"}"><span class="mascot">${correct ? "✳" : "…"}</span> ${reactionLine(correct)} ${correct ? "<b>+30</b>" : ""}</div>
@@ -1339,6 +1508,7 @@
     addPoints(n) {
       save.points += n;
       persist();
+      checkAchievements();
     },
     confettiBurst,
     shakeEl,
@@ -1347,6 +1517,14 @@
     touchStreak,
     gainHeart,
   };
+
+  // Silently backfill badges for progress made before this feature shipped —
+  // a returning player earns them retroactively without a flood of toasts.
+  if (!save.badgesBackfilled) {
+    checkAchievements(true);
+    save.badgesBackfilled = true;
+    persist();
+  }
 
   showHome();
 })();
