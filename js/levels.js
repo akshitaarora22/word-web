@@ -16,6 +16,7 @@
     "value_and_judgment",
     "quantity_and_scale",
     "power_and_conflict",
+    "law_and_governance",
   ];
 
   const DOMAIN_NAMES = {
@@ -32,6 +33,7 @@
     value_and_judgment: "Value & Judgment",
     quantity_and_scale: "Quantity & Scale",
     power_and_conflict: "Power & Conflict",
+    law_and_governance: "Law & Governance",
   };
 
   // Per-domain accent hues (used by CSS via inline custom property)
@@ -40,7 +42,7 @@
     knowledge_and_perception: 180, body_and_life: 130, structure_and_measure: 35,
     motion_and_force: 15, time_and_change: 55, people_and_society: 300,
     world_and_nature: 155, value_and_judgment: 225, quantity_and_scale: 85,
-    power_and_conflict: 0,
+    power_and_conflict: 0, law_and_governance: 245,
   };
 
   // Simple deterministic string hash → positive int

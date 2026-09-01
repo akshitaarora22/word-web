@@ -282,7 +282,7 @@
       {
         icon: "🌌",
         title: "Pick a Domain",
-        body: "Words are grouped into <b>13 domains</b> — Science, Law, Emotion, and more. Each domain is a winding path of levels. Complete a level to light up stars in its constellation.",
+        body: "Words are grouped into <b>domains</b> — Science, Law, Emotion, and more. Each domain is a winding path of levels. Complete a level to light up stars in its constellation.",
         visual: `<div class="tut-visual tut-visual-domains">
           <div class="tut-domain-row"><span class="tut-star lit">★</span><span class="tut-star lit">★</span><span class="tut-star">☆</span><span class="tut-star">☆</span> <b>Kinship &amp; Gender</b> <span class="tut-badge">start here</span></div>
           <div class="tut-domain-row"><span class="tut-star">☆</span><span class="tut-star">☆</span><span class="tut-star">☆</span><span class="tut-star">☆</span> <b>Mind &amp; Senses</b></div>
