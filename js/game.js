@@ -25,6 +25,7 @@
     bossDecoded: 0, // lifetime count of correctly-decoded boss words
     badges: {}, // badgeId -> ms epoch when unlocked
     badgesBackfilled: false, // true once existing progress has been checked once, silently
+    currentRootId: null, // root of the level last started — the web view auto-focuses here
   });
   let save = load();
   function load() {
@@ -907,6 +908,10 @@
       return;
     }
     const level = GAME.domains.flatMap((d) => d.levels).find((l) => l.id === levelId);
+    // Remembered so the root web can auto-focus whichever root the player is
+    // actually working on, instead of always opening to the whole map.
+    save.currentRootId = level.roots[0];
+    persist();
     const st = save.levels[level.id];
     // Resuming a level you never finished skips words you already got right
     // (and the boss word if it's already decoded) instead of replaying the

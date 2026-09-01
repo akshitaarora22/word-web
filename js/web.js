@@ -116,6 +116,7 @@
           }</span>
         </div>
         <div id="web-stage">
+          <div class="warp-flash" id="web-warp-flash"></div>
           <div class="web-zoom">
             <button class="web-zoom-btn" data-zoom="in" aria-label="Zoom in" title="Zoom in">+</button>
             <button class="web-zoom-btn" data-zoom="out" aria-label="Zoom out" title="Zoom out">−</button>
@@ -163,6 +164,43 @@
     // can dismiss the panel and the zoom behaviour always has a target.
     const bg = svg.append("rect").attr("class", "web-bg").attr("x", 0).attr("y", 0).attr("width", W).attr("height", H);
 
+    /* ---------- gradients & filters: domains get a soft nebula cloud behind
+       their cluster. Roots/words stay flat-filled (CSS) — a sphere gradient
+       was tried here and didn't read as well as the plain disc. ---------- */
+    const defs = svg.append("defs");
+    const usedHues = [...new Set(nodes.map((n) => n.hue))];
+    usedHues.forEach((h) => {
+      const neb = defs.append("radialGradient").attr("id", `nebula-${h}`).attr("cx", "48%").attr("cy", "44%");
+      neb.append("stop").attr("offset", "0%").attr("stop-color", `hsl(${h} 70% 55% / 0.30)`);
+      neb.append("stop").attr("offset", "55%").attr("stop-color", `hsl(${h} 60% 45% / 0.13)`);
+      neb.append("stop").attr("offset", "100%").attr("stop-color", `hsl(${h} 60% 45% / 0)`);
+      // A small, much brighter/tighter nucleus layered on top of the soft
+      // halo — same two-layer trick the map's galaxy icons use (halo + core)
+      // so the cloud reads as a galaxy with a bright center, not one flat blob.
+      const core = defs.append("radialGradient").attr("id", `nebula-core-${h}`).attr("cx", "50%").attr("cy", "46%");
+      core.append("stop").attr("offset", "0%").attr("stop-color", `hsl(${h + 10} 90% 85% / 0.8)`);
+      core.append("stop").attr("offset", "55%").attr("stop-color", `hsl(${h} 82% 68% / 0.32)`);
+      core.append("stop").attr("offset", "100%").attr("stop-color", `hsl(${h} 82% 68% / 0)`);
+    });
+    defs
+      .append("filter")
+      .attr("id", "nebula-blur")
+      .attr("x", "-60%")
+      .attr("y", "-60%")
+      .attr("width", "220%")
+      .attr("height", "220%")
+      .append("feGaussianBlur")
+      .attr("stdDeviation", compact ? 10 : 16);
+    defs
+      .append("filter")
+      .attr("id", "nebula-core-blur")
+      .attr("x", "-60%")
+      .attr("y", "-60%")
+      .attr("width", "220%")
+      .attr("height", "220%")
+      .append("feGaussianBlur")
+      .attr("stdDeviation", 1.5);
+
     const g = svg.append("g");
 
     let zk = 1; // current zoom scale
@@ -181,6 +219,269 @@
     let wordNodes = []; // expanded word leaves
     let wordLinks = [];
     const expanded = new Set();
+
+    // ---------- domain clusters: each domain gets its own gravity well, so
+    // the web settles into neighboring galaxies instead of one flat cloud.
+    // Bridge-word links can still pull directly-connected roots from
+    // different domains toward each other, same as always — this just gives
+    // every root somewhere to fall back to when it's not being pulled.
+    const domainIds = [...new Set(nodes.map((n) => n.domain))];
+    const domHueByDomain = {};
+    api().GAME.domains.forEach((d) => (domHueByDomain[d.id] = d.hue));
+    const domainHaloR = {};
+    domainIds.forEach((dom) => {
+      const count = nodes.filter((n) => n.domain === dom).length;
+      domainHaloR[dom] = 46 + Math.sqrt(count) * 26;
+    });
+
+    // Deterministic pseudo-random in the 0-1 range, seeded off a string —
+    // so the "random" scatter below is stable across reloads/resizes
+    // instead of reshuffling every time the view opens.
+    function seedRand(str) {
+      let h = 2166136261;
+      for (let i = 0; i < str.length; i++) {
+        h ^= str.charCodeAt(i);
+        h = Math.imul(h, 16777619);
+      }
+      return (h >>> 0) / 4294967296;
+    }
+
+    // Cluster centers come from a tiny standalone relaxation, not a formula —
+    // a perfect ring (every domain equidistant, evenly spaced) read as a
+    // protractor, not a universe. Seeded random starting points + collision
+    // (sized to each domain's own halo) settle into an irregular scatter
+    // that's still guaranteed non-overlapping, closer to how galaxies are
+    // actually strewn around a sky.
+    const domainCenter = {};
+    function layoutClusters(cx, cy) {
+      const spread = Math.max(420, domainIds.length * 95);
+      const seed = domainIds.map((dom) => ({
+        r: domainHaloR[dom],
+        x: cx + (seedRand(dom + "x") - 0.5) * spread,
+        y: cy + (seedRand(dom + "y") - 0.5) * spread,
+      }));
+      const relax = d3
+        .forceSimulation(seed)
+        .force(
+          "collide",
+          d3
+            .forceCollide()
+            .radius((d) => d.r + 70)
+            .strength(1)
+        )
+        .force("charge", d3.forceManyBody().strength(-40))
+        .force("x", d3.forceX(cx).strength(0.03))
+        .force("y", d3.forceY(cy).strength(0.03))
+        .stop();
+      for (let i = 0; i < 400; i++) relax.tick();
+      domainIds.forEach((dom, i) => (domainCenter[dom] = { x: seed[i].x, y: seed[i].y }));
+    }
+    layoutClusters(W / 2, H / 2);
+    function domX(d) {
+      const c = domainCenter[d.domain];
+      return c ? c.x : W / 2;
+    }
+    function domY(d) {
+      const c = domainCenter[d.domain];
+      return c ? c.y : H / 2;
+    }
+
+    // Seed every root at its domain's cluster point (small jitter so same-
+    // domain roots don't start exactly stacked) instead of leaving D3's
+    // default near-origin placement. Cluster centers can now be far apart —
+    // relying on 320 settle ticks to *migrate* a node that whole distance,
+    // against a graph that's heavily cross-linked by bridge words, is why
+    // roots were staying near the middle while their halos sat far away.
+    // Starting already in the right neighborhood means the simulation only
+    // has to refine a local layout, not travel one.
+    nodes.forEach((n) => {
+      const c = domainCenter[n.domain];
+      if (c) {
+        n.x = c.x + (seedRand(n.id + "sx") - 0.5) * 70;
+        n.y = c.y + (seedRand(n.id + "sy") - 0.5) * 70;
+      }
+    });
+
+    // A point sequence along a logarithmic spiral, local to the origin —
+    // the actual curve real spiral-arm pitch angles trace, not just a
+    // stretched ellipse. flatten compresses it vertically so it reads as a
+    // disc seen at an angle, the way spiral galaxy photos usually look.
+    function spiralArmPath(startR, endR, turns, rot, flatten) {
+      const steps = 34;
+      const b = Math.log(endR / startR) / (turns * Math.PI * 2);
+      let d = "";
+      for (let i = 0; i <= steps; i++) {
+        const theta = (i / steps) * turns * Math.PI * 2;
+        const r = startR * Math.exp(b * theta);
+        const angle = theta + rot;
+        d += (i === 0 ? "M" : "L") + (Math.cos(angle) * r).toFixed(1) + "," + (Math.sin(angle) * r * flatten).toFixed(1) + " ";
+      }
+      return d;
+    }
+
+    // A sprinkling of small sharp points scattered through a galaxy's own
+    // footprint — the soft blurred glow alone read as gas with nothing
+    // actually in it. Shaped to match the kind: hugging the two spiral arms
+    // (with a little scatter into the disc between them), radially denser
+    // toward the center for an elliptical, loosely scattered for an
+    // irregular. No blur, unlike everything else in the halo — the contrast
+    // between sharp points and soft cloud is what reads as "stars in gas."
+    function scatterStars(grp, dom, hue, kind, haloR) {
+      const n = Math.round(12 + Math.sqrt(haloR) * 2.4);
+      for (let i = 0; i < n; i++) {
+        const a = seedRand(dom + "st" + i + "a");
+        const b = seedRand(dom + "st" + i + "b");
+        let x, y;
+        if (kind === "spiral" || kind === "barred") {
+          const startR = kind === "barred" ? haloR * 0.4 : haloR * 0.15;
+          const endR = haloR * 1.45;
+          const turns = 0.8;
+          const grow = Math.log(endR / startR) / (turns * Math.PI * 2);
+          const theta = a * turns * Math.PI * 2;
+          const r = startR * Math.exp(grow * theta);
+          const angle = theta + (i % 2 === 0 ? 0 : Math.PI);
+          // a little perpendicular jitter so it's a band of stars around
+          // each arm, not a single-file line riding the curve exactly
+          const jitter = (b - 0.5) * haloR * 0.26;
+          x = Math.cos(angle) * r + Math.cos(angle + Math.PI / 2) * jitter;
+          y = (Math.sin(angle) * r + Math.sin(angle + Math.PI / 2) * jitter) * 0.5;
+        } else if (kind === "elliptical") {
+          const eccentricity = 0.4 + seedRand(dom + "ecc") * 0.5;
+          const rr = Math.pow(a, 1.7) * haloR; // biased toward the center
+          const angle = b * Math.PI * 2;
+          x = Math.cos(angle) * rr;
+          y = Math.sin(angle) * rr * eccentricity;
+        } else {
+          const rr = Math.pow(a, 1.1) * haloR * 1.1;
+          const angle = b * Math.PI * 2;
+          x = Math.cos(angle) * rr;
+          y = Math.sin(angle) * rr;
+        }
+        const bright = seedRand(dom + "st" + i + "c");
+        grp
+          .append("circle")
+          .attr("cx", x.toFixed(1))
+          .attr("cy", y.toFixed(1))
+          .attr("r", 0.6 + bright * 1.1)
+          .attr("fill", bright > 0.82 ? "#fff" : `hsl(${hue} 45% 82%)`)
+          .attr("opacity", 0.4 + bright * 0.5);
+      }
+    }
+
+    // Domain nebula clouds — appended first so every other layer draws over
+    // them. Each domain deterministically gets one of four real galaxy
+    // morphologies (Hubble-sequence flavored) so the field reads as an
+    // actual mix of galaxy types, not one repeated shape recolored:
+    //  - spiral: soft disc + two logarithmic-spiral arms off a bright bulge
+    //  - barred: same, but the arms spring from the ends of a bright bar
+    //    through the core instead of the core itself
+    //  - elliptical: a smooth glow with no arms at all, eccentricity
+    //    randomized per domain from nearly circular to stretched — real
+    //    ellipticals run that same range (E0 "spherical" to E7 elongated),
+    //    so "spherical" and "ellipse" are two ends of one spectrum here
+    //    rather than needing two separate shapes
+    //  - nebula: two overlapping soft blobs, no defined structure or
+    //    sharp nucleus — irregular galaxies don't have one either
+    const NEBULA_KINDS = ["spiral", "barred", "elliptical", "nebula"];
+    const domainKind = {};
+    const domainTilt = {};
+    domainIds.forEach((dom) => {
+      domainKind[dom] = NEBULA_KINDS[Math.floor(seedRand(dom + "kind") * NEBULA_KINDS.length)];
+      domainTilt[dom] = (seedRand(dom + "tilt") - 0.5) * 360;
+    });
+
+    const haloLayer = g.append("g").attr("class", "web-nebula-layer");
+    domainIds.forEach((dom) => {
+      const c = domainCenter[dom];
+      const hue = domHueByDomain[dom];
+      const haloR = domainHaloR[dom];
+      if (hue == null) return;
+      const kind = domainKind[dom];
+      const grp = haloLayer
+        .append("g")
+        .datum(dom)
+        .attr("class", `web-nebula web-nebula-${kind}`)
+        .attr("transform", `translate(${c.x},${c.y}) rotate(${domainTilt[dom]})`);
+
+      let nucleusR = haloR * 0.3;
+      let nucleusOpacity = 1;
+
+      if (kind === "spiral" || kind === "barred") {
+        // A dim flattened disc underneath the arms, so they don't float on
+        // empty space, then the arms themselves on top.
+        grp
+          .append("ellipse")
+          .attr("rx", haloR * 1.1)
+          .attr("ry", haloR * 0.48)
+          .attr("fill", `url(#nebula-${hue})`)
+          .attr("filter", "url(#nebula-blur)")
+          .attr("opacity", 0.5);
+
+        if (kind === "barred") {
+          grp
+            .append("rect")
+            .attr("x", -haloR * 0.42)
+            .attr("y", -haloR * 0.09)
+            .attr("width", haloR * 0.84)
+            .attr("height", haloR * 0.18)
+            .attr("rx", haloR * 0.09)
+            .attr("fill", `url(#nebula-core-${hue})`)
+            .attr("filter", "url(#nebula-core-blur)")
+            .attr("opacity", 0.75);
+        }
+        const armStartR = kind === "barred" ? haloR * 0.4 : haloR * 0.15;
+        [0, Math.PI].forEach((baseAngle) => {
+          grp
+            .append("path")
+            .attr("d", spiralArmPath(armStartR, haloR * 1.45, 0.8, baseAngle, 0.48))
+            .attr("fill", "none")
+            .attr("stroke", `hsl(${hue} 70% 62% / 0.55)`)
+            .attr("stroke-width", Math.max(6, haloR * 0.1))
+            .attr("stroke-linecap", "round")
+            .attr("filter", "url(#nebula-blur)");
+        });
+        nucleusR = haloR * 0.24;
+      } else if (kind === "elliptical") {
+        const eccentricity = 0.4 + seedRand(dom + "ecc") * 0.5; // 0.4 (stretched) .. 0.9 (near-spherical)
+        grp
+          .append("ellipse")
+          .attr("rx", haloR * 1.05)
+          .attr("ry", haloR * 1.05 * eccentricity)
+          .attr("fill", `url(#nebula-${hue})`)
+          .attr("filter", "url(#nebula-blur)");
+        nucleusR = haloR * 0.4; // smoother, broader light concentration — no sharp point source
+      } else {
+        // Two offset soft blobs instead of one perfect circle, so it reads
+        // as a shapeless cloud rather than just a bigger dot.
+        grp
+          .append("circle")
+          .attr("r", haloR * 1.1)
+          .attr("fill", `url(#nebula-${hue})`)
+          .attr("filter", "url(#nebula-blur)")
+          .attr("opacity", 0.8);
+        grp
+          .append("circle")
+          .attr("cx", haloR * 0.4)
+          .attr("cy", -haloR * 0.22)
+          .attr("r", haloR * 0.6)
+          .attr("fill", `url(#nebula-${hue})`)
+          .attr("filter", "url(#nebula-blur)")
+          .attr("opacity", 0.5);
+        nucleusR = haloR * 0.14;
+        nucleusOpacity = 0.55; // irregular galaxies rarely show a sharp nucleus at all
+      }
+
+      scatterStars(grp, dom, hue, kind, haloR);
+
+      // A small, sharper, much brighter nucleus on top — the halo alone
+      // read as one flat smudge with no center to anchor on.
+      grp
+        .append("circle")
+        .attr("r", Math.max(10, nucleusR))
+        .attr("fill", `url(#nebula-core-${hue})`)
+        .attr("filter", "url(#nebula-core-blur)")
+        .attr("opacity", nucleusOpacity);
+    });
 
     // Layer order matters for hit testing: root discs sit on top of edge ribbons.
     const linkLayer = g.append("g");
@@ -205,13 +506,22 @@
           .forceLink(links)
           .id((d) => d.id)
           .distance(compact ? 48 : 90)
-          .strength(0.3)
+          // A bridge word like "logos" touches roots across a dozen
+          // different domains ("-ology" alone spans half the map) — at a
+          // flat strength every one of those cross-domain pulls fights the
+          // clustering force below, and a hub root wins that fight by sheer
+          // numbers, dragging itself (and everything chained to it) back to
+          // the middle regardless of where it was seeded. Full strength
+          // within a domain, where it isn't fighting anything; weak across
+          // domains, so the bridge still draws as a line without forcibly
+          // merging two galaxies.
+          .strength((l) => (l.source.domain === l.target.domain ? 0.35 : 0.03))
       )
       .force("charge", d3.forceManyBody().strength(compact ? -70 : -160))
       .force("center", d3.forceCenter(W / 2, H / 2))
       .force("collide", d3.forceCollide().radius((d) => radius(d) + (compact ? 4 : 6)))
-      .force("x", d3.forceX(W / 2).strength(0.04))
-      .force("y", d3.forceY(H / 2).strength(0.06))
+      .force("x", d3.forceX(domX).strength(0.22))
+      .force("y", d3.forceY(domY).strength(0.22))
       .alphaDecay(0.035);
 
     /* ---------- static shapes ---------- */
@@ -232,7 +542,9 @@
       .join("circle")
       .attr("r", radius)
       .attr("class", (d) => "web-root" + (d.mastered ? " lit" : d.started ? " started" : ""))
-      .attr("style", (d) => `--h:${d.hue}`);
+      // --i staggers the mastered-star twinkle so a cluster of gold roots
+      // doesn't all pulse in lockstep; mod 8 keeps the cycle short.
+      .attr("style", (d, i) => `--h:${d.hue};--i:${i % 8}`);
 
     const nodeHitSel = nodeHitLayer
       .selectAll("circle")
@@ -353,6 +665,7 @@
             parent: rootNode.id,
             learned,
             hue: rootNode.hue,
+            domain: rootNode.domain, // so the cluster force pulls it toward the same galaxy, not the canvas center
             x: rootNode.x + (Math.random() - 0.5) * 30,
             y: rootNode.y + (Math.random() - 0.5) * 30,
           };
@@ -464,7 +777,23 @@
       else svg.call(zoom.transform, t);
     }
 
+    // A quick radial flash in the destination root's hue, centered on the
+    // stage — the same "warping in" effect the map uses when entering a
+    // domain, reused here so arriving at a root reads as travel, not a cut.
+    function triggerWarp(hue) {
+      const flash = document.querySelector("#web-warp-flash");
+      if (!flash || calm()) return;
+      const rect = stage.getBoundingClientRect();
+      flash.style.setProperty("--wx", rect.width / 2 + "px");
+      flash.style.setProperty("--wy", rect.height / 2 + "px");
+      flash.style.setProperty("--h", hue);
+      flash.classList.remove("go");
+      void flash.offsetWidth; // restart the animation
+      flash.classList.add("go");
+    }
+
     function focusOn(d, k) {
+      triggerWarp(d.hue);
       // With the sheet up on a phone, centre high so the node stays visible.
       const cy = phone() && !panel.hidden ? H * 0.3 : H / 2;
       const t = d3.zoomIdentity.translate(W / 2 - k * d.x, cy - k * d.y).scale(k);
@@ -473,7 +802,20 @@
     }
 
     rescale();
-    fitView(0);
+    // Always open focused on whatever root the player is actually working
+    // on (set whenever a level starts) rather than the whole map — falls
+    // back to the old fit-everything view if nothing's been played yet.
+    const currentRootId = api().getSave().currentRootId;
+    const currentNode = currentRootId && nodes.find((n) => n.id === currentRootId);
+    if (currentNode) {
+      selNode = currentNode;
+      markSelection();
+      if (!expanded.has(currentNode.id)) toggleWords(currentNode);
+      showRootPanel(currentNode);
+      focusOn(currentNode, 1.3);
+    } else {
+      fitView(0);
+    }
 
     /* ---------- panels ---------- */
     function openPanel(html) {
@@ -655,8 +997,18 @@
         svg.attr("viewBox", [0, 0, W, H]).attr("height", H);
         bg.attr("width", W).attr("height", H);
         sim.force("center", d3.forceCenter(W / 2, H / 2));
-        sim.force("x", d3.forceX(W / 2).strength(0.04));
-        sim.force("y", d3.forceY(H / 2).strength(0.06));
+        // clusterR itself doesn't depend on W/H (it's sized off the halos),
+        // so re-centering is all a resize needs — domX/domY read
+        // domainCenter live, so updating it in place re-targets every root.
+        layoutClusters(W / 2, H / 2);
+        // Each domain's shapes live at local (0,0) inside their own group,
+        // so repositioning is just moving that one translate — the group's
+        // own rotation (domainTilt) has to stay, or a resize would snap
+        // every spiral/barred/elliptical galaxy back to unrotated.
+        haloLayer
+          .selectAll("g")
+          .data(domainIds)
+          .attr("transform", (dom) => `translate(${domainCenter[dom].x},${domainCenter[dom].y}) rotate(${domainTilt[dom]})`);
         sim.alpha(0.3).restart();
         setTimeout(() => fitView(ease(400)), 500);
       }, 220);

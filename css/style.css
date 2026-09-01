@@ -284,7 +284,7 @@ h1, h2, .brand, .quiz-word, .root-name {
   content: ""; width: 8px; height: 8px; border-radius: 50%; flex: none; align-self: center;
   background: hsl(var(--h) 60% 55%);
 }
-.web-search-result.started::before { background: #3f9a63; }
+.web-search-result.started::before { background: hsl(var(--h) 65% 55%); }
 .web-search-result.mastered::before { background: var(--gold); box-shadow: 0 0 4px hsl(43 90% 62% / 0.8); }
 .web-search-result.active, .web-search-result:hover { background: var(--ink-3); }
 .web-search-root { font-family: "IBM Plex Mono", ui-monospace, monospace; font-weight: 600; color: var(--paper); }
@@ -295,27 +295,115 @@ h1, h2, .brand, .quiz-word, .root-name {
   background: linear-gradient(180deg, #0a0f1d, #101726);
   border: 1px solid #232c49; border-radius: var(--radius); overflow: hidden;
 }
+/* a static field of distant stars behind the graph itself, not just the rest
+   of the app — same dot technique as the global starfield, scoped here so it
+   doesn't get lost behind #web-stage's own opaque background. Left static
+   (no drift) since the graph's own pan/zoom already supplies the motion. */
+#web-stage::before {
+  content: "";
+  position: absolute; inset: -8%; z-index: 0; pointer-events: none;
+  background-image:
+    radial-gradient(1px 1px at 5% 9%, #fff8 50%, transparent 52%),
+    radial-gradient(1px 1px at 16% 28%, #fff6 50%, transparent 52%),
+    radial-gradient(1.5px 1.5px at 27% 6%, #fffa 50%, transparent 52%),
+    radial-gradient(1px 1px at 38% 44%, #fff5 50%, transparent 52%),
+    radial-gradient(1px 1px at 49% 15%, #fff7 50%, transparent 52%),
+    radial-gradient(1.5px 1.5px at 60% 34%, #fff9 50%, transparent 52%),
+    radial-gradient(1px 1px at 71% 8%, #fff5 50%, transparent 52%),
+    radial-gradient(1px 1px at 82% 40%, #fff7 50%, transparent 52%),
+    radial-gradient(1.5px 1.5px at 93% 18%, #fffb 50%, transparent 52%),
+    radial-gradient(1px 1px at 9% 62%, #fff6 50%, transparent 52%),
+    radial-gradient(1px 1px at 21% 82%, #fff8 50%, transparent 52%),
+    radial-gradient(1.5px 1.5px at 33% 58%, #fffa 50%, transparent 52%),
+    radial-gradient(1px 1px at 45% 90%, #fff5 50%, transparent 52%),
+    radial-gradient(1px 1px at 56% 68%, #fff7 50%, transparent 52%),
+    radial-gradient(1.5px 1.5px at 68% 88%, #fff9 50%, transparent 52%),
+    radial-gradient(1px 1px at 79% 62%, #fff6 50%, transparent 52%),
+    radial-gradient(1px 1px at 90% 84%, #fff8 50%, transparent 52%),
+    radial-gradient(1.5px 1.5px at 97% 55%, #fffa 50%, transparent 52%),
+    radial-gradient(1px 1px at 33.1% 16.5%, #fff5 50%, transparent 52%),
+    radial-gradient(1px 1px at 80.8% 11.0%, #fff9 50%, transparent 52%),
+    radial-gradient(0.8px 0.8px at 22.6% 10.3%, #fff5 50%, transparent 52%),
+    radial-gradient(1px 1px at 25.1% 54.9%, #fffb 50%, transparent 52%),
+    radial-gradient(1px 1px at 56.3% 93.0%, #fff9 50%, transparent 52%),
+    radial-gradient(1px 1px at 58.2% 6.8%, #fff5 50%, transparent 52%),
+    radial-gradient(0.8px 0.8px at 55.4% 14.8%, #fff6 50%, transparent 52%),
+    radial-gradient(1px 1px at 53.9% 56.8%, #fff5 50%, transparent 52%),
+    radial-gradient(1.5px 1.5px at 57.8% 63.3%, #fff5 50%, transparent 52%),
+    radial-gradient(1px 1px at 54.6% 8.0%, #fff9 50%, transparent 52%),
+    radial-gradient(0.8px 0.8px at 21.8% 67.3%, #fffb 50%, transparent 52%),
+    radial-gradient(0.8px 0.8px at 32.2% 58.2%, #fff7 50%, transparent 52%),
+    radial-gradient(1px 1px at 30.8% 78.3%, #fff5 50%, transparent 52%),
+    radial-gradient(1.5px 1.5px at 57.1% 52.4%, #fffa 50%, transparent 52%),
+    radial-gradient(1px 1px at 45.1% 60.5%, #fff5 50%, transparent 52%),
+    radial-gradient(1.5px 1.5px at 51.1% 17.8%, #fff6 50%, transparent 52%),
+    radial-gradient(1px 1px at 91.6% 42.5%, #fffb 50%, transparent 52%),
+    radial-gradient(1.5px 1.5px at 55.6% 77.8%, #fff7 50%, transparent 52%),
+    radial-gradient(0.8px 0.8px at 68.7% 59.1%, #fff5 50%, transparent 52%),
+    radial-gradient(0.8px 0.8px at 82.6% 92.7%, #fffa 50%, transparent 52%),
+    radial-gradient(1.5px 1.5px at 65.8% 7.8%, #fffa 50%, transparent 52%),
+    radial-gradient(0.8px 0.8px at 57.5% 67.4%, #fff7 50%, transparent 52%),
+    radial-gradient(1.5px 1.5px at 70.8% 87.2%, #fff5 50%, transparent 52%),
+    radial-gradient(1px 1px at 92.3% 36.1%, #fff8 50%, transparent 52%),
+    radial-gradient(1px 1px at 7.7% 75.8%, #fffa 50%, transparent 52%),
+    radial-gradient(0.8px 0.8px at 25.8% 39.5%, #fff5 50%, transparent 52%),
+    radial-gradient(1.5px 1.5px at 18.0% 40.6%, #fff6 50%, transparent 52%),
+    radial-gradient(1.5px 1.5px at 80.7% 84.9%, #fffa 50%, transparent 52%),
+    radial-gradient(0.8px 0.8px at 41.9% 36.4%, #fff6 50%, transparent 52%),
+    radial-gradient(1px 1px at 16.5% 18.9%, #fffa 50%, transparent 52%),
+    radial-gradient(1px 1px at 24.4% 48.6%, #fff7 50%, transparent 52%),
+    radial-gradient(1.5px 1.5px at 29.1% 16.0%, #fff9 50%, transparent 52%),
+    radial-gradient(0.8px 0.8px at 88.4% 76.9%, #fff8 50%, transparent 52%),
+    radial-gradient(0.8px 0.8px at 40.3% 11.9%, #fff5 50%, transparent 52%),
+    radial-gradient(0.8px 0.8px at 20.3% 96.5%, #fff6 50%, transparent 52%),
+    radial-gradient(1px 1px at 12.6% 59.7%, #fff5 50%, transparent 52%),
+    radial-gradient(1.5px 1.5px at 56.4% 53.5%, #fff9 50%, transparent 52%),
+    radial-gradient(0.8px 0.8px at 4.4% 85.9%, #fff6 50%, transparent 52%),
+    radial-gradient(0.8px 0.8px at 13.8% 83.5%, #fff8 50%, transparent 52%),
+    radial-gradient(1px 1px at 48.4% 10.2%, #fffa 50%, transparent 52%),
+    radial-gradient(1px 1px at 34.9% 27.4%, #fff9 50%, transparent 52%),
+    radial-gradient(1.5px 1.5px at 4.2% 93.3%, #fff6 50%, transparent 52%),
+    radial-gradient(1.5px 1.5px at 84.9% 68.8%, #fff9 50%, transparent 52%);
+}
 /* the canvas owns every touch gesture — pinch and drag must not scroll the page */
-#web-stage svg { display: block; cursor: grab; touch-action: none; -webkit-user-select: none; user-select: none; }
+#web-stage svg { position: relative; z-index: 1; display: block; cursor: grab; touch-action: none; -webkit-user-select: none; user-select: none; }
 #web-stage svg:active { cursor: grabbing; }
 .web-bg { fill: transparent; pointer-events: all; }
+.web-nebula-layer { pointer-events: none; }
 
 /* visible marks are painted only — the invisible .web-hit / .web-edge-hit
    shapes above them carry all the pointer events, sized in screen px by js */
 .web-edge { stroke: #3a4570; stroke-width: 1.4; pointer-events: none; }
-.web-edge.hover { stroke: hsl(43 60% 62%); }
-.web-edge.sel { stroke: var(--gold); }
+.web-edge.hover { stroke: hsl(43 60% 62%); filter: drop-shadow(0 0 3px hsl(43 70% 60% / 0.7)); }
+.web-edge.sel {
+  stroke: var(--gold); stroke-dasharray: 4 3;
+  filter: drop-shadow(0 0 4px hsl(43 90% 62% / 0.85));
+  animation: web-starlane-flow 1s linear infinite;
+}
+@keyframes web-starlane-flow { to { stroke-dashoffset: -21; } }
 .web-edge-hit { fill: none; stroke: transparent; stroke-linecap: round; pointer-events: stroke; cursor: pointer; }
 .web-hit { fill: transparent; stroke: none; pointer-events: all; cursor: pointer; }
-/* Untouched roots stay dim so mastered ones read as the standout gold stars. */
+/* Flat fills, not spheres — a gradient was tried here and read worse than a
+   plain dot. Untouched roots stay dim so mastered ones read as the standout
+   gold stars. */
 .web-root { fill: hsl(var(--h) 30% 32%); stroke: hsl(var(--h) 30% 45%); stroke-width: 1; pointer-events: none; }
-.web-root.started { fill: #3f9a63; stroke: #6bd696; }
-.web-root.lit { fill: var(--gold); stroke: #fff0c9; stroke-width: 1.5; filter: drop-shadow(0 0 7px hsl(43 90% 62% / 0.95)) drop-shadow(0 0 2px hsl(43 90% 75% / 0.9)); }
+/* Started keeps the domain's own hue, just lit up brighter — not swapped
+   for a flat green, which read as a different domain entirely. */
+.web-root.started { fill: hsl(var(--h) 65% 55%); stroke: hsl(var(--h) 60% 72%); }
+.web-root.lit {
+  fill: var(--gold); stroke: #fff0c9; stroke-width: 1.5;
+  filter: drop-shadow(0 0 7px hsl(43 90% 62% / 0.95)) drop-shadow(0 0 2px hsl(43 90% 75% / 0.9));
+  animation: web-star-twinkle 2.6s ease-in-out infinite; animation-delay: calc(var(--i, 0) * 0.15s);
+}
+@keyframes web-star-twinkle {
+  0%, 100% { filter: drop-shadow(0 0 7px hsl(43 90% 62% / 0.95)) drop-shadow(0 0 2px hsl(43 90% 75% / 0.9)); }
+  50% { filter: drop-shadow(0 0 12px hsl(43 90% 70% / 1)) drop-shadow(0 0 4px hsl(43 90% 85% / 1)); opacity: 0.88; }
+}
 .web-root.hover { stroke-width: 2.5; }
 .web-root.sel { stroke: var(--gold); stroke-width: 3; }
 .web-label { fill: var(--paper-dim); text-anchor: middle; font-family: "IBM Plex Mono", ui-monospace, monospace; pointer-events: none; paint-order: stroke; stroke: #0a0f1d; stroke-width: 2.5px; stroke-linejoin: round; }
-.web-word { fill: hsl(var(--h) 35% 40%); pointer-events: none; }
-.web-word.learned { fill: #4cc27a; }
+.web-word { fill: hsl(var(--h) 35% 40%); opacity: 0.82; pointer-events: none; }
+.web-word.learned { fill: #4cc27a; opacity: 1; }
 .web-word-edge { stroke: hsl(220 30% 30%); stroke-width: 0.7; pointer-events: none; }
 .web-word-label { fill: #8b93b4; font-family: "Public Sans", sans-serif; pointer-events: none; paint-order: stroke; stroke: #0a0f1d; stroke-width: 2px; stroke-linejoin: round; }
 
@@ -376,7 +464,11 @@ h1, h2, .brand, .quiz-word, .root-name {
   .web-panel .btn { width: 100%; }
 }
 
-@media (prefers-reduced-motion: reduce) { .web-panel { animation: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .web-panel { animation: none; }
+  .web-root.lit { animation: none; }
+  .web-edge.sel { animation: none; stroke-dasharray: none; }
+}
 
 @media (max-width: 560px) {
   .tiles { grid-template-columns: 1fr 1fr; }
