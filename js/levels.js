@@ -62,14 +62,15 @@
     return Math.abs(h);
   }
 
-  // Reduces a full dataset down to only its GRE-flagged words, for GRE-only
-  // mode. Roots stay as-is (a root is still a legitimate distractor/hint
-  // even if none of its remaining words are GRE-flagged); root_word_index
-  // is rebuilt from scratch against the filtered word list so a root's
-  // word count — and therefore whether it's "big enough" for its own
-  // level — reflects only what's actually in play.
-  function filterGreOnly(data) {
-    const words = data.words.filter((w) => w.gre_list);
+  // Reduces a full dataset down to only words tagged with at least one of
+  // examIds, for exam-focus mode. Roots stay as-is (a root is still a
+  // legitimate distractor/hint even if none of its remaining words are
+  // tagged); root_word_index is rebuilt from scratch against the filtered
+  // word list so a root's word count — and therefore whether it's "big
+  // enough" for its own level — reflects only what's actually in play.
+  function filterByExams(data, examIds) {
+    const set = new Set(examIds);
+    const words = data.words.filter((w) => (w.exam_lists || []).some((e) => set.has(e)));
     const index = {};
     words.forEach((w) => {
       if (!w.roots) return;
@@ -363,7 +364,7 @@
 
   function decodeScore(w) {
     let s = 0;
-    if (w.gre_list) s += 2;
+    if (w.exam_lists && w.exam_lists.length) s += 2; // on any real exam list — not just GRE
     if (w.roots && w.roots.length > 1) s += 1; // bridge words make the best bosses
     return s;
   }
@@ -424,5 +425,5 @@
     return { options, correctIndex: options.indexOf(word.definition) };
   }
 
-  window.WordWebLevels = { buildGame, filterGreOnly, optionsFor, hash, DOMAIN_NAMES };
+  window.WordWebLevels = { buildGame, filterByExams, optionsFor, hash, DOMAIN_NAMES };
 })();

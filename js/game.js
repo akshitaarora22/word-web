@@ -4,6 +4,28 @@
   const L = window.WordWebLevels;
   let GAME; // set below, once `save` is loaded — see rebuildGame()
 
+  // Every exam a word can be tagged with (word.exam_lists), in a fixed
+  // display order, and the accent hue each gets for its badge (see
+  // .exam-badge in style.css) and its exam-focus toggle chip in Profile.
+  // GRE keeps its original gold via the .exam-badge.gre CSS override.
+  const EXAM_ORDER = ["GRE", "SAT", "ACT", "GMAT", "TOEFL", "IELTS"];
+  const EXAM_HUES = { GRE: 45, SAT: 205, ACT: 140, GMAT: 275, TOEFL: 185, IELTS: 15 };
+  // Only exams the dataset actually has tagged words for — keeps the
+  // Profile screen from offering a toggle that can never do anything.
+  function availableExams() {
+    const present = (window.WORDWEB_DATA.meta && window.WORDWEB_DATA.meta.words_by_exam) || {};
+    return EXAM_ORDER.filter((e) => present[e]);
+  }
+  // Renders one small pill per exam a word is tagged with, e.g. a word on
+  // both GRE and SAT gets two badges side by side.
+  function examBadges(word) {
+    return (word.exam_lists || [])
+      .slice()
+      .sort((a, b) => EXAM_ORDER.indexOf(a) - EXAM_ORDER.indexOf(b))
+      .map((e) => `<span class="exam-badge${e === "GRE" ? " gre" : ""}" style="--h:${EXAM_HUES[e] ?? 0}">${e}</span>`)
+      .join("");
+  }
+
   /* ---------- persistence ---------- */
   const SAVE_KEY = "wordweb_save_v1";
   const defaultSave = () => ({
@@ -26,13 +48,17 @@
     badges: {}, // badgeId -> ms epoch when unlocked
     badgesBackfilled: false, // true once existing progress has been checked once, silently
     currentRootId: null, // root of the level last started — the web view auto-focuses here
-    greOnly: false, // GRE-only mode: filters to gre_list words, lower "own level" bar
+    examFilter: [], // exam ids to restrict play to (see EXAM_ORDER); empty = everything
   });
   let save = load();
   function load() {
     try {
       const raw = localStorage.getItem(SAVE_KEY);
-      return raw ? Object.assign(defaultSave(), JSON.parse(raw)) : defaultSave();
+      const s = raw ? Object.assign(defaultSave(), JSON.parse(raw)) : defaultSave();
+      // Migrate the old single-exam GRE-only toggle this replaced.
+      if (s.greOnly && (!s.examFilter || !s.examFilter.length)) s.examFilter = ["GRE"];
+      delete s.greOnly;
+      return s;
     } catch (e) {
       return defaultSave();
     }
@@ -43,17 +69,22 @@
     } catch (e) {}
   }
 
-  // GRE-only mode reduces the dataset to just gre_list words first (with a
-  // lower "own level" word threshold, since most roots individually have
-  // too few GRE-flagged words to clear the normal bar of 4) and prefixes
-  // level ids so they never collide with a normal-mode level of the same
-  // domain/root that was actually built from different words. Anything
-  // that needs "every root/word in play" should read it off GAME (.roots,
-  // .words, .root_word_index) rather than window.WORDWEB_DATA directly, or
-  // it'll silently ignore the mode.
+  // Exam-focus mode reduces the dataset to just words tagged with one of
+  // save.examFilter's exams first (with a lower "own level" word threshold,
+  // since most roots individually have too few tagged words to clear the
+  // normal bar of 4) and prefixes level ids with the exact filter combo so
+  // they never collide with a level of the same domain/root built from a
+  // different word set — either normal mode's, or a different exam
+  // selection's. Anything that needs "every root/word in play" should read
+  // it off GAME (.roots, .words, .root_word_index) rather than
+  // window.WORDWEB_DATA directly, or it'll silently ignore the mode.
   function rebuildGame() {
-    GAME = save.greOnly
-      ? L.buildGame(L.filterGreOnly(window.WORDWEB_DATA), { bigThreshold: 2, idPrefix: "gre::" })
+    const filter = save.examFilter && save.examFilter.length ? save.examFilter : null;
+    GAME = filter
+      ? L.buildGame(L.filterByExams(window.WORDWEB_DATA, filter), {
+          bigThreshold: 2,
+          idPrefix: "exam:" + filter.slice().sort().join(",") + "::",
+        })
       : L.buildGame(window.WORDWEB_DATA);
   }
   rebuildGame();
@@ -832,6 +863,8 @@
     Object.values(save.roots).forEach((rs) => Object.keys(rs.correct).forEach((w) => learned.add(w)));
     const masteryPct = GAME.meta.root_count ? Math.round((100 * mastered) / GAME.meta.root_count) : 0;
     const earnedCount = ACHIEVEMENTS.filter((a) => save.badges[a.id]).length;
+    const exams = availableExams();
+    const allSelected = exams.length > 0 && exams.every((e) => save.examFilter.includes(e));
     app.innerHTML = `${header()}
       <section class="profile">
         <div class="practice-head">
@@ -862,8 +895,24 @@
         <div class="profile-actions">
           <button class="btn ${save.hardMode ? "primary" : ""}" data-nav="hardmode">🎯 Pro mode: ${save.hardMode ? "ON" : "OFF"}</button>
           <p class="discover-hint" style="margin:-4px 0 0">Pro mode swaps in trickier answer choices — other words sharing a root with the correct one — so you can't just spot a keyword.</p>
-          <button class="btn ${save.greOnly ? "primary" : ""}" data-nav="greonly">🎓 GRE-only mode: ${save.greOnly ? "ON" : "OFF"}</button>
-          <p class="discover-hint" style="margin:-4px 0 0">Shows only words that appear on real GRE vocabulary lists — fewer words per root, so some lessons run leaner and a few roots sit out entirely.</p>
+          <div>
+            <p class="phase-kicker" style="margin:0 0 6px">🎓 Exam focus</p>
+            <p class="discover-hint" style="margin:0 0 8px">Show only words that appear on real vocabulary lists for these exams — fewer words per root, so some lessons run leaner and a few roots sit out entirely. Leave everything unchecked to play the full set.</p>
+            <div class="exam-filter-grid">
+              ${exams
+                .map((e) => {
+                  const on = save.examFilter.includes(e);
+                  return `<button class="btn exam-toggle${on ? " primary" : ""}" style="--h:${EXAM_HUES[e] ?? 0}" data-exam="${e}">${e}</button>`;
+                })
+                .join("")}
+              ${exams.length > 1 ? `<button class="btn ghost" data-exam-select-all>${allSelected ? "Clear all" : "Select all"}</button>` : ""}
+            </div>
+            <p class="exam-filter-status">${
+              save.examFilter.length
+                ? `Playing ${GAME.meta.word_count} of ${window.WORDWEB_DATA.meta.word_count} words, tagged ${save.examFilter.slice().sort().join(", ")}.`
+                : `Playing all ${window.WORDWEB_DATA.meta.word_count} words.`
+            }</p>
+          </div>
           <button class="btn" data-nav="share">Share progress</button>
           <button class="btn" data-nav="tutorial">How to play</button>
         </div>
@@ -872,6 +921,35 @@
       ${tabBarHTML("you")}`;
     wireNav();
     document.body.classList.add("has-tabbar");
+
+    // Exam-focus toggles: a per-exam chip plus a select-all/clear-all
+    // shortcut. Each click rebuilds GAME (the filtered word set changes
+    // its whole level structure, so an in-place DOM patch isn't enough)
+    // and re-renders this screen so every dependent number — mastery %,
+    // the status line, the select-all label — stays in sync.
+    app.querySelectorAll(".exam-toggle").forEach((btn) =>
+      btn.addEventListener("click", () => {
+        const exam = btn.dataset.exam;
+        if (save.examFilter.includes(exam)) save.examFilter = save.examFilter.filter((e) => e !== exam);
+        else save.examFilter.push(exam);
+        persist();
+        rebuildGame();
+        if (window.WordWebSFX) window.WordWebSFX.tap();
+        showProfile();
+      })
+    );
+    const selectAllBtn = app.querySelector("[data-exam-select-all]");
+    if (selectAllBtn) {
+      selectAllBtn.addEventListener("click", () => {
+        const exams = availableExams();
+        const allOn = exams.every((e) => save.examFilter.includes(e));
+        save.examFilter = allOn ? [] : exams.slice();
+        persist();
+        rebuildGame();
+        if (window.WordWebSFX) window.WordWebSFX.tap();
+        showProfile();
+      });
+    }
   }
 
   function showDomain(domId) {
@@ -1073,7 +1151,7 @@
           </span>
         </div>
         <h2 class="quiz-word">${esc(word.word)} <span class="pos">${esc(word.part_of_speech || "")}</span>
-          ${word.gre_list ? '<span class="gre">GRE</span>' : ""}</h2>
+          ${examBadges(word)}</h2>
         <div class="hint-row">${isDecode ? "" : '<button class="btn ghost" id="hint">Show roots (halves points)</button>'}
           <div id="hint-box" class="hint-box" hidden></div></div>
         <div class="options">
@@ -1128,7 +1206,7 @@
             run.xp.base += base;
             run.xp.streak += streakBonus;
           }
-          if (word.gre_list) {
+          if ((word.exam_lists || []).includes("GRE")) {
             gained += 5;
             run.xp.gre += 5;
           }
@@ -1404,7 +1482,7 @@
     app.innerHTML = `${header()}
       <section class="quiz daily-quiz">
         <div class="quiz-top"><span class="phase-kicker boss">Word of the day</span><span><button class="back-btn" data-nav="home">Back</button></span></div>
-        <h2 class="quiz-word">${esc(word.word)} <span class="pos">${esc(word.part_of_speech || "")}</span>${word.gre_list ? '<span class="gre">GRE</span>' : ""}</h2>
+        <h2 class="quiz-word">${esc(word.word)} <span class="pos">${esc(word.part_of_speech || "")}</span>${examBadges(word)}</h2>
         <p class="discover-hint">No roots to lean on — this one you just have to know. 30 points.</p>
         <div class="options">${q.options.map((o, i) => `<button class="option" data-i="${i}">${esc(o)}</button>`).join("")}</div>
         <div id="feedback" class="feedback" hidden></div>
@@ -1497,13 +1575,6 @@
           el.classList.toggle("primary", save.hardMode);
           el.textContent = `🎯 Pro mode: ${save.hardMode ? "ON" : "OFF"}`;
         }
-        if (t === "greonly") {
-          save.greOnly = !save.greOnly;
-          persist();
-          rebuildGame(); // domains/levels/roots all change shape — an in-place patch isn't enough
-          if (window.WordWebSFX) window.WordWebSFX.tap();
-          showHome();
-        }
       })
     );
     app.querySelectorAll("[data-domain-link]").forEach((el) =>
@@ -1516,7 +1587,7 @@
 
   /* ---------- public API for phase-2 modules (bridges.js, web.js) ---------- */
   window.WordWeb = {
-    // A live getter, not a frozen snapshot — GRE-only mode reassigns the
+    // A live getter, not a frozen snapshot — exam-focus mode reassigns the
     // GAME variable via rebuildGame(), and phase-2 modules always re-fetch
     // it through api() rather than caching it, so they pick up the swap.
     get GAME() {
@@ -1535,6 +1606,7 @@
     header,
     tabBarHTML,
     esc,
+    examBadges,
     DAY,
     addReview(word) {
       if (!save.review.some((r) => r.word === word)) {

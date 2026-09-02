@@ -122,7 +122,10 @@ h1, h2, .brand, .quiz-word, .root-name {
 .quiz-count { color: var(--paper-dim); font-size: 0.85rem; font-variant-numeric: tabular-nums; }
 .quiz-word { font-size: clamp(1.8rem, 6vw, 2.6rem); margin: 6px 0 12px; }
 .pos { font-family: "Public Sans", sans-serif; font-size: 0.8rem; color: var(--paper-dim); font-style: italic; margin-left: 6px; }
-.gre { font-size: 0.65rem; vertical-align: middle; margin-left: 8px; border: 1px solid var(--gold); color: var(--gold); border-radius: 4px; padding: 1px 5px; font-family: "Public Sans", sans-serif; letter-spacing: 0.08em; }
+/* One pill per exam a word is tagged with (word.exam_lists) — GRE keeps the
+   original gold, the rest get their own hue via --h (see EXAM_HUES in game.js). */
+.exam-badge { font-size: 0.65rem; vertical-align: middle; margin-left: 6px; border-radius: 4px; padding: 1px 5px; font-family: "Public Sans", sans-serif; letter-spacing: 0.08em; display: inline-block; border: 1px solid hsl(var(--h) 70% 55%); color: hsl(var(--h) 75% 68%); }
+.exam-badge.gre { border-color: var(--gold); color: var(--gold); }
 .hint-row { margin-bottom: 12px; }
 .hint-box { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip { background: var(--accent-soft); border: 1px solid hsl(var(--h) 55% 62% / 0.35); color: var(--paper); border-radius: 999px; padding: 3px 10px; font-size: 0.82rem; }
@@ -990,6 +993,12 @@ body.has-tabbar #app { padding-bottom: 88px; }
 .stat-label { color: var(--paper-dim); font-size: 0.78rem; }
 .profile-actions { display: flex; flex-direction: column; gap: 10px; margin: 20px 0; }
 .profile-actions .btn { width: 100%; }
+
+/* exam-focus filter — one small toggle chip per exam, colored by EXAM_HUES */
+.exam-filter-grid { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 8px; }
+.exam-filter-grid .exam-toggle { width: auto; flex: 0 0 auto; padding: 6px 14px; border-color: hsl(var(--h) 55% 40%); color: hsl(var(--h) 75% 68%); }
+.exam-filter-grid .exam-toggle.primary { background: hsl(var(--h) 55% 40%); color: var(--paper); border-color: transparent; }
+.exam-filter-status { color: var(--paper-dim); font-size: 0.8rem; margin: 0 0 10px; }
 
 /* badge shelf */
 .badge-shelf-head { display: flex; align-items: center; justify-content: space-between; margin-top: 18px; }

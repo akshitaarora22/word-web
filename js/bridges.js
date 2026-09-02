@@ -20,7 +20,7 @@
     const { GAME, rootState } = api();
     const affix = affixIds();
     // GAME.words (not window.WORDWEB_DATA.words) so GRE-only mode is
-    // respected automatically — it's already the gre_list-filtered list
+    // respected automatically — it's already the GRE-tagged-only list
     // when that mode is on.
     const words = GAME.words
       .map((w) => ({ ...w, roots: (w.roots || []).filter((rid) => !affix.has(rid)) }))
@@ -69,7 +69,7 @@
   }
 
   function puzzle() {
-    const { GAME, header, wireNav, esc } = api();
+    const { GAME, header, wireNav, esc, examBadges } = api();
     if (run.idx >= run.words.length) {
       results();
       return;
@@ -91,7 +91,7 @@
           <span class="phase-kicker boss">Bridge run</span>
           <span><span class="quiz-count">${run.idx + 1}/${run.words.length}</span><button class="back-btn" data-nav="home">Back</button></span>
         </div>
-        <p class="bridge-def">“${esc(word.definition)}” <span class="pos">${esc(word.part_of_speech || "")}</span>${word.gre_list ? '<span class="gre">GRE</span>' : ""}</p>
+        <p class="bridge-def">“${esc(word.definition)}” <span class="pos">${esc(word.part_of_speech || "")}</span>${examBadges(word)}</p>
         <p class="discover-hint">Pick the ${need} roots this word is built from.</p>
         <div class="slots">${Array.from({ length: need }, (_, i) => `<div class="slot" data-slot="${i}"></div>`).join("")}</div>
         <div class="tiles">
@@ -152,7 +152,7 @@
     let gained = 0;
     const checkBtn = document.querySelector("#check");
     if (correct) {
-      gained = 30 + (word.gre_list ? 5 : 0);
+      gained = 30 + ((word.exam_lists || []).includes("GRE") ? 5 : 0);
       addPoints(gained);
       run.score += gained;
       run.correct++;
