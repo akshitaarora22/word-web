@@ -387,6 +387,11 @@ h1, h2, .brand, .quiz-word, .root-name {
    plain dot. Untouched roots stay dim so mastered ones read as the standout
    gold stars. */
 .web-root { fill: hsl(var(--h) 30% 32%); stroke: hsl(var(--h) 30% 45%); stroke-width: 1; pointer-events: none; }
+/* Roots too thin for their own level (<4 words) aren't part of a galaxy's
+   cluster in the physics either — a rough dashed outline and a duller fill
+   mark them as loose rubble, not a star. Comes before .started/.lit below
+   so mastering or starting one of these still lights it up normally. */
+.web-root.asteroid { fill: hsl(var(--h) 18% 24%); stroke: hsl(var(--h) 18% 38%); stroke-width: 0.75; stroke-dasharray: 1.6 1.3; }
 /* Started keeps the domain's own hue, just lit up brighter — not swapped
    for a flat green, which read as a different domain entirely. */
 .web-root.started { fill: hsl(var(--h) 65% 55%); stroke: hsl(var(--h) 60% 72%); }
@@ -395,6 +400,7 @@ h1, h2, .brand, .quiz-word, .root-name {
   filter: drop-shadow(0 0 7px hsl(43 90% 62% / 0.95)) drop-shadow(0 0 2px hsl(43 90% 75% / 0.9));
   animation: web-star-twinkle 2.6s ease-in-out infinite; animation-delay: calc(var(--i, 0) * 0.15s);
 }
+.web-root.asteroid.started, .web-root.asteroid.lit { stroke-dasharray: none; }
 @keyframes web-star-twinkle {
   0%, 100% { filter: drop-shadow(0 0 7px hsl(43 90% 62% / 0.95)) drop-shadow(0 0 2px hsl(43 90% 75% / 0.9)); }
   50% { filter: drop-shadow(0 0 12px hsl(43 90% 70% / 1)) drop-shadow(0 0 4px hsl(43 90% 85% / 1)); opacity: 0.88; }

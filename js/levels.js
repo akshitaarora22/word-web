@@ -74,11 +74,18 @@
 
     const index = data.root_word_index; // rootId -> [key,...]
 
-    // Group roots (that have words) by the domain of the ROOT itself
+    // Group roots (that have words) by the domain of the ROOT itself.
+    // Affix roots (re-, con-, in-...) are excluded here at the source: they're
+    // hint-only tags on other roots' words (see the everPrimary comment
+    // below), never a real teachable root, so they must never enter a
+    // domain's rootIds — that list feeds every "roots mastered"/domain%
+    // count in game.js, and an affix root's words are scattered across
+    // levels it has nothing to do with, so it could never be "mastered" in
+    // any meaningful sense.
     const domainRoots = {};
     Object.keys(index).forEach((rootId) => {
       const root = rootsById[rootId];
-      if (!root) return;
+      if (!root || root.affix) return;
       const dom = root.domain;
       (domainRoots[dom] = domainRoots[dom] || []).push(rootId);
     });
@@ -111,7 +118,49 @@
     const bigTaughtWords = new Set();
     bigRootIds.forEach((r) => index[r].forEach((k) => bigTaughtWords.add(k)));
 
+    // Builds one root's own level: the usual ~20% (max 2) decode holdout,
+    // preferring GRE-listed multi-root words, with everything else taught.
+    // Shared by the normal per-domain pass and the rescue pass below.
+    function buildRootLevel(domId, rootId, words) {
+      const n = Math.min(2, Math.max(1, Math.floor(words.length * 0.2)));
+      const ranked = words
+        .slice()
+        .sort((a, b) => decodeScore(b) - decodeScore(a) || hash(a.word) - hash(b.word));
+      const decodeWords = ranked.slice(0, n);
+      const decodeSet = new Set(decodeWords.map((w) => w.key || w.word));
+      const teachWords = words.filter((w) => !decodeSet.has(w.key || w.word));
+      const root = rootsById[rootId];
+      return {
+        id: domId + "::" + rootId,
+        kind: "root",
+        title: root.root,
+        subtitle: root.meaning,
+        domain: domId,
+        roots: [rootId],
+        teachWords,
+        decodeWords,
+      };
+    }
+
     const domains = [];
+    // A bridge word (e.g. "misogamy", carried by both "misein" and "gamos")
+    // can belong to two *big* roots at once. It's only ever taught once —
+    // by whichever of those roots' domains comes first in DOMAIN_ORDER —
+    // so it's playable in exactly one galaxy. This accumulates across the
+    // DOMAIN_ORDER loop below, in order, so "first domain wins."  The web
+    // view's bridge lines are unaffected: those are drawn straight from
+    // data.words, independent of which domain ends up teaching the word.
+    const globalBigClaimed = new Set();
+    // A big root can end up with literally zero words after that filter if
+    // *every* one of its words is a bridge word an earlier domain already
+    // claimed (e.g. "anthropos": misanthrope/misanthropic/anthropological/
+    // philanthropy are all shared with misein/logos/philein, each processed
+    // earlier). Rather than leave such a root without a level of its own,
+    // it's queued here and rescued below with its full, unfiltered word
+    // list — the one deliberate exception to "each word taught once": those
+    // particular bridge words end up taught in two places after all, so
+    // the root isn't left contentless.
+    const rescueQueue = [];
 
     DOMAIN_ORDER.forEach((domId) => {
       const rootIds = (domainRoots[domId] || []).slice();
@@ -130,36 +179,26 @@
       // a small root's medley must never re-teach those. From here it also
       // accumulates this domain's own big-root and medley words, so two
       // small roots that happen to share a word (e.g. "kallos" and "pyge"
-      // both touching "callipygian") only teach it once. Two *big* roots
-      // sharing a word (e.g. "misein" + "gamos" on "misogamy") still both
-      // teach it — that's the intentional bridge-word mechanic, and this
-      // set is never consulted by the big-root loop below.
+      // both touching "callipygian") only teach it once.
       const domainTaught = new Set(bigTaughtWords);
 
       big.forEach((rootId) => {
+        // A word already claimed by an earlier-processed domain's big root
+        // (globalBigClaimed) is dropped here rather than taught again —
+        // see the comment on globalBigClaimed above.
         const words = index[rootId]
           .map((k) => wordsByKey[k])
-          .filter(Boolean);
-        words.forEach((w) => domainTaught.add(w.key || w.word));
-        // Decode holdout: ~20% (max 2), preferring GRE-listed multi-root words.
-        const n = Math.min(2, Math.max(1, Math.floor(words.length * 0.2)));
-        const ranked = words
-          .slice()
-          .sort((a, b) => decodeScore(b) - decodeScore(a) || hash(a.word) - hash(b.word));
-        const decodeWords = ranked.slice(0, n);
-        const decodeSet = new Set(decodeWords.map((w) => w.key || w.word));
-        const teachWords = words.filter((w) => !decodeSet.has(w.key || w.word));
-        const root = rootsById[rootId];
-        levels.push({
-          id: domId + "::" + rootId,
-          kind: "root",
-          title: root.root,
-          subtitle: root.meaning,
-          domain: domId,
-          roots: [rootId],
-          teachWords,
-          decodeWords,
+          .filter((w) => w && !globalBigClaimed.has(w.key || w.word));
+        if (!words.length) {
+          rescueQueue.push({ domId, rootId });
+          return;
+        }
+        words.forEach((w) => {
+          const k = w.key || w.word;
+          domainTaught.add(k);
+          globalBigClaimed.add(k);
         });
+        levels.push(buildRootLevel(domId, rootId, words));
       });
 
       // Bundle small roots into levels of ~5–9 words, no decode boss. Each
@@ -221,6 +260,17 @@
         levels,
         rootIds,
       });
+    });
+
+    // Rescue pass — see the comment on rescueQueue above. Runs after every
+    // domain's normal pass so it never displaces a level that already
+    // legitimately claimed one of these words.
+    rescueQueue.forEach(({ domId, rootId }) => {
+      const dom = domains.find((d) => d.id === domId);
+      if (!dom) return;
+      const words = index[rootId].map((k) => wordsByKey[k]).filter(Boolean);
+      if (!words.length) return;
+      dom.levels.push(buildRootLevel(domId, rootId, words));
     });
 
     // A one-word medley barely counts as a lesson — drop it, unless that

@@ -8,9 +8,20 @@
     return window.WordWeb;
   }
 
+  // Affix roots (re-, con-, in-...) are hint-only tags, never a taught root
+  // (see js/levels.js's everPrimary comment) — a word tagged with one isn't
+  // a real "bridge" between two roots, and the affix itself isn't fair game
+  // as a tile to guess or a distractor. Filtered out on both ends below.
+  function affixIds() {
+    return new Set(window.WORDWEB_DATA.roots.filter((r) => r.affix).map((r) => r.id));
+  }
+
   function pool() {
     const { GAME, rootState } = api();
-    const words = window.WORDWEB_DATA.words.filter((w) => (w.roots || []).length >= 2);
+    const affix = affixIds();
+    const words = window.WORDWEB_DATA.words
+      .map((w) => ({ ...w, roots: (w.roots || []).filter((rid) => !affix.has(rid)) }))
+      .filter((w) => w.roots.length >= 2);
     // Prefer words whose roots the player has already touched — decoding feels earned.
     const touched = (rid) => Object.keys(rootState(rid).correct).length > 0 || rootState(rid).decoded;
     return words
@@ -21,9 +32,10 @@
   function distractorRoots(word, count) {
     const { GAME } = api();
     const all = window.WORDWEB_DATA.roots;
+    const affix = affixIds();
     const correct = new Set(word.roots);
     // Mix: word-less roots (the vault) + same-domain roots, shuffled
-    const cands = all.filter((r) => !correct.has(r.id));
+    const cands = all.filter((r) => !correct.has(r.id) && !affix.has(r.id));
     for (let i = cands.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [cands[i], cands[j]] = [cands[j], cands[i]];

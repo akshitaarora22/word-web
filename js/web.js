@@ -32,30 +32,46 @@
     const domHue = {};
     GAME.domains.forEach((d) => (domHue[d.id] = d.hue));
 
-    const nodes = Object.keys(idx).map((rid) => {
-      const r = GAME.rootsById[rid];
-      const mastered = rootMastered(rid);
-      // "started" = at least one word answered correctly, but not yet mastered.
-      // Computed once here (not per simulation tick) since rootMastered walks
-      // every domain/level.
-      const rs = rootState(rid);
-      const started = !mastered && idx[rid].some((k) => rs.correct[k]);
-      return {
-        id: rid,
-        type: "root",
-        label: r.root.split(",")[0],
-        meaning: r.meaning,
-        domain: r.domain,
-        hue: domHue[r.domain] ?? 220,
-        wordCount: idx[rid].length,
-        mastered,
-        started,
-      };
-    });
+    // Affix roots (re-, con-, in-...) are hint-only tags, never a taught
+    // root — see js/levels.js's everPrimary comment. They're excluded from
+    // the graph entirely (no node, no bridge edges): a handful of them
+    // touch dozens of words apiece, and drawing all of that would bury the
+    // real root-to-root bridges in noise. They still show as chips on a
+    // word's own panel, just not here.
+    const affixIds = new Set(data.roots.filter((r) => r.affix).map((r) => r.id));
+
+    const nodes = Object.keys(idx)
+      .filter((rid) => !affixIds.has(rid))
+      .map((rid) => {
+        const r = GAME.rootsById[rid];
+        const mastered = rootMastered(rid);
+        // "started" = at least one word answered correctly, but not yet mastered.
+        // Computed once here (not per simulation tick) since rootMastered walks
+        // every domain/level.
+        const rs = rootState(rid);
+        const started = !mastered && idx[rid].some((k) => rs.correct[k]);
+        return {
+          id: rid,
+          type: "root",
+          label: r.root.split(",")[0],
+          meaning: r.meaning,
+          domain: r.domain,
+          hue: domHue[r.domain] ?? 220,
+          wordCount: idx[rid].length,
+          mastered,
+          started,
+          // Same <4-word threshold that already keeps a root out of its own
+          // dedicated level (it bundles into a medley instead) — visually
+          // it doesn't belong to any one galaxy either: it drifts loose in
+          // the shared space between them rather than orbiting a cluster.
+          asteroid: idx[rid].length < 4,
+        };
+      });
 
     const edgeMap = {};
     data.words
-      .filter((w) => (w.roots || []).length >= 2)
+      .map((w) => ({ word: w.word, roots: (w.roots || []).filter((rid) => !affixIds.has(rid)) }))
+      .filter((w) => w.roots.length >= 2)
       .forEach((w) => {
         const rs = w.roots.slice().sort();
         for (let i = 0; i < rs.length; i++)
@@ -278,10 +294,12 @@
     }
     layoutClusters(W / 2, H / 2);
     function domX(d) {
+      if (d.asteroid) return W / 2;
       const c = domainCenter[d.domain];
       return c ? c.x : W / 2;
     }
     function domY(d) {
+      if (d.asteroid) return H / 2;
       const c = domainCenter[d.domain];
       return c ? c.y : H / 2;
     }
@@ -520,8 +538,11 @@
       .force("charge", d3.forceManyBody().strength(compact ? -70 : -160))
       .force("center", d3.forceCenter(W / 2, H / 2))
       .force("collide", d3.forceCollide().radius((d) => radius(d) + (compact ? 4 : 6)))
-      .force("x", d3.forceX(domX).strength(0.22))
-      .force("y", d3.forceY(domY).strength(0.22))
+      // Asteroids barely feel this pull — they're not bound to any one
+      // galaxy's gravity well, just loosely centered on the whole canvas
+      // (charge + collide do the rest of the work of scattering them).
+      .force("x", d3.forceX(domX).strength((d) => (d.asteroid ? 0.015 : 0.22)))
+      .force("y", d3.forceY(domY).strength((d) => (d.asteroid ? 0.015 : 0.22)))
       .alphaDecay(0.035);
 
     /* ---------- static shapes ---------- */
@@ -541,7 +562,7 @@
       .data(nodes)
       .join("circle")
       .attr("r", radius)
-      .attr("class", (d) => "web-root" + (d.mastered ? " lit" : d.started ? " started" : ""))
+      .attr("class", (d) => "web-root" + (d.asteroid ? " asteroid" : "") + (d.mastered ? " lit" : d.started ? " started" : ""))
       // --i staggers the mastered-star twinkle so a cluster of gold roots
       // doesn't all pulse in lockstep; mod 8 keeps the cycle short.
       .attr("style", (d, i) => `--h:${d.hue};--i:${i % 8}`);
@@ -573,9 +594,41 @@
       linkSel.classed("sel", (d) => d === selEdge);
       nodeSel.classed("sel", (d) => d === selNode);
     }
+    // Pin the node the player is actively looking at. Expanding/collapsing
+    // its words reheats the whole simulation (restart()'s sim.alpha(0.5)),
+    // and an asteroid's anchor pull is deliberately near-zero (see the
+    // "x"/"y" force above) — without a pin, the sudden burst of
+    // charge/collide pressure from its own new-or-removed word children can
+    // fling it clear across the canvas right as the camera centers on it,
+    // and focusOn() only pans once, so it visibly rockets out of view.
+    // Released whenever selection changes (selectNode/deselectAll below).
+    function selectNode(d) {
+      if (selNode) {
+        selNode.fx = null;
+        selNode.fy = null;
+      }
+      selNode = d;
+      selEdge = null;
+      d.fx = d.x;
+      d.fy = d.y;
+      markSelection();
+    }
+    function deselectAll() {
+      if (selNode) {
+        selNode.fx = null;
+        selNode.fy = null;
+      }
+      selEdge = null;
+      selNode = null;
+      markSelection();
+    }
 
     /* ---------- interaction ---------- */
     tappable(edgeHitSel, (ev, d) => {
+      if (selNode) {
+        selNode.fx = null;
+        selNode.fy = null;
+      }
       selEdge = d;
       selNode = null;
       markSelection();
@@ -583,19 +636,15 @@
     });
 
     tappable(nodeHitSel, (ev, d) => {
-      selNode = d;
-      selEdge = null;
-      markSelection();
       const opening = !expanded.has(d.id);
+      selectNode(d);
       toggleWords(d);
       showRootPanel(d);
       if (opening && phone()) setTimeout(() => focusOn(d, Math.max(zk, 1.15)), 320);
     });
 
     tappable(bg, () => {
-      selEdge = null;
-      selNode = null;
-      markSelection();
+      deselectAll();
       closePanel();
     });
 
@@ -666,6 +715,13 @@
             learned,
             hue: rootNode.hue,
             domain: rootNode.domain, // so the cluster force pulls it toward the same galaxy, not the canvas center
+            // ...unless the parent itself is an asteroid, drifting loose and
+            // unbound to that galaxy's cluster (domX/domY special-case
+            // asteroids to the canvas center instead). Without this, an
+            // asteroid's word gets yanked at full strength toward a domain
+            // cluster the parent isn't anywhere near, fighting the much
+            // shorter parent-child link and visibly flying off on expand.
+            asteroid: rootNode.asteroid,
             x: rootNode.x + (Math.random() - 0.5) * 30,
             y: rootNode.y + (Math.random() - 0.5) * 30,
           };
@@ -808,8 +864,7 @@
     const currentRootId = api().getSave().currentRootId;
     const currentNode = currentRootId && nodes.find((n) => n.id === currentRootId);
     if (currentNode) {
-      selNode = currentNode;
-      markSelection();
+      selectNode(currentNode);
       if (!expanded.has(currentNode.id)) toggleWords(currentNode);
       showRootPanel(currentNode);
       focusOn(currentNode, 1.3);
@@ -822,9 +877,7 @@
       panel.hidden = false;
       panel.innerHTML = `<button class="web-panel-close" aria-label="Close">×</button>${html}`;
       panel.querySelector(".web-panel-close").addEventListener("click", () => {
-        selEdge = null;
-        selNode = null;
-        markSelection();
+        deselectAll();
         closePanel();
       });
       panel.scrollTop = 0;
