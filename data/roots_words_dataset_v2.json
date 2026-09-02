@@ -4,43 +4,49 @@
     "version": 2,
     "organizing_principle": "Roots selected by measured productivity across a GRE-level corpus, then grouped into 13 semantic domains defined for this project. Grouping and ordering are original to this dataset.",
     "content_note": "Root-to-meaning mappings are factual linguistic data. All definitions, example sentences, domain groupings, and notes are original work written for this project. No text from any published vocabulary book is reproduced.",
-    "root_count": 235,
-    "word_count": 1097,
-    "domain_count": 15,
+    "root_count": 236,
+    "word_count": 1098,
+    "domain_count": 18,
     "roots_per_domain": {
       "speech_and_writing": 18,
       "mind_and_emotion": 20,
       "knowledge_and_perception": 17,
-      "motion_and_force": 29,
-      "structure_and_measure": 25,
+      "force_and_manipulation": 15,
+      "motion_and_force": 16,
+      "structure_and_measure": 24,
       "time_and_change": 12,
       "people_and_society": 11,
       "power_and_conflict": 16,
-      "value_and_judgment": 28,
-      "body_and_life": 22,
-      "kinship_and_gender": 6,
-      "world_and_nature": 12,
-      "quantity_and_scale": 15,
+      "value_and_judgment": 12,
+      "body_and_life": 16,
+      "truth_and_deception": 7,
+      "quantity_and_scale": 18,
+      "life_and_vitality": 10,
+      "kinship_and_gender": 7,
+      "world_and_nature": 13,
       "law_and_governance": 4
     },
     "words_per_domain": {
       "mind_and_emotion": 84,
       "unrooted": 171,
-      "quantity_and_scale": 53,
-      "kinship_and_gender": 12,
+      "quantity_and_scale": 63,
+      "kinship_and_gender": 13,
       "people_and_society": 30,
-      "body_and_life": 99,
-      "structure_and_measure": 121,
+      "body_and_life": 63,
+      "structure_and_measure": 112,
       "knowledge_and_perception": 75,
       "speech_and_writing": 77,
-      "value_and_judgment": 84,
+      "life_and_vitality": 48,
+      "value_and_judgment": 32,
       "time_and_change": 39,
-      "world_and_nature": 48,
-      "motion_and_force": 130,
+      "world_and_nature": 50,
+      "force_and_manipulation": 97,
+      "motion_and_force": 45,
       "power_and_conflict": 57,
+      "truth_and_deception": 25,
       "law_and_governance": 17
     },
-    "words_on_gre_list": 419,
+    "words_on_gre_list": 420,
     "roots_without_words": [
       "agogos",
       "iatreia",
@@ -69,7 +75,7 @@
       "ante_",
       "per_"
     ],
-    "gre_list_word_count": 419
+    "gre_list_word_count": 420
   },
   "roots": [
     {
@@ -309,7 +315,7 @@
       "root": "teneo",
       "origin": "Latin",
       "meaning": "to hold",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "note": "The most productive root measured: tenacious, abstain, untenable."
     },
     {
@@ -317,7 +323,7 @@
       "root": "tendo",
       "origin": "Latin",
       "meaning": "to stretch",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "note": "Stretching and straining: ostentatious, contentious, tenuous."
     },
     {
@@ -325,7 +331,7 @@
       "root": "traho, tractus",
       "origin": "Latin",
       "meaning": "to drag, pull",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "note": "Pulling: intractable, protracted, tractable."
     },
     {
@@ -333,7 +339,7 @@
       "root": "fero",
       "origin": "Latin",
       "meaning": "to carry",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "note": "Carrying: confer, deference, proffer."
     },
     {
@@ -365,7 +371,7 @@
       "root": "pello, pulsus",
       "origin": "Latin",
       "meaning": "to drive",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "note": "Driving: compel, repulse, impel."
     },
     {
@@ -373,7 +379,7 @@
       "root": "duco, ductus",
       "origin": "Latin",
       "meaning": "to lead",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "note": "Leading: conduce, induce, abduct."
     },
     {
@@ -381,7 +387,7 @@
       "root": "agogos",
       "origin": "Greek",
       "meaning": "leading",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "note": "One who leads: demagogue, pedagogue."
     },
     {
@@ -389,7 +395,7 @@
       "root": "sequor",
       "origin": "Latin",
       "meaning": "to follow",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "note": "Following: obsequious, sequel, consecutive."
     },
     {
@@ -485,7 +491,7 @@
       "root": "verto, versus",
       "origin": "Latin",
       "meaning": "to turn",
-      "domain": "structure_and_measure",
+      "domain": "force_and_manipulation",
       "note": "Turning: adverse, covert, introvert."
     },
     {
@@ -717,7 +723,7 @@
       "root": "kallos",
       "origin": "Greek",
       "meaning": "beauty",
-      "domain": "value_and_judgment",
+      "domain": "body_and_life",
       "note": "Beauty: calligraphy, callipygian."
     },
     {
@@ -725,7 +731,7 @@
       "root": "verus",
       "origin": "Latin",
       "meaning": "true",
-      "domain": "value_and_judgment",
+      "domain": "truth_and_deception",
       "note": "Truth: veracity, verisimilar, aver."
     },
     {
@@ -733,7 +739,7 @@
       "root": "falsus",
       "origin": "Latin",
       "meaning": "false",
-      "domain": "value_and_judgment",
+      "domain": "truth_and_deception",
       "note": "Falsity: fallacious, falsify."
     },
     {
@@ -741,7 +747,7 @@
       "root": "gravis",
       "origin": "Latin",
       "meaning": "heavy, serious",
-      "domain": "value_and_judgment",
+      "domain": "quantity_and_scale",
       "note": "Weight and seriousness: gravitas, aggravate, grievous."
     },
     {
@@ -749,7 +755,7 @@
       "root": "levis",
       "origin": "Latin",
       "meaning": "light (weight)",
-      "domain": "value_and_judgment",
+      "domain": "quantity_and_scale",
       "note": "Lightness: alleviate, levity, elevate."
     },
     {
@@ -757,7 +763,7 @@
       "root": "acer",
       "origin": "Latin",
       "meaning": "sharp",
-      "domain": "value_and_judgment",
+      "domain": "body_and_life",
       "note": "Sharpness: acerbic, acrid, exacerbate."
     },
     {
@@ -773,7 +779,7 @@
       "root": "summus",
       "origin": "Latin",
       "meaning": "highest",
-      "domain": "value_and_judgment",
+      "domain": "quantity_and_scale",
       "note": "The peak: consummate, summit."
     },
     {
@@ -781,7 +787,7 @@
       "root": "bios",
       "origin": "Greek",
       "meaning": "life",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "note": "Life: biopsy, symbiosis, biosphere."
     },
     {
@@ -789,7 +795,7 @@
       "root": "vivo",
       "origin": "Latin",
       "meaning": "to live",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "note": "Living: vivacious, convivial, revive."
     },
     {
@@ -797,7 +803,7 @@
       "root": "mors, mortis",
       "origin": "Latin",
       "meaning": "death",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "note": "Death: moribund, mortify, immortal."
     },
     {
@@ -805,7 +811,7 @@
       "root": "genesis",
       "origin": "Greek",
       "meaning": "birth, origin",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "note": "Origins and descent: congenital, genealogy, progeny."
     },
     {
@@ -813,7 +819,7 @@
       "root": "natus",
       "origin": "Latin",
       "meaning": "born",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "note": "Birth: nascent, innate, preternatural."
     },
     {
@@ -901,7 +907,7 @@
       "root": "algos",
       "origin": "Greek",
       "meaning": "pain",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "note": "Pain: neuralgia, nostalgia, analgesic."
     },
     {
@@ -909,7 +915,7 @@
       "root": "iatreia",
       "origin": "Greek",
       "meaning": "healing",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "note": "Medical care: pediatrics, geriatrics, podiatry."
     },
     {
@@ -1157,7 +1163,7 @@
       "root": "geras",
       "origin": "Greek",
       "meaning": "old age",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "note": "Aging: geriatrics, gerontology."
     },
     {
@@ -1189,7 +1195,7 @@
       "root": "pyge",
       "origin": "Greek",
       "meaning": "buttocks",
-      "domain": "value_and_judgment",
+      "domain": "body_and_life",
       "note": "A narrow root, retained for callipygian."
     },
     {
@@ -1213,7 +1219,7 @@
       "root": "ago, actus",
       "origin": "Latin",
       "meaning": "to do, drive",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "note": "Compulsion and enormity: cogent, exigent, prodigious."
     },
     {
@@ -1237,7 +1243,7 @@
       "root": "capio, captus",
       "origin": "Latin",
       "meaning": "to take, seize",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "note": "Seizing and holding: incipient, capacious, susceptible."
     },
     {
@@ -1261,7 +1267,7 @@
       "root": "pungo, punctus",
       "origin": "Latin",
       "meaning": "to prick, pierce",
-      "domain": "value_and_judgment",
+      "domain": "body_and_life",
       "note": "Sharpness, precision, and remorse: pungent, punctilious, compunction."
     },
     {
@@ -1269,7 +1275,7 @@
       "root": "credo, creditus",
       "origin": "Latin",
       "meaning": "to believe",
-      "domain": "value_and_judgment",
+      "domain": "truth_and_deception",
       "note": "Trust granted and withheld: credulous, incredulous, miscreant."
     },
     {
@@ -1277,7 +1283,7 @@
       "root": "fides",
       "origin": "Latin",
       "meaning": "faith, trust",
-      "domain": "value_and_judgment",
+      "domain": "truth_and_deception",
       "note": "Trust kept and broken: fidelity, perfidy, diffident."
     },
     {
@@ -1317,7 +1323,7 @@
       "root": "salus, salutis",
       "origin": "Latin",
       "meaning": "health, well-being",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "note": "Wellness offered and wished: salubrious, salutary, salutation."
     },
     {
@@ -1389,7 +1395,7 @@
       "root": "calumnia",
       "origin": "Latin",
       "meaning": "false accusation",
-      "domain": "value_and_judgment",
+      "domain": "truth_and_deception",
       "note": "A lie told to wound: calumny, calumniate."
     },
     {
@@ -1445,7 +1451,7 @@
       "root": "mendax, mendacis",
       "origin": "Latin",
       "meaning": "lying",
-      "domain": "value_and_judgment",
+      "domain": "truth_and_deception",
       "note": "A habit of untruth: mendacity, mendacious."
     },
     {
@@ -1501,7 +1507,7 @@
       "root": "peto, petitus",
       "origin": "Latin",
       "meaning": "to seek, rush at",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "note": "A drive toward something: impetuous, impetus, petulant."
     },
     {
@@ -1533,7 +1539,7 @@
       "root": "noceo",
       "origin": "Latin",
       "meaning": "to harm",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "note": "Harmless and harmful: innocuous, noxious, obnoxious."
     },
     {
@@ -1605,7 +1611,7 @@
       "root": "jacio, jactus",
       "origin": "Latin",
       "meaning": "to throw",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "note": "Thrown down, together, or in: abject, conjectural, interject."
     },
     {
@@ -1621,7 +1627,7 @@
       "root": "stringo, strictus",
       "origin": "Latin",
       "meaning": "to draw tight, bind",
-      "domain": "value_and_judgment",
+      "domain": "force_and_manipulation",
       "note": "Bound tight, in manner or rule: stringent, astringent, constrict."
     },
     {
@@ -1709,7 +1715,7 @@
       "root": "spargo, sparsus",
       "origin": "Latin",
       "meaning": "to scatter",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "note": "Scattered doubt, or scattered wide: aspersion, sparse, disperse."
     },
     {
@@ -1725,7 +1731,7 @@
       "root": "fingo, fictus",
       "origin": "Latin",
       "meaning": "to shape, pretend",
-      "domain": "value_and_judgment",
+      "domain": "truth_and_deception",
       "note": "A shaped lie, or a shaped meaning: feign, feint, figurative."
     },
     {
@@ -1773,7 +1779,7 @@
       "root": "flagro, flagratus",
       "origin": "Latin",
       "meaning": "to burn, blaze",
-      "domain": "value_and_judgment",
+      "domain": "world_and_nature",
       "note": "A blaze that consumes, or wrongdoing that blazes out in the open: conflagration, flagrant."
     },
     {
@@ -1972,6 +1978,14 @@
       "domain": "structure_and_measure",
       "note": "A prefix, not a taught root: seen only as a hint (perturb, perspective, pervasive...).",
       "affix": true
+    },
+    {
+      "id": "nepos",
+      "root": "nepos, nepotis",
+      "origin": "Latin",
+      "meaning": "nephew, grandson",
+      "domain": "kinship_and_gender",
+      "note": "Favor kept in the family: nepotism."
     }
   ],
   "words": [
@@ -2620,7 +2634,7 @@
         "iatreia"
       ],
       "primary_root": "geras",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "adjective",
       "definition": "Relating to old age or its medical care.",
       "example": "The hospital opened a geriatric ward for its oldest patients.",
@@ -3057,7 +3071,7 @@
         "graphein"
       ],
       "primary_root": "kallos",
-      "domain": "value_and_judgment",
+      "domain": "body_and_life",
       "part_of_speech": "noun",
       "definition": "The art of beautiful handwriting.",
       "example": "She practiced calligraphy until each wedding invitation looked engraved.",
@@ -3096,7 +3110,7 @@
         "pyge"
       ],
       "primary_root": "kallos",
-      "domain": "value_and_judgment",
+      "domain": "body_and_life",
       "part_of_speech": "adjective",
       "definition": "Having beautifully shaped buttocks.",
       "example": "The sculptor was praised for his callipygian marble figures.",
@@ -3109,7 +3123,7 @@
         "logos"
       ],
       "primary_root": "geras",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "noun",
       "definition": "The study of aging and the problems of the old.",
       "example": "Her research in gerontology focused on keeping the elderly active.",
@@ -3206,7 +3220,7 @@
         "logos"
       ],
       "primary_root": "bios",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "adjective",
       "definition": "Relating to living organisms.",
       "example": "The biological clock ticks differently for every species.",
@@ -3219,7 +3233,7 @@
         "graphein"
       ],
       "primary_root": "bios",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "noun",
       "definition": "An account of a person's life written by someone else.",
       "example": "The biography traced the inventor from his boyhood to his last patent.",
@@ -3246,7 +3260,7 @@
         "opsis"
       ],
       "primary_root": "bios",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "noun",
       "definition": "The removal of tissue to examine it for disease.",
       "example": "The biopsy confirmed the lump was harmless.",
@@ -3662,7 +3676,7 @@
         "con_"
       ],
       "primary_root": "summus",
-      "domain": "value_and_judgment",
+      "domain": "quantity_and_scale",
       "part_of_speech": "adjective",
       "definition": "Showing the highest skill; complete and perfect.",
       "example": "She handled the hostile crowd with the ease of a consummate professional.",
@@ -3675,7 +3689,7 @@
         "con_"
       ],
       "primary_root": "summus",
-      "domain": "value_and_judgment",
+      "domain": "quantity_and_scale",
       "part_of_speech": "noun",
       "definition": "The completion or perfection of something.",
       "example": "The signing was the consummation of two years of quiet negotiation.",
@@ -3876,7 +3890,7 @@
         "logos"
       ],
       "primary_root": "genesis",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "noun",
       "definition": "The study of family lines and descent.",
       "example": "Her genealogy traced the family back to a single farming village.",
@@ -3888,7 +3902,7 @@
         "genesis"
       ],
       "primary_root": "genesis",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "noun",
       "definition": "The origin or beginning of something.",
       "example": "A chance remark was the genesis of the entire invention.",
@@ -3900,7 +3914,7 @@
         "genesis"
       ],
       "primary_root": "genesis",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "noun",
       "definition": "The study of heredity and how traits pass to offspring.",
       "example": "Advances in genetics let doctors predict certain inherited risks.",
@@ -3912,7 +3926,7 @@
         "genesis"
       ],
       "primary_root": "genesis",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "noun",
       "definition": "A scientist who studies genes and heredity.",
       "example": "The geneticist mapped the gene responsible for the rare condition.",
@@ -3925,7 +3939,7 @@
         "con_"
       ],
       "primary_root": "genesis",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "adjective",
       "definition": "Present from birth; also, so deeply ingrained in someone that it seems as if it were.",
       "example": "He was a congenital worrier, anxious about one thing or another since childhood.",
@@ -4273,7 +4287,7 @@
         "bios"
       ],
       "primary_root": "bios",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "noun",
       "definition": "The regions of Earth occupied by living things.",
       "example": "Pollution in one river can ripple through the whole biosphere.",
@@ -4286,7 +4300,7 @@
         "syn"
       ],
       "primary_root": "bios",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "noun",
       "definition": "A close relationship between two different organisms, often to mutual benefit.",
       "example": "The clownfish and anemone live in a well-known symbiosis.",
@@ -4323,7 +4337,7 @@
         "algos"
       ],
       "primary_root": "algos",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "noun",
       "definition": "A sentimental longing for the past.",
       "example": "The old song filled him with a warm nostalgia for his school years.",
@@ -4335,7 +4349,7 @@
         "algos"
       ],
       "primary_root": "algos",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "noun",
       "definition": "A medicine that relieves pain.",
       "example": "The dentist gave him an analgesic before the procedure.",
@@ -4739,7 +4753,7 @@
         "pro_"
       ],
       "primary_root": "genesis",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "noun",
       "definition": "A person's descendants or offspring.",
       "example": "The old apple tree's progeny grew in orchards across the county.",
@@ -4751,7 +4765,7 @@
         "genesis"
       ],
       "primary_root": "genesis",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "noun",
       "definition": "A unit of heredity passed from parent to offspring.",
       "example": "Scientists isolated the gene linked to the trait.",
@@ -4850,7 +4864,7 @@
         "tenere"
       ],
       "primary_root": "tenere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Holding firmly; stubbornly persistent.",
       "example": "Her tenacious grip on the rope kept them both from falling.",
@@ -4862,7 +4876,7 @@
         "tenere"
       ],
       "primary_root": "tenere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "noun",
       "definition": "A principle held to be true by a group.",
       "example": "Nonviolence was the central tenet of the movement.",
@@ -4874,7 +4888,7 @@
         "tenere"
       ],
       "primary_root": "tenere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "noun",
       "definition": "The holding of a position or property, especially permanently.",
       "example": "After six years she was granted tenure at the university.",
@@ -4886,7 +4900,7 @@
         "tenere"
       ],
       "primary_root": "tenere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Able to be defended or maintained.",
       "example": "His argument was no longer tenable once the data came in.",
@@ -4899,7 +4913,7 @@
         "un_"
       ],
       "primary_root": "tenere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Impossible to defend against objection.",
       "example": "The policy became untenable after three separate investigations.",
@@ -4911,7 +4925,7 @@
         "tenere"
       ],
       "primary_root": "tenere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "verb",
       "definition": "To hold oneself back from doing something.",
       "example": "Two members chose to abstain rather than take a side.",
@@ -4923,7 +4937,7 @@
         "tenere"
       ],
       "primary_root": "tenere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "noun",
       "definition": "The practice of refraining from something.",
       "example": "His abstinence from sugar lasted exactly nine days.",
@@ -4936,7 +4950,7 @@
         "sub_"
       ],
       "primary_root": "tenere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "verb",
       "definition": "To hold up, support, or keep going.",
       "example": "The charity could not sustain three shelters on one grant.",
@@ -4949,7 +4963,7 @@
         "re_"
       ],
       "primary_root": "tenere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "noun",
       "definition": "The act of keeping or holding on to something.",
       "example": "The company studied why employee retention had dropped.",
@@ -4962,7 +4976,7 @@
         "per_"
       ],
       "primary_root": "tenere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Relevant; bearing on the matter at hand.",
       "example": "She asked the one pertinent question everyone else had missed.",
@@ -4975,7 +4989,7 @@
         "con_"
       ],
       "primary_root": "tenere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "verb",
       "definition": "To tolerate or give approval to.",
       "example": "The board would not countenance another delay.",
@@ -4988,7 +5002,7 @@
         "de_"
       ],
       "primary_root": "tenere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "verb",
       "definition": "To hold back or keep in custody.",
       "example": "Customs officers detained him for two hours of questioning.",
@@ -5000,7 +5014,7 @@
         "tenere"
       ],
       "primary_root": "tenere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Clinging persistently to a position or substance.",
       "example": "The vine's tenacious roots split the old brick wall.",
@@ -5012,7 +5026,7 @@
         "tendere"
       ],
       "primary_root": "tendere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Very weak or slight; thin.",
       "example": "The evidence linking the two events was tenuous at best.",
@@ -5025,7 +5039,7 @@
         "ad_"
       ],
       "primary_root": "tendere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "verb",
       "definition": "To reduce in force, value, or thickness.",
       "example": "Distance attenuates the signal until it fades entirely.",
@@ -5038,7 +5052,7 @@
         "con_"
       ],
       "primary_root": "tendere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Causing or likely to cause argument.",
       "example": "Redistricting is the most contentious item on the agenda.",
@@ -5051,7 +5065,7 @@
         "ob_"
       ],
       "primary_root": "tendere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Showy in a way meant to impress.",
       "example": "The ostentatious gold fixtures impressed no one at the dinner.",
@@ -5064,7 +5078,7 @@
         "pre_"
       ],
       "primary_root": "tendere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Claiming greater importance or merit than is deserved.",
       "example": "The menu's pretentious descriptions could not rescue the food.",
@@ -5076,7 +5090,7 @@
         "tendere"
       ],
       "primary_root": "tendere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Promoting a particular cause; biased.",
       "example": "The report was tendentious, quoting only sources that agreed.",
@@ -5089,7 +5103,7 @@
         "pro_"
       ],
       "primary_root": "tendere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "verb",
       "definition": "To be a sign or warning of something to come.",
       "example": "The falling barometer seemed to portend a rough crossing.",
@@ -5102,7 +5116,7 @@
         "dis_"
       ],
       "primary_root": "tendere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "verb",
       "definition": "To swell or stretch out from internal pressure.",
       "example": "Gas can distend the abdomen and cause real discomfort.",
@@ -5115,7 +5129,7 @@
         "con_"
       ],
       "primary_root": "tendere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "verb",
       "definition": "To assert, or to struggle against.",
       "example": "The lawyers contend that the contract was never valid.",
@@ -5128,7 +5142,7 @@
         "ex_"
       ],
       "primary_root": "tendere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "verb",
       "definition": "To make an offense seem less serious.",
       "example": "Nothing could extenuate a betrayal of that scale.",
@@ -5788,7 +5802,7 @@
         "ad_"
       ],
       "primary_root": "vertere",
-      "domain": "structure_and_measure",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Unfavorable or harmful.",
       "example": "The drug was withdrawn after adverse reactions appeared.",
@@ -5801,7 +5815,7 @@
         "ad_"
       ],
       "primary_root": "vertere",
-      "domain": "structure_and_measure",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Strongly disinclined toward something.",
       "example": "He is averse to any plan involving early mornings.",
@@ -5814,7 +5828,7 @@
         "in_neg"
       ],
       "primary_root": "vertere",
-      "domain": "structure_and_measure",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Unintentional; done without noticing.",
       "example": "An inadvertent keystroke deleted the whole paragraph.",
@@ -5827,7 +5841,7 @@
         "sub_"
       ],
       "primary_root": "vertere",
-      "domain": "structure_and_measure",
+      "domain": "force_and_manipulation",
       "part_of_speech": "verb",
       "definition": "To undermine the power or authority of.",
       "example": "The leak was designed to subvert the negotiations.",
@@ -5840,7 +5854,7 @@
         "in_neg"
       ],
       "primary_root": "vertere",
-      "domain": "structure_and_measure",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Impossible to dispute.",
       "example": "The video was incontrovertible proof of what happened.",
@@ -5852,7 +5866,7 @@
         "vertere"
       ],
       "primary_root": "vertere",
-      "domain": "structure_and_measure",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Able to adapt to many functions.",
       "example": "A versatile player, she covered three positions that season.",
@@ -5865,7 +5879,7 @@
         "ad_"
       ],
       "primary_root": "vertere",
-      "domain": "structure_and_measure",
+      "domain": "force_and_manipulation",
       "part_of_speech": "noun",
       "definition": "A strong dislike.",
       "example": "She has a lifelong aversion to crowded trains.",
@@ -5878,7 +5892,7 @@
         "dis_"
       ],
       "primary_root": "vertere",
-      "domain": "structure_and_measure",
+      "domain": "force_and_manipulation",
       "part_of_speech": "verb",
       "definition": "To turn aside from a course.",
       "example": "Police diverted traffic around the flooded underpass.",
@@ -5991,7 +6005,7 @@
         "natus"
       ],
       "primary_root": "natus",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "adjective",
       "definition": "Just coming into existence.",
       "example": "The nascent industry employed fewer than fifty people.",
@@ -6004,7 +6018,7 @@
         "in_into"
       ],
       "primary_root": "natus",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "adjective",
       "definition": "Inborn; present from birth.",
       "example": "Some birds have an innate sense of magnetic direction.",
@@ -6017,7 +6031,7 @@
         "pre_"
       ],
       "primary_root": "natus",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "adjective",
       "definition": "Beyond what is normal or natural.",
       "example": "She showed a preternatural calm during the emergency.",
@@ -6030,7 +6044,7 @@
         "re_"
       ],
       "primary_root": "natus",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "noun",
       "definition": "A revival or rebirth of interest.",
       "example": "The neighborhood is enjoying a culinary renaissance.",
@@ -6043,7 +6057,7 @@
         "con_"
       ],
       "primary_root": "natus",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "adjective",
       "definition": "Related in origin, especially of words.",
       "example": "English 'father' and German 'Vater' are cognate.",
@@ -6055,7 +6069,7 @@
         "natus"
       ],
       "primary_root": "natus",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "adjective",
       "definition": "Lacking experience or judgment; unsophisticated.",
       "example": "It was naive to assume the deadline would hold.",
@@ -6068,7 +6082,7 @@
         "con_"
       ],
       "primary_root": "ferre",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "verb",
       "definition": "To grant, or to consult together.",
       "example": "The university will confer degrees on Saturday.",
@@ -6080,7 +6094,7 @@
         "ferre"
       ],
       "primary_root": "ferre",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "noun",
       "definition": "Respectful submission to another's judgment.",
       "example": "Out of deference to his age, no one interrupted.",
@@ -6093,7 +6107,7 @@
         "pro_"
       ],
       "primary_root": "ferre",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "verb",
       "definition": "To offer for acceptance.",
       "example": "She proffered an apology before anyone asked for one.",
@@ -6106,7 +6120,7 @@
         "in_into"
       ],
       "primary_root": "ferre",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "verb",
       "definition": "To conclude from evidence rather than explicit statement.",
       "example": "From the empty shelves I inferred the store was closing.",
@@ -6118,7 +6132,7 @@
         "ferre"
       ],
       "primary_root": "ferre",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Producing abundantly.",
       "example": "The valley's fertile soil supported three harvests a year.",
@@ -6130,7 +6144,7 @@
         "ferre"
       ],
       "primary_root": "ferre",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Giving off a strong smell.",
       "example": "The odoriferous cheese cleared the entire train carriage.",
@@ -6674,7 +6688,7 @@
         "ad_"
       ],
       "primary_root": "levis",
-      "domain": "value_and_judgment",
+      "domain": "quantity_and_scale",
       "part_of_speech": "verb",
       "definition": "To make less severe.",
       "example": "The grant will alleviate some of the district's shortfall.",
@@ -6686,7 +6700,7 @@
         "levis"
       ],
       "primary_root": "levis",
-      "domain": "value_and_judgment",
+      "domain": "quantity_and_scale",
       "part_of_speech": "noun",
       "definition": "Humor or lack of seriousness.",
       "example": "A moment of levity broke the tension in the room.",
@@ -6699,7 +6713,7 @@
         "ex_"
       ],
       "primary_root": "levis",
-      "domain": "value_and_judgment",
+      "domain": "quantity_and_scale",
       "part_of_speech": "verb",
       "definition": "To raise or lift up.",
       "example": "The promotion elevated her above her former supervisor.",
@@ -6863,7 +6877,7 @@
         "con_"
       ],
       "primary_root": "agere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Clearly reasoned and convincing.",
       "example": "Her cogent argument left no room for rebuttal.",
@@ -6876,7 +6890,7 @@
         "ex_"
       ],
       "primary_root": "agere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Demanding immediate attention; pressing.",
       "example": "The exigent circumstances forced the board to meet at midnight.",
@@ -6888,7 +6902,7 @@
         "agere"
       ],
       "primary_root": "agere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Open to more than one interpretation.",
       "example": "His ambiguous answer satisfied no one.",
@@ -6900,7 +6914,7 @@
         "agere"
       ],
       "primary_root": "agere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "noun",
       "definition": "The process of taking legal action to settle a dispute.",
       "example": "The dispute dragged on for years of costly litigation.",
@@ -6913,7 +6927,7 @@
         "in_neg"
       ],
       "primary_root": "agere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Refusing to change one's views or agree about something.",
       "example": "The intransigent committee rejected every compromise offered.",
@@ -6926,7 +6940,7 @@
         "pro_"
       ],
       "primary_root": "agere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Wastefully extravagant.",
       "example": "The prodigal heir spent the fortune within a decade.",
@@ -6939,7 +6953,7 @@
         "pro_"
       ],
       "primary_root": "agere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Remarkably great in extent, size, or degree.",
       "example": "The library held a prodigious collection of manuscripts.",
@@ -6952,7 +6966,7 @@
         "ex_"
       ],
       "primary_root": "agere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Making great demands on skill, attention, or resources.",
       "example": "The exacting editor rejected three drafts before approving the final one.",
@@ -7114,7 +7128,7 @@
         "capere"
       ],
       "primary_root": "capere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Tending to find fault or raise petty objections.",
       "example": "The captious reviewer picked apart every sentence.",
@@ -7127,7 +7141,7 @@
         "in_into"
       ],
       "primary_root": "capere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "In an early stage; beginning to happen.",
       "example": "Doctors caught the incipient infection before it could spread.",
@@ -7139,7 +7153,7 @@
         "capere"
       ],
       "primary_root": "capere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Having a lot of space inside; roomy.",
       "example": "Her capacious handbag seemed to hold an entire office.",
@@ -7152,7 +7166,7 @@
         "sub_"
       ],
       "primary_root": "capere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Likely to be influenced or harmed by something.",
       "example": "Newborns are especially susceptible to the cold.",
@@ -7165,7 +7179,7 @@
         "ante_"
       ],
       "primary_root": "capere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "verb",
       "definition": "To regard as probable and prepare for accordingly.",
       "example": "The staff anticipated a rush and doubled the order.",
@@ -7178,7 +7192,7 @@
         "manus"
       ],
       "primary_root": "capere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "verb",
       "definition": "To set free from legal, social, or political restrictions.",
       "example": "The reform sought to emancipate tenant farmers from generations of debt.",
@@ -7344,7 +7358,7 @@
         "ex_"
       ],
       "primary_root": "pungere",
-      "domain": "value_and_judgment",
+      "domain": "body_and_life",
       "part_of_speech": "verb",
       "definition": "To erase or remove completely.",
       "example": "The judge ordered the old conviction expunged from his record.",
@@ -7356,7 +7370,7 @@
         "pungere"
       ],
       "primary_root": "pungere",
-      "domain": "value_and_judgment",
+      "domain": "body_and_life",
       "part_of_speech": "adjective",
       "definition": "Evoking a keen sense of sadness or regret.",
       "example": "The old photographs made for a poignant reminder of the flood.",
@@ -7368,7 +7382,7 @@
         "pungere"
       ],
       "primary_root": "pungere",
-      "domain": "value_and_judgment",
+      "domain": "body_and_life",
       "part_of_speech": "adjective",
       "definition": "Showing great attention to detail or correct behavior.",
       "example": "The punctilious host arranged every place setting to the millimeter.",
@@ -7380,7 +7394,7 @@
         "pungere"
       ],
       "primary_root": "pungere",
-      "domain": "value_and_judgment",
+      "domain": "body_and_life",
       "part_of_speech": "adjective",
       "definition": "Having a sharply strong taste or smell.",
       "example": "The pungent smell of vinegar filled the small kitchen.",
@@ -7393,7 +7407,7 @@
         "con_"
       ],
       "primary_root": "pungere",
-      "domain": "value_and_judgment",
+      "domain": "body_and_life",
       "part_of_speech": "noun",
       "definition": "A feeling of guilt or unease about one's actions.",
       "example": "He showed no compunction about canceling the deal at the last minute.",
@@ -7405,7 +7419,7 @@
         "credere"
       ],
       "primary_root": "credere",
-      "domain": "value_and_judgment",
+      "domain": "truth_and_deception",
       "part_of_speech": "adjective",
       "definition": "Too ready to believe things; easily deceived.",
       "example": "The credulous investor never questioned the impossible returns.",
@@ -7417,7 +7431,7 @@
         "credere"
       ],
       "primary_root": "credere",
-      "domain": "value_and_judgment",
+      "domain": "truth_and_deception",
       "part_of_speech": "noun",
       "definition": "Belief in or acceptance of something as true.",
       "example": "The rumor gained credence once two witnesses confirmed it.",
@@ -7430,7 +7444,7 @@
         "in_neg"
       ],
       "primary_root": "credere",
-      "domain": "value_and_judgment",
+      "domain": "truth_and_deception",
       "part_of_speech": "adjective",
       "definition": "Unwilling or unable to believe something.",
       "example": "She gave an incredulous laugh at the outrageous claim.",
@@ -7443,7 +7457,7 @@
         "mis_"
       ],
       "primary_root": "credere",
-      "domain": "value_and_judgment",
+      "domain": "truth_and_deception",
       "part_of_speech": "noun",
       "definition": "A person who behaves badly or unlawfully.",
       "example": "The night watchman chased the miscreants off the property.",
@@ -7455,7 +7469,7 @@
         "credere"
       ],
       "primary_root": "credere",
-      "domain": "value_and_judgment",
+      "domain": "truth_and_deception",
       "part_of_speech": "noun",
       "definition": "A statement of the beliefs that guide someone's actions.",
       "example": "Honesty above comfort was the family's unspoken credo.",
@@ -7468,7 +7482,7 @@
         "dis_"
       ],
       "primary_root": "fides",
-      "domain": "value_and_judgment",
+      "domain": "truth_and_deception",
       "part_of_speech": "adjective",
       "definition": "Modest or shy because of a lack of self-confidence.",
       "example": "The diffident intern hesitated before sharing her idea.",
@@ -7481,7 +7495,7 @@
         "per_"
       ],
       "primary_root": "fides",
-      "domain": "value_and_judgment",
+      "domain": "truth_and_deception",
       "part_of_speech": "noun",
       "definition": "Deceitfulness; betrayal of trust.",
       "example": "The treaty collapsed under a decade of quiet perfidy.",
@@ -7494,7 +7508,7 @@
         "con_"
       ],
       "primary_root": "fides",
-      "domain": "value_and_judgment",
+      "domain": "truth_and_deception",
       "part_of_speech": "verb",
       "definition": "To tell someone a secret or private matter, trusting them.",
       "example": "She confided her plans to only one close friend.",
@@ -7506,7 +7520,7 @@
         "fides"
       ],
       "primary_root": "fides",
-      "domain": "value_and_judgment",
+      "domain": "truth_and_deception",
       "part_of_speech": "noun",
       "definition": "Faithfulness to a person, cause, or belief.",
       "example": "The choir sang with unusual fidelity to the original score.",
@@ -7519,7 +7533,7 @@
         "in_neg"
       ],
       "primary_root": "fides",
-      "domain": "value_and_judgment",
+      "domain": "truth_and_deception",
       "part_of_speech": "noun",
       "definition": "A person who does not believe in a particular religion.",
       "example": "The crusaders marched east to fight the infidel.",
@@ -7733,7 +7747,7 @@
         "salus"
       ],
       "primary_root": "salus",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "adjective",
       "definition": "Health-giving; pleasant and beneficial.",
       "example": "They moved to the coast for its salubrious sea air.",
@@ -7745,7 +7759,7 @@
         "salus"
       ],
       "primary_root": "salus",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "adjective",
       "definition": "Producing good effects; beneficial, especially after a setback.",
       "example": "The failed launch was a salutary lesson in over-promising.",
@@ -7757,7 +7771,7 @@
         "salus"
       ],
       "primary_root": "salus",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "noun",
       "definition": "A greeting or gesture of welcome.",
       "example": "He opened the letter with an old-fashioned salutation.",
@@ -8265,7 +8279,7 @@
         "trahere"
       ],
       "primary_root": "trahere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Easy to control or influence; manageable.",
       "example": "Clay is far more tractable than stone under a sculptor's hands.",
@@ -8278,7 +8292,7 @@
         "in_neg"
       ],
       "primary_root": "trahere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Hard to control or deal with; stubbornly unmanageable.",
       "example": "The two sides treated the border dispute as intractable for decades.",
@@ -8291,7 +8305,7 @@
         "pro_"
       ],
       "primary_root": "trahere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "verb",
       "definition": "To prolong or extend something beyond its usual length.",
       "example": "Endless objections protracted the hearing well past midnight.",
@@ -8304,7 +8318,7 @@
         "dis_"
       ],
       "primary_root": "trahere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "verb",
       "definition": "To draw someone's attention away from what they should be focused on.",
       "example": "A single buzzing phone was enough to distract the whole class.",
@@ -8317,7 +8331,7 @@
         "re_"
       ],
       "primary_root": "trahere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "verb",
       "definition": "To withdraw a statement as untrue or unjustified.",
       "example": "The paper was forced to retract its claim within a day.",
@@ -8394,7 +8408,7 @@
         "con_"
       ],
       "primary_root": "pellere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "verb",
       "definition": "To force or oblige someone to do something.",
       "example": "New evidence compelled the board to reopen the case.",
@@ -8407,7 +8421,7 @@
         "ex_"
       ],
       "primary_root": "pellere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "verb",
       "definition": "To force someone to leave a place or organization.",
       "example": "The student was expelled after the third violation.",
@@ -8420,7 +8434,7 @@
         "re_"
       ],
       "primary_root": "pellere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "verb",
       "definition": "To drive back or ward off an attack, or to cause disgust.",
       "example": "The garrison repelled three assaults before the siege finally broke.",
@@ -8433,7 +8447,7 @@
         "pro_"
       ],
       "primary_root": "pellere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "verb",
       "definition": "To drive or push something forward.",
       "example": "A single strong current propelled the raft downriver in minutes.",
@@ -8446,7 +8460,7 @@
         "de_"
       ],
       "primary_root": "ducere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "verb",
       "definition": "To reach a conclusion by reasoning from known facts.",
       "example": "From the muddy boots alone, she deduced he'd walked, not driven.",
@@ -8459,7 +8473,7 @@
         "in_into"
       ],
       "primary_root": "ducere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "verb",
       "definition": "To succeed in persuading someone to do something, or to bring about.",
       "example": "Nothing could induce the old fisherman to sell his boat.",
@@ -8471,7 +8485,7 @@
         "ducere"
       ],
       "primary_root": "ducere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "verb",
       "definition": "To tempt someone into a course of action, often unwisely.",
       "example": "The glossy brochure seduced them into a vacation they couldn't afford.",
@@ -8484,7 +8498,7 @@
         "con_"
       ],
       "primary_root": "ducere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "verb",
       "definition": "To organize and carry out a particular activity.",
       "example": "The board conducted its review with unusual speed.",
@@ -8497,7 +8511,7 @@
         "in_into"
       ],
       "primary_root": "ducere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "verb",
       "definition": "To formally admit someone into a position, office, or society.",
       "example": "She was inducted into the academy at just thirty.",
@@ -8510,7 +8524,7 @@
         "ob_"
       ],
       "primary_root": "sequi",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Excessively eager to please or obey; fawning.",
       "example": "The obsequious waiter refilled their water before it was half empty.",
@@ -8523,7 +8537,7 @@
         "con_"
       ],
       "primary_root": "sequi",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Having significant effects; important.",
       "example": "It was the most consequential vote the council had cast in years.",
@@ -8536,7 +8550,7 @@
         "sub_"
       ],
       "primary_root": "sequi",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Coming after something else in time; following.",
       "example": "Subsequent tests confirmed what the first sample had only suggested.",
@@ -8548,7 +8562,7 @@
         "sequi"
       ],
       "primary_root": "sequi",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Blindly following the lead of another; unquestioningly obedient.",
       "example": "The critic dismissed the junior poets as merely sequacious imitators.",
@@ -9524,7 +9538,7 @@
         "ad_"
       ],
       "primary_root": "verus",
-      "domain": "value_and_judgment",
+      "domain": "truth_and_deception",
       "part_of_speech": "verb",
       "definition": "To state something confidently as being the case.",
       "example": "The witness averred that she had seen the car at the scene.",
@@ -9536,7 +9550,7 @@
         "verus"
       ],
       "primary_root": "verus",
-      "domain": "value_and_judgment",
+      "domain": "truth_and_deception",
       "part_of_speech": "adjective",
       "definition": "Speaking or representing the truth; truthful.",
       "example": "The court found the veracious witness far more useful than the eager one.",
@@ -9548,7 +9562,7 @@
         "verus"
       ],
       "primary_root": "verus",
-      "domain": "value_and_judgment",
+      "domain": "truth_and_deception",
       "part_of_speech": "noun",
       "definition": "Conformity to facts; accuracy or truthfulness.",
       "example": "Editors questioned the veracity of the anonymous tip before running it.",
@@ -9560,7 +9574,7 @@
         "verus"
       ],
       "primary_root": "verus",
-      "domain": "value_and_judgment",
+      "domain": "truth_and_deception",
       "part_of_speech": "adjective",
       "definition": "Used to emphasize the aptness of a metaphor or description; genuine.",
       "example": "The attic was a veritable museum of the family's failed inventions.",
@@ -9572,7 +9586,7 @@
         "falsus"
       ],
       "primary_root": "falsus",
-      "domain": "value_and_judgment",
+      "domain": "truth_and_deception",
       "part_of_speech": "adjective",
       "definition": "Based on a mistaken belief; logically unsound.",
       "example": "The whole argument rested on a fallacious assumption about demand.",
@@ -9584,7 +9598,7 @@
         "falsus"
       ],
       "primary_root": "falsus",
-      "domain": "value_and_judgment",
+      "domain": "truth_and_deception",
       "part_of_speech": "adjective",
       "definition": "Capable of making mistakes or being wrong.",
       "example": "Even the most careful editor is fallible after the tenth read-through.",
@@ -9596,7 +9610,7 @@
         "falsus"
       ],
       "primary_root": "falsus",
-      "domain": "value_and_judgment",
+      "domain": "truth_and_deception",
       "part_of_speech": "verb",
       "definition": "To alter information dishonestly, or to prove something false.",
       "example": "The clerk falsified the shipping records to hide the shortage.",
@@ -9608,7 +9622,7 @@
         "gravis"
       ],
       "primary_root": "gravis",
-      "domain": "value_and_judgment",
+      "domain": "quantity_and_scale",
       "part_of_speech": "noun",
       "definition": "Dignity, seriousness, or solemnity of manner.",
       "example": "The retired general lent the panel a gravitas it had lacked before.",
@@ -9620,7 +9634,7 @@
         "gravis"
       ],
       "primary_root": "gravis",
-      "domain": "value_and_judgment",
+      "domain": "quantity_and_scale",
       "part_of_speech": "adjective",
       "definition": "Very severe or serious; causing grief or suffering.",
       "example": "The report described a grievous error in the original calculations.",
@@ -9633,7 +9647,7 @@
         "ad_"
       ],
       "primary_root": "gravis",
-      "domain": "value_and_judgment",
+      "domain": "quantity_and_scale",
       "part_of_speech": "verb",
       "definition": "To make a problem or situation worse; also, to irritate.",
       "example": "Skipping the follow-up visit only aggravated the injury.",
@@ -9646,7 +9660,7 @@
         "ad_"
       ],
       "primary_root": "gravis",
-      "domain": "value_and_judgment",
+      "domain": "quantity_and_scale",
       "part_of_speech": "adjective",
       "definition": "Feeling resentment at having been unfairly treated.",
       "example": "The aggrieved tenants filed a joint complaint against the landlord.",
@@ -9658,7 +9672,7 @@
         "acer"
       ],
       "primary_root": "acer",
-      "domain": "value_and_judgment",
+      "domain": "body_and_life",
       "part_of_speech": "adjective",
       "definition": "Sharp and forthright, often cuttingly so.",
       "example": "Her acerbic reviews were feared by every restaurant in town.",
@@ -9670,7 +9684,7 @@
         "acer"
       ],
       "primary_root": "acer",
-      "domain": "value_and_judgment",
+      "domain": "body_and_life",
       "part_of_speech": "adjective",
       "definition": "Angry and bitter, especially in tone or manner.",
       "example": "The merger talks collapsed into an acrimonious public dispute.",
@@ -9682,7 +9696,7 @@
         "acer"
       ],
       "primary_root": "acer",
-      "domain": "value_and_judgment",
+      "domain": "body_and_life",
       "part_of_speech": "noun",
       "definition": "Keen insight or shrewd judgment, especially in practical matters.",
       "example": "Her business acumen turned a failing shop into a local chain.",
@@ -9694,7 +9708,7 @@
         "acer"
       ],
       "primary_root": "acer",
-      "domain": "value_and_judgment",
+      "domain": "body_and_life",
       "part_of_speech": "noun",
       "definition": "Brisk and cheerful readiness or willingness.",
       "example": "The volunteers accepted the extra shift with surprising alacrity.",
@@ -9707,7 +9721,7 @@
         "ex_"
       ],
       "primary_root": "acer",
-      "domain": "value_and_judgment",
+      "domain": "body_and_life",
       "part_of_speech": "verb",
       "definition": "To make a problem, conflict, or situation worse.",
       "example": "The delayed response only exacerbated the shortage.",
@@ -9720,7 +9734,7 @@
         "con_"
       ],
       "primary_root": "vivere",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "adjective",
       "definition": "Friendly, lively, and enjoyable, especially in atmosphere.",
       "example": "The convivial dinner ran three hours past its planned end.",
@@ -9732,7 +9746,7 @@
         "vivere"
       ],
       "primary_root": "vivere",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "adjective",
       "definition": "Full of energy and enthusiasm; lively.",
       "example": "The vivacious new hire livened up even the dullest staff meeting.",
@@ -9744,7 +9758,7 @@
         "vivere"
       ],
       "primary_root": "vivere",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "adjective",
       "definition": "Producing powerful feelings or clear images in the mind.",
       "example": "His vivid account made the storm feel like it was still happening.",
@@ -9756,7 +9770,7 @@
         "vivere"
       ],
       "primary_root": "vivere",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "adjective",
       "definition": "Capable of working successfully; feasible.",
       "example": "Only one of the four proposals turned out to be financially viable.",
@@ -9769,7 +9783,7 @@
         "ad_"
       ],
       "primary_root": "mors",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "verb",
       "definition": "To gradually pay off a debt over time through regular installments.",
       "example": "The loan is amortized over twenty years of fixed payments.",
@@ -9781,7 +9795,7 @@
         "mors"
       ],
       "primary_root": "mors",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "verb",
       "definition": "To cause someone to feel deeply embarrassed or humiliated.",
       "example": "The typo on the invitation mortified the whole planning committee.",
@@ -9793,7 +9807,7 @@
         "mors"
       ],
       "primary_root": "mors",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "adjective",
       "definition": "In a state of stagnation or decline; approaching death.",
       "example": "The once-busy port had become a moribund stretch of empty docks.",
@@ -9805,7 +9819,7 @@
         "mors"
       ],
       "primary_root": "mors",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "noun",
       "definition": "A loan used to purchase property, secured by that property.",
       "example": "They finally paid off the mortgage after twenty-two years.",
@@ -10607,7 +10621,7 @@
         "dis_"
       ],
       "primary_root": "genesis",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "adjective",
       "definition": "Not candid or sincere, typically by pretending ignorance.",
       "example": "It was disingenuous to call the layoffs a restructuring.",
@@ -10620,7 +10634,7 @@
         "in_into"
       ],
       "primary_root": "genesis",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "verb",
       "definition": "To cause or give rise to a feeling, situation, or condition.",
       "example": "Years of broken promises engendered a deep distrust of the office.",
@@ -10632,7 +10646,7 @@
         "genesis"
       ],
       "primary_root": "genesis",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "adjective",
       "definition": "Friendly and cheerful in manner.",
       "example": "The genial host remembered every guest's name by the second course.",
@@ -10644,7 +10658,7 @@
         "genesis"
       ],
       "primary_root": "genesis",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "adjective",
       "definition": "Diverse in character or content; made up of unlike parts.",
       "example": "The committee was a heterogeneous mix of engineers, artists, and lawyers.",
@@ -10656,7 +10670,7 @@
         "genesis"
       ],
       "primary_root": "genesis",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "adjective",
       "definition": "Uniform in structure or composition throughout; all of the same kind.",
       "example": "The suburb had grown far more homogeneous than the city it bordered.",
@@ -10668,7 +10682,7 @@
         "genesis"
       ],
       "primary_root": "genesis",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "adjective",
       "definition": "Originating naturally in a particular place; native.",
       "example": "Only a handful of indigenous species survived the introduced predators.",
@@ -10681,7 +10695,7 @@
         "in_into"
       ],
       "primary_root": "genesis",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "adjective",
       "definition": "Clever, original, and inventive.",
       "example": "The ingenious pulley system let one person lift the whole beam.",
@@ -10694,7 +10708,7 @@
         "in_into"
       ],
       "primary_root": "genesis",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "noun",
       "definition": "The quality of being clever, original, and inventive.",
       "example": "It took real ingenuity to fix the engine with what they had on hand.",
@@ -10707,7 +10721,7 @@
         "in_into"
       ],
       "primary_root": "genesis",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "adjective",
       "definition": "Innocent and unsuspecting; artlessly frank.",
       "example": "His ingenuous questions revealed he'd never read the fine print.",
@@ -10719,7 +10733,7 @@
         "ferre"
       ],
       "primary_root": "ferre",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Slow to act; intended to cause delay.",
       "example": "The company's dilatory response cost them the contract.",
@@ -10732,7 +10746,7 @@
         "in_neg"
       ],
       "primary_root": "ferre",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Having no particular interest or sympathy; unconcerned.",
       "example": "The clerk seemed indifferent to whether the package ever arrived.",
@@ -10745,7 +10759,7 @@
         "con_"
       ],
       "primary_root": "ferre",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "verb",
       "definition": "To combine two or more things into one, often carelessly.",
       "example": "The article conflated two unrelated studies into a single claim.",
@@ -10758,7 +10772,7 @@
         "ex_"
       ],
       "primary_root": "ferre",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Very happy or proud; jubilant.",
       "example": "The whole team was elated when the grant finally came through.",
@@ -10771,7 +10785,7 @@
         "pro_"
       ],
       "primary_root": "ferre",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "verb",
       "definition": "To increase rapidly in number; to multiply.",
       "example": "Rumors proliferated the moment the office lights stayed on late.",
@@ -11308,7 +11322,7 @@
         "calumnia"
       ],
       "primary_root": "calumnia",
-      "domain": "value_and_judgment",
+      "domain": "truth_and_deception",
       "part_of_speech": "noun",
       "definition": "A false and defamatory statement intended to damage someone's reputation.",
       "example": "The senator dismissed the accusation as pure calumny.",
@@ -11320,7 +11334,7 @@
         "calumnia"
       ],
       "primary_root": "calumnia",
-      "domain": "value_and_judgment",
+      "domain": "truth_and_deception",
       "part_of_speech": "verb",
       "definition": "To make false and defamatory statements about someone.",
       "example": "Rival newspapers spent the campaign calumniating each other's candidates.",
@@ -11505,7 +11519,7 @@
         "mendax"
       ],
       "primary_root": "mendax",
-      "domain": "value_and_judgment",
+      "domain": "truth_and_deception",
       "part_of_speech": "noun",
       "definition": "The tendency to lie or be untruthful.",
       "example": "The report accused the agency of decades of mendacity.",
@@ -11517,7 +11531,7 @@
         "mendax"
       ],
       "primary_root": "mendax",
-      "domain": "value_and_judgment",
+      "domain": "truth_and_deception",
       "part_of_speech": "adjective",
       "definition": "Not telling the truth; lying.",
       "example": "His mendacious testimony fell apart under cross-examination.",
@@ -11730,7 +11744,7 @@
         "in_into"
       ],
       "primary_root": "petere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Acting quickly without thought or care for consequences.",
       "example": "His impetuous decision to quit cost him the severance package.",
@@ -11743,7 +11757,7 @@
         "in_into"
       ],
       "primary_root": "petere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "noun",
       "definition": "Something that makes a process or activity happen, or happen faster.",
       "example": "The scandal gave fresh impetus to the reform campaign.",
@@ -11755,7 +11769,7 @@
         "petere"
       ],
       "primary_root": "petere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Childishly sulky or bad-tempered.",
       "example": "The petulant reply surprised everyone who knew him as easygoing.",
@@ -11768,7 +11782,7 @@
         "con_"
       ],
       "primary_root": "petere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Having the necessary skill or knowledge to do something successfully.",
       "example": "The new hire was competent but clearly still learning the systems.",
@@ -11917,7 +11931,7 @@
         "in_neg"
       ],
       "primary_root": "nocere",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "adjective",
       "definition": "Not harmful or offensive.",
       "example": "The comment seemed innocuous until it was read out of context.",
@@ -11929,7 +11943,7 @@
         "nocere"
       ],
       "primary_root": "nocere",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "adjective",
       "definition": "Harmful, poisonous, or very unpleasant.",
       "example": "A noxious smell drifted up from the flooded basement.",
@@ -11942,7 +11956,7 @@
         "ob_"
       ],
       "primary_root": "nocere",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "adjective",
       "definition": "Extremely unpleasant, especially in an offensive or annoying way.",
       "example": "His obnoxious laugh carried across the entire restaurant.",
@@ -12245,7 +12259,7 @@
         "agere"
       ],
       "primary_root": "agere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Feeling or appearing troubled, nervous, or disturbed.",
       "example": "He grew visibly agitated the longer the meeting ran.",
@@ -12258,7 +12272,7 @@
         "con_"
       ],
       "primary_root": "agere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "verb",
       "definition": "To think deeply about something.",
       "example": "She retreated to the porch to cogitate over the offer.",
@@ -12270,7 +12284,7 @@
         "credere"
       ],
       "primary_root": "credere",
-      "domain": "value_and_judgment",
+      "domain": "truth_and_deception",
       "part_of_speech": "adjective",
       "definition": "Able to be believed; convincing.",
       "example": "His alibi only became credible once the receipt turned up.",
@@ -12320,7 +12334,7 @@
         "con_"
       ],
       "primary_root": "genesis",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "adjective",
       "definition": "Pleasant or agreeable because suited to one's taste or nature.",
       "example": "The two founders turned out to be remarkably congenial partners.",
@@ -12333,7 +12347,7 @@
         "de_"
       ],
       "primary_root": "tenere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "noun",
       "definition": "An easing of hostility or strained relations, especially between nations.",
       "example": "The two governments reached an uneasy detente after years of tension.",
@@ -12345,7 +12359,7 @@
         "tenere"
       ],
       "primary_root": "tenere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Not certain or fixed; provisional, or hesitant.",
       "example": "They set a tentative date, pending the venue's confirmation.",
@@ -12383,7 +12397,7 @@
         "vertere"
       ],
       "primary_root": "vertere",
-      "domain": "structure_and_measure",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Applicable to or true of all cases; occurring everywhere.",
       "example": "There's no universal formula for a first novel.",
@@ -12631,7 +12645,7 @@
         "gravis"
       ],
       "primary_root": "gravis",
-      "domain": "value_and_judgment",
+      "domain": "quantity_and_scale",
       "part_of_speech": "noun",
       "definition": "A real or imagined wrong regarded as grounds for complaint.",
       "example": "The union filed a formal grievance over the missed payments.",
@@ -12655,7 +12669,7 @@
         "trahere"
       ],
       "primary_root": "trahere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Existing in thought or as an idea, not having a physical or concrete existence.",
       "example": "The proposal stayed abstract for months before anyone drafted real numbers.",
@@ -12667,7 +12681,7 @@
         "vivere"
       ],
       "primary_root": "vivere",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "noun",
       "definition": "The state of being strong and full of energy.",
       "example": "The team played with a vitality no one expected after the loss.",
@@ -12715,7 +12729,7 @@
         "jacere"
       ],
       "primary_root": "jacere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Experienced or present to the maximum degree, especially of something bad; utterly hopeless.",
       "example": "The team's abject collapse in the final quarter stunned even their own fans.",
@@ -12728,7 +12742,7 @@
         "con_"
       ],
       "primary_root": "jacere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Based on guesswork rather than certain knowledge.",
       "example": "The dating of the manuscript remains largely conjectural.",
@@ -12741,7 +12755,7 @@
         "sub_"
       ],
       "primary_root": "jacere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Based on or influenced by personal feelings or opinions rather than facts.",
       "example": "Taste in music is far too subjective to argue about.",
@@ -12754,7 +12768,7 @@
         "inter_"
       ],
       "primary_root": "jacere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "verb",
       "definition": "To interrupt with a remark or comment.",
       "example": "She interjected a correction before he could finish the sentence.",
@@ -12817,7 +12831,7 @@
         "ad_"
       ],
       "primary_root": "stringere",
-      "domain": "value_and_judgment",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Sharp or severe in manner; also, causing tissue to contract.",
       "example": "The critic's astringent review ended the play's run within a week.",
@@ -12829,7 +12843,7 @@
         "stringere"
       ],
       "primary_root": "stringere",
-      "domain": "value_and_judgment",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Strict, precise, and rigorously enforced.",
       "example": "The new safety rules were far more stringent than the old ones.",
@@ -12842,7 +12856,7 @@
         "con_"
       ],
       "primary_root": "stringere",
-      "domain": "value_and_judgment",
+      "domain": "force_and_manipulation",
       "part_of_speech": "verb",
       "definition": "To make narrower, especially by squeezing or tightening.",
       "example": "The cold constricted the blood vessels near the skin's surface.",
@@ -13161,7 +13175,7 @@
         "agere"
       ],
       "primary_root": "agere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "verb",
       "definition": "To reprimand severely, especially formally or publicly.",
       "example": "The coach chastised the team for the second missed practice in a row.",
@@ -13224,7 +13238,7 @@
         "ad_"
       ],
       "primary_root": "spargere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "noun",
       "definition": "A remark that unfairly criticizes or casts doubt on someone's character.",
       "example": "He resented the aspersions cast on his integrity during the hearing.",
@@ -13236,7 +13250,7 @@
         "spargere"
       ],
       "primary_root": "spargere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Thinly scattered or distributed; not dense.",
       "example": "The desert supported only sparse vegetation.",
@@ -13249,7 +13263,7 @@
         "dis_"
       ],
       "primary_root": "spargere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "verb",
       "definition": "To scatter or spread over a wide area; to break up and go different ways.",
       "example": "Police asked the crowd to disperse before nightfall.",
@@ -13300,7 +13314,7 @@
         "fingere"
       ],
       "primary_root": "fingere",
-      "domain": "value_and_judgment",
+      "domain": "truth_and_deception",
       "part_of_speech": "verb",
       "definition": "To pretend to feel or be affected by something.",
       "example": "He feigned surprise when the results were announced.",
@@ -13312,7 +13326,7 @@
         "fingere"
       ],
       "primary_root": "fingere",
-      "domain": "value_and_judgment",
+      "domain": "truth_and_deception",
       "part_of_speech": "noun",
       "definition": "A deceptive or pretended movement, especially in a fight or contest, meant to mislead an opponent.",
       "example": "The boxer's feint drew his opponent's guard away from the real target.",
@@ -13324,7 +13338,7 @@
         "fingere"
       ],
       "primary_root": "fingere",
-      "domain": "value_and_judgment",
+      "domain": "truth_and_deception",
       "part_of_speech": "adjective",
       "definition": "Departing from a literal use of words; metaphorical rather than literal.",
       "example": "The critic took the poem's title figuratively rather than literally.",
@@ -13459,7 +13473,7 @@
         "con_"
       ],
       "primary_root": "flagrare",
-      "domain": "value_and_judgment",
+      "domain": "world_and_nature",
       "part_of_speech": "noun",
       "definition": "An extensive and destructive fire.",
       "example": "The conflagration spread through three city blocks before it was contained.",
@@ -13471,7 +13485,7 @@
         "flagrare"
       ],
       "primary_root": "flagrare",
-      "domain": "value_and_judgment",
+      "domain": "world_and_nature",
       "part_of_speech": "adjective",
       "definition": "Conspicuously or offensively wrong or bad; blatant.",
       "example": "The referee called a flagrant foul in the final seconds.",
@@ -13571,7 +13585,7 @@
         "con_"
       ],
       "primary_root": "ferre",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "verb",
       "definition": "To have a mutual relationship or connection, especially statistically.",
       "example": "Higher rainfall correlated with stronger crop yields that year.",
@@ -13710,7 +13724,7 @@
         "genesis"
       ],
       "primary_root": "genesis",
-      "domain": "body_and_life",
+      "domain": "life_and_vitality",
       "part_of_speech": "adjective",
       "definition": "Gentle and kindly; also, not harmful, especially of a tumor.",
       "example": "The biopsy confirmed the growth was benign.",
@@ -13786,7 +13800,7 @@
         "per_"
       ],
       "primary_root": "tenere",
-      "domain": "motion_and_force",
+      "domain": "force_and_manipulation",
       "part_of_speech": "adjective",
       "definition": "Holding firmly to an opinion or course of action; stubbornly persistent.",
       "example": "His pertinacious pursuit of the grant eventually paid off.",
@@ -15261,6 +15275,18 @@
       "part_of_speech": "noun",
       "definition": "The highest point reached, especially of success or power.",
       "example": "The empire was at its zenith just before the first cracks appeared.",
+      "gre_list": true
+    },
+    {
+      "word": "nepotism",
+      "roots": [
+        "nepos"
+      ],
+      "primary_root": "nepos",
+      "domain": "kinship_and_gender",
+      "part_of_speech": "noun",
+      "definition": "The practice of giving unfair advantages to one's relatives, especially in employment.",
+      "example": "The new hire's connection to the CEO fueled talk of nepotism.",
       "gre_list": true
     }
   ],

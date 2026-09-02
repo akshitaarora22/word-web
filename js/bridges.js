@@ -13,13 +13,16 @@
   // a real "bridge" between two roots, and the affix itself isn't fair game
   // as a tile to guess or a distractor. Filtered out on both ends below.
   function affixIds() {
-    return new Set(window.WORDWEB_DATA.roots.filter((r) => r.affix).map((r) => r.id));
+    return new Set(api().GAME.roots.filter((r) => r.affix).map((r) => r.id));
   }
 
   function pool() {
     const { GAME, rootState } = api();
     const affix = affixIds();
-    const words = window.WORDWEB_DATA.words
+    // GAME.words (not window.WORDWEB_DATA.words) so GRE-only mode is
+    // respected automatically — it's already the gre_list-filtered list
+    // when that mode is on.
+    const words = GAME.words
       .map((w) => ({ ...w, roots: (w.roots || []).filter((rid) => !affix.has(rid)) }))
       .filter((w) => w.roots.length >= 2);
     // Prefer words whose roots the player has already touched — decoding feels earned.
@@ -31,7 +34,7 @@
 
   function distractorRoots(word, count) {
     const { GAME } = api();
-    const all = window.WORDWEB_DATA.roots;
+    const all = GAME.roots;
     const affix = affixIds();
     const correct = new Set(word.roots);
     // Mix: word-less roots (the vault) + same-domain roots, shuffled

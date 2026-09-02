@@ -2,7 +2,7 @@
 
 (function () {
   const L = window.WordWebLevels;
-  const GAME = L.buildGame(window.WORDWEB_DATA);
+  let GAME; // set below, once `save` is loaded — see rebuildGame()
 
   /* ---------- persistence ---------- */
   const SAVE_KEY = "wordweb_save_v1";
@@ -26,6 +26,7 @@
     badges: {}, // badgeId -> ms epoch when unlocked
     badgesBackfilled: false, // true once existing progress has been checked once, silently
     currentRootId: null, // root of the level last started — the web view auto-focuses here
+    greOnly: false, // GRE-only mode: filters to gre_list words, lower "own level" bar
   });
   let save = load();
   function load() {
@@ -41,6 +42,21 @@
       localStorage.setItem(SAVE_KEY, JSON.stringify(save));
     } catch (e) {}
   }
+
+  // GRE-only mode reduces the dataset to just gre_list words first (with a
+  // lower "own level" word threshold, since most roots individually have
+  // too few GRE-flagged words to clear the normal bar of 4) and prefixes
+  // level ids so they never collide with a normal-mode level of the same
+  // domain/root that was actually built from different words. Anything
+  // that needs "every root/word in play" should read it off GAME (.roots,
+  // .words, .root_word_index) rather than window.WORDWEB_DATA directly, or
+  // it'll silently ignore the mode.
+  function rebuildGame() {
+    GAME = save.greOnly
+      ? L.buildGame(L.filterGreOnly(window.WORDWEB_DATA), { bigThreshold: 2, idPrefix: "gre::" })
+      : L.buildGame(window.WORDWEB_DATA);
+  }
+  rebuildGame();
 
   /* ---------- helpers ---------- */
   const $ = (sel) => document.querySelector(sel);
@@ -65,8 +81,10 @@
     }
     // bundled root: mastered when all its words answered correctly.
     // root_word_index stores keys (unique per sense), so this is already
-    // consistent with however rs.correct[] gets written elsewhere.
-    const words = window.WORDWEB_DATA.root_word_index[rootId] || [];
+    // consistent with however rs.correct[] gets written elsewhere. Reads
+    // off GAME (not window.WORDWEB_DATA) so GRE-only mode only requires
+    // the root's GRE-flagged words, not its full normal-mode word list.
+    const words = GAME.root_word_index[rootId] || [];
     return words.length > 0 && words.every((k) => rs.correct[k]);
   }
   function levelProgress(level) {
@@ -844,6 +862,8 @@
         <div class="profile-actions">
           <button class="btn ${save.hardMode ? "primary" : ""}" data-nav="hardmode">🎯 Pro mode: ${save.hardMode ? "ON" : "OFF"}</button>
           <p class="discover-hint" style="margin:-4px 0 0">Pro mode swaps in trickier answer choices — other words sharing a root with the correct one — so you can't just spot a keyword.</p>
+          <button class="btn ${save.greOnly ? "primary" : ""}" data-nav="greonly">🎓 GRE-only mode: ${save.greOnly ? "ON" : "OFF"}</button>
+          <p class="discover-hint" style="margin:-4px 0 0">Shows only words that appear on real GRE vocabulary lists — fewer words per root, so some lessons run leaner and a few roots sit out entirely.</p>
           <button class="btn" data-nav="share">Share progress</button>
           <button class="btn" data-nav="tutorial">How to play</button>
         </div>
@@ -1477,6 +1497,13 @@
           el.classList.toggle("primary", save.hardMode);
           el.textContent = `🎯 Pro mode: ${save.hardMode ? "ON" : "OFF"}`;
         }
+        if (t === "greonly") {
+          save.greOnly = !save.greOnly;
+          persist();
+          rebuildGame(); // domains/levels/roots all change shape — an in-place patch isn't enough
+          if (window.WordWebSFX) window.WordWebSFX.tap();
+          showHome();
+        }
       })
     );
     app.querySelectorAll("[data-domain-link]").forEach((el) =>
@@ -1489,7 +1516,12 @@
 
   /* ---------- public API for phase-2 modules (bridges.js, web.js) ---------- */
   window.WordWeb = {
-    GAME,
+    // A live getter, not a frozen snapshot — GRE-only mode reassigns the
+    // GAME variable via rebuildGame(), and phase-2 modules always re-fetch
+    // it through api() rather than caching it, so they pick up the swap.
+    get GAME() {
+      return GAME;
+    },
     getSave: () => save,
     persist,
     rootState,

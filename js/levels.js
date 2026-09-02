@@ -3,17 +3,20 @@
 
 (function () {
   const DOMAIN_ORDER = [
-    "kinship_and_gender",      // small, tightly linked misein/gamos/gyne cluster — tutorial world
+    "kinship_and_gender",      // small, tightly linked paidos/gamos/gyne/nepos cluster — tutorial world
     "mind_and_emotion",
     "speech_and_writing",
     "knowledge_and_perception",
     "body_and_life",
+    "life_and_vitality",       // split off body_and_life: birth, health, harm, death — not literal anatomy
     "structure_and_measure",
     "motion_and_force",
+    "force_and_manipulation",  // split off motion_and_force: driving/holding/throwing/pulling, not travel
     "time_and_change",
     "people_and_society",
     "world_and_nature",
     "value_and_judgment",
+    "truth_and_deception",     // split off value_and_judgment: belief, honesty, lying
     "quantity_and_scale",
     "power_and_conflict",
     "law_and_governance",
@@ -25,12 +28,15 @@
     speech_and_writing: "Speech & Writing",
     knowledge_and_perception: "Knowledge & Perception",
     body_and_life: "Body & Life",
+    life_and_vitality: "Life & Vitality",
     structure_and_measure: "Structure & Measure",
     motion_and_force: "Motion & Force",
+    force_and_manipulation: "Force & Manipulation",
     time_and_change: "Time & Change",
     people_and_society: "People & Society",
     world_and_nature: "World & Nature",
     value_and_judgment: "Value & Judgment",
+    truth_and_deception: "Truth & Deception",
     quantity_and_scale: "Quantity & Scale",
     power_and_conflict: "Power & Conflict",
     law_and_governance: "Law & Governance",
@@ -39,9 +45,10 @@
   // Per-domain accent hues (used by CSS via inline custom property)
   const DOMAIN_HUES = {
     kinship_and_gender: 340, mind_and_emotion: 265, speech_and_writing: 205,
-    knowledge_and_perception: 180, body_and_life: 130, structure_and_measure: 35,
-    motion_and_force: 15, time_and_change: 55, people_and_society: 300,
-    world_and_nature: 155, value_and_judgment: 225, quantity_and_scale: 85,
+    knowledge_and_perception: 180, body_and_life: 130, life_and_vitality: 110,
+    structure_and_measure: 35, motion_and_force: 15, force_and_manipulation: 25,
+    time_and_change: 55, people_and_society: 300, world_and_nature: 155,
+    value_and_judgment: 225, truth_and_deception: 235, quantity_and_scale: 85,
     power_and_conflict: 0, law_and_governance: 245,
   };
 
@@ -55,7 +62,25 @@
     return Math.abs(h);
   }
 
-  function buildGame(data) {
+  // Reduces a full dataset down to only its GRE-flagged words, for GRE-only
+  // mode. Roots stay as-is (a root is still a legitimate distractor/hint
+  // even if none of its remaining words are GRE-flagged); root_word_index
+  // is rebuilt from scratch against the filtered word list so a root's
+  // word count — and therefore whether it's "big enough" for its own
+  // level — reflects only what's actually in play.
+  function filterGreOnly(data) {
+    const words = data.words.filter((w) => w.gre_list);
+    const index = {};
+    words.forEach((w) => {
+      if (!w.roots) return;
+      const k = w.key || w.word;
+      w.roots.forEach((rid) => (index[rid] = index[rid] || []).push(k));
+    });
+    return { roots: data.roots, words, root_word_index: index, meta: data.meta };
+  }
+
+  function buildGame(data, opts) {
+    const { bigThreshold = 4, idPrefix = "" } = opts || {};
     const rootsById = {};
     data.roots.forEach((r) => (rootsById[r.id] = r));
     // A few words share a spelling but teach a distinct sense (e.g. two
@@ -105,15 +130,16 @@
       if (w.roots && w.roots.length) everPrimary.add(w.roots[0]);
     });
 
-    // "Big" (4+ words) roots always get their own dedicated level — that's
-    // a property of the root itself, independent of domain. Precompute
-    // globally (not per-domain) so a small root in one domain correctly
-    // sees that its word is already fully taught by a big root over in a
-    // *different* domain (e.g. "potens" in power_and_conflict shouldn't
-    // re-teach "omnipotent" just because "omnis", the root that already
-    // teaches it, happens to live in quantity_and_scale).
+    // "Big" (bigThreshold+ words, 4 by default) roots always get their own
+    // dedicated level — that's a property of the root itself, independent
+    // of domain. Precompute globally (not per-domain) so a small root in
+    // one domain correctly sees that its word is already fully taught by a
+    // big root over in a *different* domain (e.g. "potens" in
+    // power_and_conflict shouldn't re-teach "omnipotent" just because
+    // "omnis", the root that already teaches it, happens to live in
+    // quantity_and_scale).
     const bigRootIds = new Set(
-      Object.keys(index).filter((r) => index[r].length >= 4 && everPrimary.has(r))
+      Object.keys(index).filter((r) => index[r].length >= bigThreshold && everPrimary.has(r))
     );
     const bigTaughtWords = new Set();
     bigRootIds.forEach((r) => index[r].forEach((k) => bigTaughtWords.add(k)));
@@ -131,7 +157,11 @@
       const teachWords = words.filter((w) => !decodeSet.has(w.key || w.word));
       const root = rootsById[rootId];
       return {
-        id: domId + "::" + rootId,
+        // idPrefix keeps GRE-mode level ids from colliding with normal-mode
+        // ones in save.levels — a lower bigThreshold changes which roots
+        // are "big" and how bundles are grouped, so the same id could
+        // otherwise point at differently-built levels across modes.
+        id: idPrefix + domId + "::" + rootId,
         kind: "root",
         title: root.root,
         subtitle: root.meaning,
@@ -232,7 +262,7 @@
           return;
         }
         levels.push({
-          id: domId + "::bundle-" + levels.length,
+          id: idPrefix + domId + "::bundle-" + levels.length,
           kind: "bundle",
           title: bundle.map((r) => rootsById[r].root.split(",")[0]).join(" · "),
           subtitle: "root medley",
@@ -304,7 +334,31 @@
       .filter((w) => !w.roots || w.roots.length === 0)
       .sort((a, b) => a.word.localeCompare(b.word));
 
-    return { domains, rootsById, wordsByName, wordsByKey, defsByDomain, daily, meta: data.meta };
+    // meta.root_count feeds every "X of Y roots mastered" display — it must
+    // count only roots that actually appear in some domain's rootIds (i.e.
+    // can ever actually be mastered), not every root row in the dataset.
+    // Affix roots (re-, con-, in-...) are already excluded from rootIds
+    // above, and under a raised bigThreshold some content roots can end up
+    // with no level of their own without a word left over anywhere in
+    // rootIds either — either way, this must be derived, not trusted from
+    // data.meta, or the two numbers drift out of sync.
+    const rootCount = domains.reduce((n, d) => n + d.rootIds.length, 0);
+
+    return {
+      domains,
+      rootsById,
+      wordsByName,
+      wordsByKey,
+      defsByDomain,
+      daily,
+      // The active (possibly GRE-filtered) roots/words/index — anything
+      // that needs "every root" or "every word" should read these, not
+      // window.WORDWEB_DATA directly, so it respects GRE-only mode too.
+      roots: data.roots,
+      words: data.words,
+      root_word_index: index,
+      meta: { ...data.meta, root_count: rootCount },
+    };
   }
 
   function decodeScore(w) {
@@ -343,7 +397,7 @@
     if (hard) {
       const siblingKeys = new Set();
       (word.roots || []).forEach((rid) => {
-        (window.WORDWEB_DATA.root_word_index[rid] || []).forEach((k) => siblingKeys.add(k));
+        (game.root_word_index[rid] || []).forEach((k) => siblingKeys.add(k));
       });
       const siblings = Array.from(siblingKeys)
         .map((k) => game.wordsByKey[k])
@@ -370,5 +424,5 @@
     return { options, correctIndex: options.indexOf(word.definition) };
   }
 
-  window.WordWebLevels = { buildGame, optionsFor, hash, DOMAIN_NAMES };
+  window.WordWebLevels = { buildGame, filterGreOnly, optionsFor, hash, DOMAIN_NAMES };
 })();

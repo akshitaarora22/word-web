@@ -27,8 +27,7 @@
 
   function buildGraph() {
     const { GAME, rootMastered, rootState } = api();
-    const data = window.WORDWEB_DATA;
-    const idx = data.root_word_index;
+    const idx = GAME.root_word_index; // rootId -> [key,...] — respects GRE-only mode
     const domHue = {};
     GAME.domains.forEach((d) => (domHue[d.id] = d.hue));
 
@@ -38,7 +37,15 @@
     // touch dozens of words apiece, and drawing all of that would bury the
     // real root-to-root bridges in noise. They still show as chips on a
     // word's own panel, just not here.
-    const affixIds = new Set(data.roots.filter((r) => r.affix).map((r) => r.id));
+    const affixIds = new Set(GAME.roots.filter((r) => r.affix).map((r) => r.id));
+
+    // A root that actually got its own dedicated level, vs. one bundled
+    // into a medley (or with no level at all) — derived from the built
+    // levels rather than a hardcoded word-count threshold, since GRE-only
+    // mode uses a lower bar (2, not 4) for what counts as "big enough".
+    const ownLeveledRootIds = new Set(
+      GAME.domains.flatMap((d) => d.levels).filter((lv) => lv.kind === "root").map((lv) => lv.roots[0])
+    );
 
     const nodes = Object.keys(idx)
       .filter((rid) => !affixIds.has(rid))
@@ -60,16 +67,15 @@
           wordCount: idx[rid].length,
           mastered,
           started,
-          // Same <4-word threshold that already keeps a root out of its own
-          // dedicated level (it bundles into a medley instead) — visually
-          // it doesn't belong to any one galaxy either: it drifts loose in
-          // the shared space between them rather than orbiting a cluster.
-          asteroid: idx[rid].length < 4,
+          // A root without its own dedicated lesson doesn't belong to any
+          // one galaxy either — it drifts loose in the shared space
+          // between them rather than orbiting a cluster.
+          asteroid: !ownLeveledRootIds.has(rid),
         };
       });
 
     const edgeMap = {};
-    data.words
+    GAME.words
       .map((w) => ({ word: w.word, roots: (w.roots || []).filter((rid) => !affixIds.has(rid)) }))
       .filter((w) => w.roots.length >= 2)
       .forEach((w) => {
@@ -695,7 +701,7 @@
 
     /* ---------- expansion ---------- */
     function toggleWords(rootNode) {
-      const idx = window.WORDWEB_DATA.root_word_index; // rootId -> [key,...]
+      const idx = api().GAME.root_word_index; // rootId -> [key,...] — respects GRE-only mode
       const wordsByKey = api().GAME.wordsByKey;
       if (expanded.has(rootNode.id)) {
         expanded.delete(rootNode.id);
@@ -890,7 +896,7 @@
     function showRootPanel(d) {
       const { GAME } = api();
       const r = GAME.rootsById[d.id];
-      const idx = window.WORDWEB_DATA.root_word_index; // rootId -> [key,...]
+      const idx = GAME.root_word_index; // rootId -> [key,...] — respects GRE-only mode
       const words = (idx[d.id] || []).map((key) => GAME.wordsByKey[key]).filter(Boolean);
       const rs = rootState(d.id);
       const level = GAME.domains.flatMap((x) => x.levels).find((lv) => lv.roots.includes(d.id));
