@@ -26,6 +26,53 @@
       .join("");
   }
 
+  // The exam-toggle chips + select-all + status line — identical markup
+  // and wiring whether they're shown inline in Profile or in the
+  // Home-screen modal, so both just call these two.
+  function examFilterGridHTML() {
+    const exams = availableExams();
+    const allSelected = exams.length > 0 && exams.every((e) => save.examFilter.includes(e));
+    return `<div class="exam-filter-grid">
+        ${exams
+          .map((e) => {
+            const on = save.examFilter.includes(e);
+            return `<button class="btn exam-toggle${on ? " primary" : ""}" style="--h:${EXAM_HUES[e] ?? 0}" data-exam="${e}">${e}</button>`;
+          })
+          .join("")}
+        ${exams.length > 1 ? `<button class="btn ghost" data-exam-select-all>${allSelected ? "Clear all" : "Select all"}</button>` : ""}
+      </div>
+      <p class="exam-filter-status">${
+        save.examFilter.length
+          ? `Playing ${GAME.meta.word_count} of ${window.WORDWEB_DATA.meta.word_count} words, tagged ${esc(save.examFilter.slice().sort().join(", "))}.`
+          : `Playing all ${window.WORDWEB_DATA.meta.word_count} words.`
+      }</p>`;
+  }
+  function wireExamFilterGrid(container, onChange) {
+    container.querySelectorAll(".exam-toggle").forEach((btn) =>
+      btn.addEventListener("click", () => {
+        const exam = btn.dataset.exam;
+        if (save.examFilter.includes(exam)) save.examFilter = save.examFilter.filter((e) => e !== exam);
+        else save.examFilter.push(exam);
+        persist();
+        rebuildGame();
+        if (window.WordWebSFX) window.WordWebSFX.tap();
+        onChange();
+      })
+    );
+    const selectAllBtn = container.querySelector("[data-exam-select-all]");
+    if (selectAllBtn) {
+      selectAllBtn.addEventListener("click", () => {
+        const exams = availableExams();
+        const allOn = exams.every((e) => save.examFilter.includes(e));
+        save.examFilter = allOn ? [] : exams.slice();
+        persist();
+        rebuildGame();
+        if (window.WordWebSFX) window.WordWebSFX.tap();
+        onChange();
+      });
+    }
+  }
+
   /* ---------- persistence ---------- */
   const SAVE_KEY = "wordweb_save_v1";
   const defaultSave = () => ({
@@ -360,23 +407,36 @@
           <div class="tut-mini-card review-c"><span>🔄</span> Review sprint</div>
         </div>`,
       },
+      // {
+      //   icon: "⬡",
+      //   title: "Your Knowledge Web",
+      //   body: "Every root is a node. Roots that share a bridge word are linked by an edge. During quizzes your web <b>grows in real time</b> as you answer correctly. Mastered roots glow gold.",
+      //   visual: `<div class="tut-visual tut-visual-web">
+      //     <svg viewBox="0 0 160 70" width="160" height="70">
+      //       <line x1="80" y1="35" x2="32" y2="18" stroke="#2a3868" stroke-width="1.5"/>
+      //       <line x1="80" y1="35" x2="128" y2="18" stroke="#2a3868" stroke-width="1.5"/>
+      //       <line x1="80" y1="35" x2="50" y2="58" stroke="#2a3868" stroke-width="1.5"/>
+      //       <line x1="80" y1="35" x2="115" y2="58" stroke="#2a3868" stroke-width="1.5"/>
+      //       <circle cx="80" cy="35" r="11" fill="hsl(220 60% 50%)" stroke="hsl(220 60% 75%)" stroke-width="1.5"/>
+      //       <circle cx="32" cy="18" r="5" fill="#4cc27a" stroke="#9fe0b8" stroke-width="1.2"/>
+      //       <circle cx="128" cy="18" r="5" fill="#4cc27a" stroke="#9fe0b8" stroke-width="1.2"/>
+      //       <circle cx="50" cy="58" r="5" fill="#e8b64c" stroke="#fff0c9" stroke-width="1.2"/>
+      //       <circle cx="115" cy="58" r="5" fill="#4cc27a" stroke="#9fe0b8" stroke-width="1.2"/>
+      //       <text x="80" y="38.5" text-anchor="middle" font-size="7" fill="#c8c2b4" font-family="monospace">aud</text>
+      //     </svg>
+      //   </div>`,
+      // },
       {
-        icon: "⬡",
-        title: "Your Knowledge Web",
-        body: "Every root is a node. Roots that share a bridge word are linked by an edge. During quizzes your web <b>grows in real time</b> as you answer correctly. Mastered roots glow gold.",
-        visual: `<div class="tut-visual tut-visual-web">
-          <svg viewBox="0 0 160 70" width="160" height="70">
-            <line x1="80" y1="35" x2="32" y2="18" stroke="#2a3868" stroke-width="1.5"/>
-            <line x1="80" y1="35" x2="128" y2="18" stroke="#2a3868" stroke-width="1.5"/>
-            <line x1="80" y1="35" x2="50" y2="58" stroke="#2a3868" stroke-width="1.5"/>
-            <line x1="80" y1="35" x2="115" y2="58" stroke="#2a3868" stroke-width="1.5"/>
-            <circle cx="80" cy="35" r="11" fill="hsl(220 60% 50%)" stroke="hsl(220 60% 75%)" stroke-width="1.5"/>
-            <circle cx="32" cy="18" r="5" fill="#4cc27a" stroke="#9fe0b8" stroke-width="1.2"/>
-            <circle cx="128" cy="18" r="5" fill="#4cc27a" stroke="#9fe0b8" stroke-width="1.2"/>
-            <circle cx="50" cy="58" r="5" fill="#e8b64c" stroke="#fff0c9" stroke-width="1.2"/>
-            <circle cx="115" cy="58" r="5" fill="#4cc27a" stroke="#9fe0b8" stroke-width="1.2"/>
-            <text x="80" y="38.5" text-anchor="middle" font-size="7" fill="#c8c2b4" font-family="monospace">aud</text>
-          </svg>
+        icon: "🎓",
+        title: "Studying for a Specific Exam?",
+        body: "Every word carries small badges for the real vocabulary lists it appears on — <b>GRE, SAT, ACT, GMAT, TOEFL, IELTS</b>. Head to your <b>Profile → Exam focus</b> to filter play down to just one exam, any combination, or leave them all unchecked to play everything.",
+        visual: `<div class="tut-visual tut-visual-exams">
+          <span class="exam-badge gre" style="--h:45">GRE</span>
+          <span class="exam-badge" style="--h:205">SAT</span>
+          <span class="exam-badge" style="--h:140">ACT</span>
+          <span class="exam-badge" style="--h:275">GMAT</span>
+          <span class="exam-badge" style="--h:185">TOEFL</span>
+          <span class="exam-badge" style="--h:15">IELTS</span>
         </div>`,
       },
       {
@@ -422,6 +482,43 @@
       overlay.classList.add("tutorial-fade-out");
       setTimeout(() => overlay.remove(), 320);
     }
+
+    render();
+    document.body.appendChild(overlay);
+  }
+
+  // The exam-focus picker as a modal — opened by tapping the Home-screen
+  // bubble, so switching exams doesn't require leaving the map. Reuses
+  // the tutorial's overlay chrome/animation but as a single static card,
+  // not a step wizard, and always re-renders showHome() underneath on
+  // close so the bubble text and mastery stats reflect whatever changed.
+  function showExamFocusModal() {
+    const overlay = document.createElement("div");
+    overlay.className = "examfocus-backdrop";
+
+    function render() {
+      overlay.innerHTML = `<div class="examfocus-card">
+        <button class="web-panel-close" aria-label="Close">×</button>
+        <span class="tutorial-icon">🎓</span>
+        <h2 class="tutorial-title">Exam focus</h2>
+        <p class="tutorial-body">Show only words that appear on real vocabulary lists for these exams — fewer words per root, so some lessons run leaner and a few roots sit out entirely. Leave everything unchecked to play the full set.</p>
+        ${examFilterGridHTML()}
+      </div>`;
+      overlay.querySelector(".web-panel-close").addEventListener("click", close);
+      wireExamFilterGrid(overlay, render);
+    }
+
+    function close() {
+      overlay.classList.add("tutorial-fade-out");
+      setTimeout(() => {
+        overlay.remove();
+        showHome();
+      }, 320);
+    }
+
+    overlay.addEventListener("click", (ev) => {
+      if (ev.target === overlay) close();
+    });
 
     render();
     document.body.appendChild(overlay);
@@ -623,8 +720,20 @@
     const hearts = Array.from({ length: save.heartsMax }, (_, i) =>
       i < save.hearts ? '<span class="heart full">♥</span>' : '<span class="heart empty">♡</span>'
     ).join("");
+    // A persistent reminder that exam-focus mode is on, visible on every
+    // screen (not just Home, where the quest-row bubble already shows it) —
+    // tapping it opens the same picker modal. Absent entirely when no
+    // filter is set, so its mere presence is the signal.
+    const examBadge = save.examFilter.length
+      ? `<button class="header-exam-badge" data-nav="examfocus" title="Exam focus: ${esc(save.examFilter.slice().sort().join(", "))} — tap to change">
+          🎓 ${esc(save.examFilter.length > 1 ? save.examFilter[0] + " +" + (save.examFilter.length - 1) : save.examFilter[0])}
+        </button>`
+      : "";
     return `<header class="top">
-      <div class="brand" data-nav="home"><span class="brand-mark">✳</span> Word Web</div>
+      <div class="header-left">
+        <div class="brand" data-nav="home"><span class="brand-mark">✳</span> Word Web</div>
+        ${examBadge}
+      </div>
       <div class="stats">
         <span class="streak-pill" title="Day streak">🔥 ${save.streakDays}</span>
         <span class="hearts" title="${save.hearts < save.heartsMax ? "Next heart in " + heartTimeLeft() : "Full hearts"}">${hearts}</span>
@@ -747,24 +856,34 @@
           <div class="hero-bar"><div class="hero-bar-fill" style="width:${masteryPct}%"></div></div>
         </div>
       </section>
-      ${
-        dailyDone
-          ? `<div class="quest-bubble done" style="cursor:default">
-              <span class="qb-icon">📅</span>
-              <span class="qb-text">
-                <span class="qb-label">Word of the day</span>
-                <span class="qb-word">${esc(daily.word)} — solved. New word tomorrow.</span>
-              </span>
-            </div>`
-          : `<button class="quest-bubble" data-nav="daily">
-              <span class="qb-icon">📅</span>
-              <span class="qb-text">
-                <span class="qb-label">Word of the day</span>
-                <span class="qb-word">? ? ? ? ? ?  ·  30 pts</span>
-              </span>
-              <span class="qb-go">›</span>
-            </button>`
-      }
+      <div class="quest-row">
+        ${
+          dailyDone
+            ? `<div class="quest-bubble done" style="cursor:default">
+                <span class="qb-icon">📅</span>
+                <span class="qb-text">
+                  <span class="qb-label">Word of the day</span>
+                  <span class="qb-word">${esc(daily.word)} — solved</span>
+                </span>
+              </div>`
+            : `<button class="quest-bubble" data-nav="daily">
+                <span class="qb-icon">📅</span>
+                <span class="qb-text">
+                  <span class="qb-label">Word of the day</span>
+                  <span class="qb-word">? ? ? ? ? ?</span>
+                </span>
+                <span class="qb-go">›</span>
+              </button>`
+        }
+        <button class="quest-bubble examfocus-bubble${save.examFilter.length ? " active" : ""}" data-open-examfocus>
+          <span class="qb-icon">🎓</span>
+          <span class="qb-text">
+            <span class="qb-label">Exam focus</span>
+            <span class="qb-word">${save.examFilter.length ? esc(save.examFilter.slice().sort().join(", ")) : "No exam selected"}</span>
+          </span>
+          <span class="qb-go">›</span>
+        </button>
+      </div>
       <div class="journey">
         ${columns.map((col) => `<div class="journey-col">${col.map(renderCell).join("")}</div>`).join("")}
       </div>
@@ -783,6 +902,8 @@
     app.querySelectorAll("[data-domain]").forEach((el) =>
       el.addEventListener("click", () => warpToDomain(el.dataset.domain, el))
     );
+    const examFocusBtn = app.querySelector("[data-open-examfocus]");
+    if (examFocusBtn) examFocusBtn.addEventListener("click", showExamFocusModal);
     wireNav();
     document.body.classList.add("has-tabbar");
     if (!save.tutorialDone) setTimeout(() => showTutorial(), 400);
@@ -791,6 +912,7 @@
   /* A quick radial flash in the destination's hue before the domain path
      screen replaces the map — reads as "traveling" instead of a hard cut. */
   function warpToDomain(domId, btnEl) {
+    if (window.WordWebSFX) window.WordWebSFX.warp();
     const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const flash = $("#warp-flash");
     if (reduceMotion || !flash || !btnEl) {
@@ -863,8 +985,6 @@
     Object.values(save.roots).forEach((rs) => Object.keys(rs.correct).forEach((w) => learned.add(w)));
     const masteryPct = GAME.meta.root_count ? Math.round((100 * mastered) / GAME.meta.root_count) : 0;
     const earnedCount = ACHIEVEMENTS.filter((a) => save.badges[a.id]).length;
-    const exams = availableExams();
-    const allSelected = exams.length > 0 && exams.every((e) => save.examFilter.includes(e));
     app.innerHTML = `${header()}
       <section class="profile">
         <div class="practice-head">
@@ -898,20 +1018,7 @@
           <div>
             <p class="phase-kicker" style="margin:0 0 6px">🎓 Exam focus</p>
             <p class="discover-hint" style="margin:0 0 8px">Show only words that appear on real vocabulary lists for these exams — fewer words per root, so some lessons run leaner and a few roots sit out entirely. Leave everything unchecked to play the full set.</p>
-            <div class="exam-filter-grid">
-              ${exams
-                .map((e) => {
-                  const on = save.examFilter.includes(e);
-                  return `<button class="btn exam-toggle${on ? " primary" : ""}" style="--h:${EXAM_HUES[e] ?? 0}" data-exam="${e}">${e}</button>`;
-                })
-                .join("")}
-              ${exams.length > 1 ? `<button class="btn ghost" data-exam-select-all>${allSelected ? "Clear all" : "Select all"}</button>` : ""}
-            </div>
-            <p class="exam-filter-status">${
-              save.examFilter.length
-                ? `Playing ${GAME.meta.word_count} of ${window.WORDWEB_DATA.meta.word_count} words, tagged ${save.examFilter.slice().sort().join(", ")}.`
-                : `Playing all ${window.WORDWEB_DATA.meta.word_count} words.`
-            }</p>
+            ${examFilterGridHTML()}
           </div>
           <button class="btn" data-nav="share">Share progress</button>
           <button class="btn" data-nav="tutorial">How to play</button>
@@ -921,35 +1028,10 @@
       ${tabBarHTML("you")}`;
     wireNav();
     document.body.classList.add("has-tabbar");
-
-    // Exam-focus toggles: a per-exam chip plus a select-all/clear-all
-    // shortcut. Each click rebuilds GAME (the filtered word set changes
-    // its whole level structure, so an in-place DOM patch isn't enough)
-    // and re-renders this screen so every dependent number — mastery %,
-    // the status line, the select-all label — stays in sync.
-    app.querySelectorAll(".exam-toggle").forEach((btn) =>
-      btn.addEventListener("click", () => {
-        const exam = btn.dataset.exam;
-        if (save.examFilter.includes(exam)) save.examFilter = save.examFilter.filter((e) => e !== exam);
-        else save.examFilter.push(exam);
-        persist();
-        rebuildGame();
-        if (window.WordWebSFX) window.WordWebSFX.tap();
-        showProfile();
-      })
-    );
-    const selectAllBtn = app.querySelector("[data-exam-select-all]");
-    if (selectAllBtn) {
-      selectAllBtn.addEventListener("click", () => {
-        const exams = availableExams();
-        const allOn = exams.every((e) => save.examFilter.includes(e));
-        save.examFilter = allOn ? [] : exams.slice();
-        persist();
-        rebuildGame();
-        if (window.WordWebSFX) window.WordWebSFX.tap();
-        showProfile();
-      });
-    }
+    // Rebuilds GAME (the filtered word set changes its whole level
+    // structure, so an in-place DOM patch isn't enough) and re-renders
+    // this screen so every dependent number stays in sync.
+    wireExamFilterGrid(app, showProfile);
   }
 
   function showDomain(domId) {
@@ -1575,6 +1657,7 @@
           el.classList.toggle("primary", save.hardMode);
           el.textContent = `🎯 Pro mode: ${save.hardMode ? "ON" : "OFF"}`;
         }
+        if (t === "examfocus") showExamFocusModal();
       })
     );
     app.querySelectorAll("[data-domain-link]").forEach((el) =>

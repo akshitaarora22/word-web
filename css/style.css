@@ -44,9 +44,21 @@ h1, h2, .brand, .quiz-word, .root-name {
 
 /* header */
 .top { display: flex; justify-content: space-between; align-items: baseline; padding: 8px 0 20px; }
+.header-left { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
 .brand { font-size: 1.2rem; cursor: pointer; }
 .brand-mark { color: var(--gold); }
 .stats { display: flex; gap: 14px; color: var(--paper-dim); font-size: 0.85rem; font-variant-numeric: tabular-nums; }
+/* persistent "exam-focus is on" reminder, visible on every screen — its
+   mere presence (it renders nothing when no filter is set) is the signal
+   the Home-screen bubble alone couldn't give once you navigate away. */
+.header-exam-badge {
+  all: unset; cursor: pointer; touch-action: manipulation;
+  display: inline-flex; align-items: center;
+  padding: 3px 10px; border-radius: 999px;
+  font-size: 0.72rem; font-weight: 600; line-height: 1.4;
+  color: hsl(205 75% 68%); border: 1px solid hsl(205 55% 45%); background: hsl(205 55% 20% / 0.35);
+}
+@media (hover: hover) { .header-exam-badge:hover { border-color: hsl(205 65% 60%); } }
 
 /* hero */
 .hero-progress { margin-top: 6px; }
@@ -617,6 +629,32 @@ h1, h2, .brand, .quiz-word, .root-name {
 }
 .tut-skip:hover { color: var(--paper); }
 
+/* exam-focus picker modal — same overlay chrome as the tutorial (reuses
+   its fade/slide keyframes by name), but a single static card rather than
+   a step wizard: tapping the Exam focus bubble opens this instead of
+   navigating away to Profile. */
+.examfocus-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(9, 13, 26, 0.86);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 200;
+  display: flex; align-items: center; justify-content: center;
+  padding: 16px;
+  animation: tut-fade-in 0.22s ease;
+}
+.examfocus-card {
+  position: relative;
+  background: var(--ink-2);
+  border: 1px solid #2d3860;
+  border-radius: 20px;
+  padding: 26px 26px 20px;
+  max-width: 430px; width: 100%;
+  max-height: calc(100vh - 32px); overflow-y: auto;
+  box-shadow: 0 28px 70px rgba(0,0,0,0.6);
+  animation: tut-slide-up 0.26s ease;
+}
+
 /* tutorial step visuals */
 .tut-visual {
   background: #080c18;
@@ -657,6 +695,7 @@ h1, h2, .brand, .quiz-word, .root-name {
 .tut-phase-icon { font-size: 1.1rem; }
 
 .tut-visual-cards { gap: 6px; justify-content: center; }
+.tut-visual-exams { justify-content: center; }
 .tut-mini-card {
   display: flex; align-items: center; gap: 6px;
   padding: 6px 10px; border-radius: 8px; font-size: 0.78rem;
@@ -704,6 +743,7 @@ button, a, .option, .tile, .path-node, .level { touch-action: manipulation; }
      little tighter than desktop so the map screen has more room below */
   .top { flex-wrap: wrap; align-items: center; row-gap: 6px; padding: 6px 0 10px; }
   .brand { font-size: 1.05rem; }
+  .header-exam-badge { font-size: 0.68rem; padding: 2px 8px; }
   .stats { order: 3; width: 100%; justify-content: space-between; gap: 6px; font-size: 0.8rem; }
   .sound-toggle { width: 30px; height: 30px; font-size: 0.85rem; }
 
@@ -711,6 +751,11 @@ button, a, .option, .tile, .path-node, .level { touch-action: manipulation; }
      (set once, not overridden per breakpoint) — trimmed elsewhere below so
      at least 3 galaxies still stay visible before the page needs to scroll */
   .quest-bubble { padding: 9px 12px; margin: 2px 0 12px; }
+  .quest-row { margin: 2px 0 12px; gap: 8px; }
+  .quest-row .quest-bubble { padding: 9px 10px; margin: 0; }
+  .quest-row .qb-icon { width: 32px; height: 32px; font-size: 1rem; }
+  .quest-row .qb-label { font-size: 0.68rem; }
+  .quest-row .qb-word { font-size: 0.78rem; }
 
   /* thumb-sized controls */
   .btn { min-height: 46px; padding: 12px 20px; }
@@ -788,6 +833,18 @@ body.has-tabbar #app { padding-bottom: 88px; }
 @media (hover: hover) { .quest-bubble:hover { border-color: hsl(43 60% 50% / 0.7); } }
 .quest-bubble.done { opacity: 0.7; }
 .quest-bubble.done .qb-icon { opacity: 0.7; }
+
+/* Word of the day + Exam focus side by side, each at half width — same
+   card, half the space, rather than a second full-width bubble stacked
+   below (which is what made the pill-under-the-hero-bar version feel
+   like an afterthought instead of a peer to the daily word). */
+.quest-row { display: flex; gap: 10px; margin: 4px 0 18px; }
+.quest-row .quest-bubble { flex: 1 1 0; min-width: 0; margin: 0; }
+.examfocus-bubble { background: linear-gradient(135deg, #1a2a3a, #142030); border-color: #2f5270; }
+.examfocus-bubble .qb-icon { background: hsl(205 65% 55% / 0.16); border-color: hsl(205 65% 55% / 0.4); }
+.examfocus-bubble .qb-label { color: hsl(205 70% 68%); }
+.examfocus-bubble.active { border-color: hsl(205 65% 55% / 0.85); }
+@media (hover: hover) { .examfocus-bubble:hover { border-color: hsl(205 60% 50% / 0.7); } }
 
 /* No spine connecting them — galaxies don't sit on a route. Two explicit
    flex columns (balanced by estimated height in JS, not CSS column-count —

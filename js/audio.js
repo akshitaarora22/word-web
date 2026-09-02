@@ -59,6 +59,28 @@
         tone(440, 0, 0.05, "triangle", 0.06);
       } catch (e) {}
     },
+    // "Enter galaxy" — a rising pitch sweep (not a chord like the others)
+    // to match the warp-flash's outward launch, rather than a fanfare.
+    warp() {
+      buzz(25);
+      try {
+        if (!enabled()) return;
+        const c = ac();
+        const osc = c.createOscillator();
+        const gain = c.createGain();
+        osc.type = "sawtooth";
+        const t0 = c.currentTime;
+        osc.frequency.setValueAtTime(180, t0);
+        osc.frequency.exponentialRampToValueAtTime(1400, t0 + 0.32);
+        gain.gain.setValueAtTime(0, t0);
+        gain.gain.linearRampToValueAtTime(0.12, t0 + 0.04);
+        gain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.36);
+        osc.connect(gain);
+        gain.connect(c.destination);
+        osc.start(t0);
+        osc.stop(t0 + 0.38);
+      } catch (e) {}
+    },
     levelup() {
       buzz([20, 30, 20, 30, 40]);
       try {

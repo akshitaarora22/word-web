@@ -335,14 +335,16 @@
       .filter((w) => !w.roots || w.roots.length === 0)
       .sort((a, b) => a.word.localeCompare(b.word));
 
-    // meta.root_count feeds every "X of Y roots mastered" display — it must
-    // count only roots that actually appear in some domain's rootIds (i.e.
-    // can ever actually be mastered), not every root row in the dataset.
-    // Affix roots (re-, con-, in-...) are already excluded from rootIds
-    // above, and under a raised bigThreshold some content roots can end up
-    // with no level of their own without a word left over anywhere in
-    // rootIds either — either way, this must be derived, not trusted from
-    // data.meta, or the two numbers drift out of sync.
+    // meta.root_count and meta.word_count feed every "X of Y" display —
+    // both must be derived from the data actually in play, not trusted
+    // from data.meta. root_count only counts roots that appear in some
+    // domain's rootIds (i.e. can ever actually be mastered): affix roots
+    // (re-, con-, in-...) are already excluded above, and under a raised
+    // bigThreshold some content roots can end up with no level of their
+    // own. word_count matters just as much: filterByExams passes through
+    // the *original* dataset's meta unchanged (it only replaces roots/
+    // words/root_word_index), so data.meta.word_count would otherwise
+    // still read as the full, unfiltered count even in exam-focus mode.
     const rootCount = domains.reduce((n, d) => n + d.rootIds.length, 0);
 
     return {
@@ -352,13 +354,13 @@
       wordsByKey,
       defsByDomain,
       daily,
-      // The active (possibly GRE-filtered) roots/words/index — anything
+      // The active (possibly exam-filtered) roots/words/index — anything
       // that needs "every root" or "every word" should read these, not
-      // window.WORDWEB_DATA directly, so it respects GRE-only mode too.
+      // window.WORDWEB_DATA directly, so it respects exam-focus mode too.
       roots: data.roots,
       words: data.words,
       root_word_index: index,
-      meta: { ...data.meta, root_count: rootCount },
+      meta: { ...data.meta, root_count: rootCount, word_count: data.words.length },
     };
   }
 
