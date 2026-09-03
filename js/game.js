@@ -3,6 +3,12 @@
 (function () {
   const L = window.WordWebLevels;
   let GAME; // set below, once `save` is loaded — see rebuildGame()
+  // showTutorial() now spotlights real Home elements, so it forces
+  // showHome() first (in case it was opened from elsewhere, e.g. Profile's
+  // "How to play") — this guard stops that from re-triggering showHome()'s
+  // own auto-launch of the tutorial (tutorialDone is still false while the
+  // tour itself is running) into an infinite loop.
+  let tutorialOpen = false;
 
   // Every exam a word can be tagged with (word.exam_lists), in a fixed
   // display order, and the accent hue each gets for its badge (see
@@ -81,7 +87,7 @@
     levels: {}, // levelId -> { completed, bestScore }
     roots: {}, // rootId -> { correct: {word:true}, decoded: bool }
     review: [], // { word, box, due } due = ms epoch
-    daily: {}, // dateStr -> true
+    constellations: {}, // localDateStr -> result { puzzleId, puzzleNum, type, stars, total, flickers, words, starGlyphs, completedAt }
     celebratedDomains: {}, // domainId -> true, so the supernova only fires once
     hearts: 5,
     heartsMax: 5,
@@ -142,6 +148,23 @@
   const rng = Math.random;
   const todayStr = () => new Date().toISOString().slice(0, 10);
   const DAY = 24 * 60 * 60 * 1000;
+  // Tonight's Constellation is indexed by the player's LOCAL calendar date,
+  // Wordle-style, so it flips at their own midnight and everyone on the same
+  // date gets the same puzzle — deliberately separate from todayStr()/DAY
+  // above (UTC-based, used for streaks), which stay as they are.
+  const localDateStr = (d) => {
+    d = d || new Date();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${d.getFullYear()}-${m}-${day}`;
+  };
+  const CONSTELLATION_EPOCH = new Date(2026, 0, 1); // local Jan 1 2026 = puzzle #1
+  const daysSinceEpochLocal = (d) => {
+    d = d || new Date();
+    const midnight = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+    const epoch = CONSTELLATION_EPOCH.getTime();
+    return Math.floor((midnight - epoch) / DAY);
+  };
   const REVISION_COUNT = 12; // number of words in revision mode
   const esc = (s) =>
     String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -364,6 +387,14 @@
 
   /* ---------- tutorial (card modal) ---------- */
   function showTutorial() {
+    // Several steps spotlight a real Home element (the domain cards, the
+    // quest-row bubbles, the Web tab), so Home has to actually be what's
+    // rendered underneath — "How to play" can be tapped from Profile,
+    // where none of those exist. tutorialOpen guards against the
+    // re-entrant loop this would otherwise cause (see its declaration).
+    tutorialOpen = true;
+    showHome();
+
     const steps = [
       {
         icon: "✳",
@@ -379,11 +410,8 @@
       {
         icon: "🌌",
         title: "Pick a Domain",
-        body: "Words are grouped into <b>domains</b> — Science, Law, Emotion, and more. Each domain is a winding path of levels. Complete a level to light up stars in its constellation.",
-        visual: `<div class="tut-visual tut-visual-domains">
-          <div class="tut-domain-row"><span class="tut-star lit">★</span><span class="tut-star lit">★</span><span class="tut-star">☆</span><span class="tut-star">☆</span> <b>Kinship &amp; Gender</b> <span class="tut-badge">start here</span></div>
-          <div class="tut-domain-row"><span class="tut-star">☆</span><span class="tut-star">☆</span><span class="tut-star">☆</span><span class="tut-star">☆</span> <b>Mind &amp; Senses</b></div>
-        </div>`,
+        target: "[data-system]",
+        body: "Each galaxy is a domain of roots. Tap one to explore its levels — smaller galaxies are a good place to start.",
       },
       {
         icon: "⚡",
@@ -398,46 +426,33 @@
         </div>`,
       },
       {
-        icon: "📅",
-        title: "Daily Challenges",
-        body: "<b>Word of the Day</b> — one mystery word every 24 hours.<br><b>Bridge Run</b> — assemble bridge words from root tiles.<br><b>Review Sprint</b> — words you missed come back for spaced practice.",
-        visual: `<div class="tut-visual tut-visual-cards">
-          <div class="tut-mini-card daily-c"><span>📅</span> Word of the day</div>
-          <div class="tut-mini-card bridge-c"><span>⬡</span> Bridge run</div>
-          <div class="tut-mini-card review-c"><span>🔄</span> Review sprint</div>
-        </div>`,
+        icon: "🌌",
+        title: "Tonight's Constellation",
+        target: ".quest-row",
+        body: "A new chain of linked words every night, same for everyone. Pick correctly and a star ignites. <b>Bridge Run</b> and <b>Review Sprint</b> live under the Practice tab below.",
       },
-      // {
-      //   icon: "⬡",
-      //   title: "Your Knowledge Web",
-      //   body: "Every root is a node. Roots that share a bridge word are linked by an edge. During quizzes your web <b>grows in real time</b> as you answer correctly. Mastered roots glow gold.",
-      //   visual: `<div class="tut-visual tut-visual-web">
-      //     <svg viewBox="0 0 160 70" width="160" height="70">
-      //       <line x1="80" y1="35" x2="32" y2="18" stroke="#2a3868" stroke-width="1.5"/>
-      //       <line x1="80" y1="35" x2="128" y2="18" stroke="#2a3868" stroke-width="1.5"/>
-      //       <line x1="80" y1="35" x2="50" y2="58" stroke="#2a3868" stroke-width="1.5"/>
-      //       <line x1="80" y1="35" x2="115" y2="58" stroke="#2a3868" stroke-width="1.5"/>
-      //       <circle cx="80" cy="35" r="11" fill="hsl(220 60% 50%)" stroke="hsl(220 60% 75%)" stroke-width="1.5"/>
-      //       <circle cx="32" cy="18" r="5" fill="#4cc27a" stroke="#9fe0b8" stroke-width="1.2"/>
-      //       <circle cx="128" cy="18" r="5" fill="#4cc27a" stroke="#9fe0b8" stroke-width="1.2"/>
-      //       <circle cx="50" cy="58" r="5" fill="#e8b64c" stroke="#fff0c9" stroke-width="1.2"/>
-      //       <circle cx="115" cy="58" r="5" fill="#4cc27a" stroke="#9fe0b8" stroke-width="1.2"/>
-      //       <text x="80" y="38.5" text-anchor="middle" font-size="7" fill="#c8c2b4" font-family="monospace">aud</text>
-      //     </svg>
-      //   </div>`,
-      // },
+      {
+        icon: "⬡",
+        title: "Your Knowledge Web",
+        target: '[data-nav="web"]',
+        body: "Every root is a node — roots that share a word are linked. It grows in real time as you learn, right here.",
+        visual: `<svg viewBox="0 0 120 54" width="120" height="54" class="tut-mini-web">
+          <line x1="60" y1="27" x2="24" y2="14" stroke="#2a3868" stroke-width="1.2"/>
+          <line x1="60" y1="27" x2="96" y2="14" stroke="#2a3868" stroke-width="1.2"/>
+          <line x1="60" y1="27" x2="38" y2="44" stroke="#2a3868" stroke-width="1.2"/>
+          <line x1="60" y1="27" x2="86" y2="44" stroke="#2a3868" stroke-width="1.2"/>
+          <circle cx="60" cy="27" r="8" fill="hsl(220 60% 50%)" stroke="hsl(220 60% 75%)" stroke-width="1.2"/>
+          <circle cx="24" cy="14" r="4" fill="#4cc27a" stroke="#9fe0b8" stroke-width="1"/>
+          <circle cx="96" cy="14" r="4" fill="#4cc27a" stroke="#9fe0b8" stroke-width="1"/>
+          <circle cx="38" cy="44" r="4" fill="#e8b64c" stroke="#fff0c9" stroke-width="1"/>
+          <circle cx="86" cy="44" r="4" fill="#4cc27a" stroke="#9fe0b8" stroke-width="1"/>
+        </svg>`,
+      },
       {
         icon: "🎓",
         title: "Studying for a Specific Exam?",
-        body: "Every word carries small badges for the real vocabulary lists it appears on — <b>GRE, SAT, ACT, GMAT, TOEFL, IELTS</b>. Head to your <b>Profile → Exam focus</b> to filter play down to just one exam, any combination, or leave them all unchecked to play everything.",
-        visual: `<div class="tut-visual tut-visual-exams">
-          <span class="exam-badge gre" style="--h:45">GRE</span>
-          <span class="exam-badge" style="--h:205">SAT</span>
-          <span class="exam-badge" style="--h:140">ACT</span>
-          <span class="exam-badge" style="--h:275">GMAT</span>
-          <span class="exam-badge" style="--h:185">TOEFL</span>
-          <span class="exam-badge" style="--h:15">IELTS</span>
-        </div>`,
+        target: ".examfocus-bubble",
+        body: "Words are tagged for real vocabulary lists — <b>GRE, SAT, ACT, GMAT, TOEFL, IELTS</b>. Tap here to filter play to any combination.",
       },
       {
         icon: "★",
@@ -449,13 +464,27 @@
 
     let step = 0;
     const overlay = document.createElement("div");
-    overlay.className = "tutorial-backdrop";
+
+    // Parks the callout below the spotlighted element if there's room,
+    // above it otherwise, clamped so it never runs off the viewport edge.
+    function placeCallout(card, rect) {
+      const margin = 14;
+      const cw = Math.min(300, window.innerWidth - margin * 2);
+      card.style.maxWidth = cw + "px";
+      card.style.left = Math.max(margin, Math.min(rect.left, window.innerWidth - cw - margin)) + "px";
+      const roomBelow = window.innerHeight - rect.bottom;
+      const cardH = card.offsetHeight || 160;
+      card.style.top =
+        roomBelow > cardH + margin * 2
+          ? rect.bottom + margin + "px"
+          : Math.max(margin, rect.top - cardH - margin) + "px";
+    }
 
     function render() {
       const s = steps[step];
       const isLast = step === steps.length - 1;
-      overlay.innerHTML = `<div class="tutorial-card">
-        <div class="tut-step-line">
+      const target = s.target ? document.querySelector(s.target) : null;
+      const navHTML = `<div class="tut-step-line">
           ${steps.map((_, i) => `<span class="tutorial-dot${i === step ? " active" : ""}"></span>`).join("")}
         </div>
         <span class="tutorial-icon">${s.icon}</span>
@@ -465,8 +494,25 @@
         <div class="tutorial-nav">
           <button class="tut-skip">${isLast ? "" : "Skip"}</button>
           <button class="btn primary tut-next">${isLast ? "Let's go! ★" : "Next →"}</button>
-        </div>
-      </div>`;
+        </div>`;
+
+      // A step with a real target spotlights it in place (a gold-ring
+      // cutout dimming everything else, via an oversized box-shadow — see
+      // .tut-spotlight-hole) with a small callout parked beside it, rather
+      // than a centered card describing it in prose. Falls back to the
+      // plain card if the target isn't actually in the DOM for some
+      // reason, so a step never renders empty.
+      if (target) {
+        overlay.className = "tut-spotlight-overlay";
+        const r = target.getBoundingClientRect();
+        const pad = 8;
+        overlay.innerHTML = `<div class="tut-spotlight-hole" style="left:${r.left - pad}px;top:${r.top - pad}px;width:${r.width + pad * 2}px;height:${r.height + pad * 2}px"></div>
+          <div class="tut-callout">${navHTML}</div>`;
+        placeCallout(overlay.querySelector(".tut-callout"), r);
+      } else {
+        overlay.className = "tutorial-backdrop";
+        overlay.innerHTML = `<div class="tutorial-card">${navHTML}</div>`;
+      }
 
       overlay.querySelector(".tut-next").addEventListener("click", () => {
         if (isLast) closeTutorial();
@@ -478,6 +524,7 @@
 
     function closeTutorial() {
       save.tutorialDone = true;
+      tutorialOpen = false;
       persist();
       overlay.classList.add("tutorial-fade-out");
       setTimeout(() => overlay.remove(), 320);
@@ -765,8 +812,10 @@
 
   function showHome() {
     touchStreak();
-    const daily = dailyWord();
-    const dailyDone = save.daily[todayStr()];
+    const todayDay = todaysDayRec();
+    const todayConst = primaryRun(todayDay);
+    const bothDone = !!(todayDay && todayDay.mc && todayDay.assembly);
+    const otherModeAvailable = !!todayDay && !bothDone && (todayDay.mc ? !!todaysAssemblyPuzzle() : true);
     const masteredRoots = GAME.domains.reduce((acc, d) => acc + d.rootIds.filter((rid) => rootMastered(rid)).length, 0);
     const masteryPct = GAME.meta.root_count ? Math.round((100 * masteredRoots) / GAME.meta.root_count) : 0;
     // The first not-yet-mastered domain gets the "continue" nudge — every
@@ -858,19 +907,19 @@
       </section>
       <div class="quest-row">
         ${
-          dailyDone
-            ? `<div class="quest-bubble done" style="cursor:default">
-                <span class="qb-icon">📅</span>
+          todayConst
+            ? `<button class="quest-bubble done" data-nav="constellation">
+                <span class="qb-icon">🌌</span>
                 <span class="qb-text">
-                  <span class="qb-label">Word of the day</span>
-                  <span class="qb-word">${esc(daily.word)} — solved</span>
+                  <span class="qb-label">Tonight's Constellation</span>
+                  <span class="qb-word">${todayConst.stars}/${todayConst.total} stars — ${bothDone ? "both modes done" : otherModeAvailable ? "try the other mode?" : "revisit"}</span>
                 </span>
-              </div>`
-            : `<button class="quest-bubble" data-nav="daily">
-                <span class="qb-icon">📅</span>
+              </button>`
+            : `<button class="quest-bubble" data-nav="constellation">
+                <span class="qb-icon">🌌</span>
                 <span class="qb-text">
-                  <span class="qb-label">Word of the day</span>
-                  <span class="qb-word">? ? ? ? ? ?</span>
+                  <span class="qb-label">Tonight's Constellation</span>
+                  <span class="qb-word">New tonight ✨</span>
                 </span>
                 <span class="qb-go">›</span>
               </button>`
@@ -906,7 +955,7 @@
     if (examFocusBtn) examFocusBtn.addEventListener("click", showExamFocusModal);
     wireNav();
     document.body.classList.add("has-tabbar");
-    if (!save.tutorialDone) setTimeout(() => showTutorial(), 400);
+    if (!save.tutorialDone && !tutorialOpen) setTimeout(() => showTutorial(), 400);
   }
 
   /* A quick radial flash in the destination's hue before the domain path
@@ -932,7 +981,9 @@
 
   function showPractice() {
     const due = dueReviews();
-    const dailyDone = save.daily[todayStr()];
+    const todayDay = todaysDayRec();
+    const todayConst = primaryRun(todayDay);
+    const bothDone = !!(todayDay && todayDay.mc && todayDay.assembly);
     app.innerHTML = `${header()}
       <section class="practice">
         <div class="practice-head">
@@ -941,13 +992,20 @@
           <button class="back-btn" data-nav="home">Back</button>
         </div>
         <div class="practice-list">
-          <button class="prac-row" data-nav="daily">
-            <span class="prac-icon daily">📅</span>
+          <button class="prac-row" data-nav="constellation">
+            <span class="prac-icon daily">🌌</span>
             <span class="prac-text">
-              <span class="prac-title">Word of the day</span>
-              <span class="prac-note">${dailyDone ? "Solved. New word tomorrow." : "One untaught word · 30 points"}</span>
+              <span class="prac-title">Tonight's Constellation</span>
+              <span class="prac-note">${todayConst ? `${todayConst.stars}/${todayConst.total} stars${bothDone ? " — both modes done" : " — tap to revisit or try the other mode"}` : "5 linked stars · pick the word from its definition"}</span>
             </span>
-            <span class="prac-badge ${dailyDone ? "done" : ""}">${dailyDone ? "✓" : "NEW"}</span>
+            <span class="prac-badge ${todayConst ? "done" : ""}">${todayConst ? "✓" : "NEW"}</span>
+          </button>
+          <button class="prac-row" data-nav="nightsky">
+            <span class="prac-icon review">🌠</span>
+            <span class="prac-text">
+              <span class="prac-title">Night sky</span>
+              <span class="prac-note">Every constellation you've completed, dated</span>
+            </span>
           </button>
           <button class="prac-row" data-nav="bridges">
             <span class="prac-icon bridge">🌉</span>
@@ -1234,7 +1292,7 @@
         </div>
         <h2 class="quiz-word">${esc(word.word)} <span class="pos">${esc(word.part_of_speech || "")}</span>
           ${examBadges(word)}</h2>
-        <div class="hint-row">${isDecode ? "" : '<button class="btn ghost" id="hint">Show roots (halves points)</button>'}
+        <div class="hint-row">${isDecode ? "" : '<button class="btn ghost" id="hint">💡 Hint <span class="hint-note">root · half points</span></button>'}
           <div id="hint-box" class="hint-box" hidden></div></div>
         <div class="options">
           ${q.options.map((o, i) => `<button class="option" data-i="${i}">${esc(o)}</button>`).join("")}
@@ -1550,23 +1608,340 @@
   }
 
   /* ---------- daily word ---------- */
-  function dailyWord() {
-    const days = Math.floor(Date.now() / DAY);
-    return GAME.daily[days % GAME.daily.length];
+  /* ---------- Tonight's Constellation ----------
+     One pre-curated puzzle a day (data/daily_puzzles.js, generated by
+     tools/generate_chains.py), indexed by local calendar date so every
+     player on the same date sees the same puzzle. Two shapes, unified into
+     a common { steps: [...] } walk so the rest of this code doesn't care
+     which one it's playing:
+       "chain"   — 5 words linked by 4 different pivot roots, one root/step.
+       "cluster" — 1 root's word family, 4 definition rounds against a
+                   shared shrinking option pool (see normalizeConstellation).
+     Anti-letter-leak distractors, quality grading etc. are all baked into
+     the JSON already — this layer only renders it and tracks the play.
+
+     A second way to play the SAME daily puzzle also lives here: "assembly"
+     mode (data/assembly_puzzles.js, generated by tools/build_assembly.py)
+     builds each word from root-stem tiles instead of picking it from a
+     multiple-choice list. It's index-aligned with the MC bank — same
+     position, same day's word set — so a `null` slot (a day whose words
+     don't decompose into clean visible stems) just means that mode isn't
+     offered today; MC mode is always available.
+
+     Both modes share one visual: an SVG "sky" (buildConstellationSVG) where
+     a cluster's shared root renders as a sun with word-planets orbiting it,
+     and a chain renders as a gentle arc of linked stars — the shape the
+     share string reduces to. Completing one mode doesn't use up the day:
+     save.constellations[date] is { mc?, assembly? }, each set independently
+     by finishConstellation/finishAssembly, so a player can play both and
+     renderConstellationDay shows every run that's done plus a prompt for
+     whichever mode is still open (see normalizeDayRec for the old flat-rec
+     shape this replaced). */
+  function puzzleBank() {
+    return (window.WORDWEB_DAILY_PUZZLES && window.WORDWEB_DAILY_PUZZLES.puzzles) || [];
   }
-  function showDaily() {
-    const word = dailyWord();
-    if (save.daily[todayStr()]) {
+  function assemblyBank() {
+    return window.WORDWEB_ASSEMBLY_PUZZLES || [];
+  }
+  function puzzleNumber() {
+    return Math.max(1, daysSinceEpochLocal() + 1);
+  }
+  function todaysPuzzle() {
+    const bank = puzzleBank();
+    if (!bank.length) return null;
+    const days = daysSinceEpochLocal();
+    const idx = ((days % bank.length) + bank.length) % bank.length;
+    return bank[idx];
+  }
+  // null if today's words can't be decomposed into clean tiles — build mode
+  // just isn't offered that day (see tools/build_assembly.py's coverage note).
+  function todaysAssemblyPuzzle() {
+    const puzzles = puzzleBank();
+    const bank = assemblyBank();
+    if (!puzzles.length || !bank.length) return null;
+    const days = daysSinceEpochLocal();
+    const idx = ((days % puzzles.length) + puzzles.length) % puzzles.length;
+    return bank[idx] || null;
+  }
+  function rootRecapFromPuzzle(puzzle) {
+    return puzzle.type === "chain"
+      ? puzzle.pivot_roots.map((r) => ({ root: r.root, meaning: r.meaning }))
+      : [{ root: puzzle.root.root, meaning: puzzle.root.meaning }];
+  }
+  // A day's record holds BOTH modes' results independently — { mc?, assembly? }
+  // — so completing one never locks out the other; see showConstellationModePicker
+  // and renderConstellationDay. Old saves before this shape existed stored one
+  // flat rec with a `.mode` field directly; migrate those on read.
+  function normalizeDayRec(dayRec) {
+    if (!dayRec) return null;
+    if (dayRec.mc || dayRec.assembly) return dayRec;
+    if (dayRec.mode) return { [dayRec.mode]: dayRec };
+    return null;
+  }
+  function todaysDayRec() {
+    return normalizeDayRec(save.constellations && save.constellations[localDateStr()]);
+  }
+  // The bubble/prac-row summary only has room for one line — prefer MC
+  // since it's the default/always-available mode.
+  function primaryRun(dayRec) {
+    return dayRec ? dayRec.mc || dayRec.assembly : null;
+  }
+  function normalizeConstellation(puzzle) {
+    if (puzzle.type === "chain") {
+      return {
+        type: "chain",
+        words: puzzle.chain.slice(),
+        steps: puzzle.links.map((l) => ({
+          definition: l.answer_definition,
+          answer: l.answer,
+          options: l.options.slice(),
+          rootDisplay: l.root_display,
+          rootMeaning: l.root_meaning,
+        })),
+      };
+    }
+    return {
+      type: "cluster",
+      root: puzzle.root,
+      pool: puzzle.options.slice(),
+      steps: puzzle.rounds.map((r) => ({
+        definition: r.definition,
+        answer: r.answer,
+        rootDisplay: puzzle.root.root,
+        rootMeaning: puzzle.root.meaning,
+      })),
+    };
+  }
+
+  function starGlyph(state, isRoot) {
+    if (state === "lit") return isRoot ? "✹" : "⭐";
+    if (state === "muddy") return "💫"; // assembly mode: solved, but took retries
+    if (state === "dark") return "🌑"; // MC mode: missed, chain moved on anyway
+    if (state === "current") return "☆";
+    return "·";
+  }
+  // MC mode's sky: the original one-line strip — a row of star glyphs
+  // joined by short dashes, matching the share string's own look
+  // (⭐—⭐—🌑—⭐—⭐). Build mode uses the fuller SVG sun/arc view below instead
+  // (buildConstellationSVG) since its slower, more deliberate pace has room
+  // for it; this one stays deliberately compact for the faster MC flow.
+  function constellationStripHTML(stars) {
+    return `<div class="const-strip">${stars
+      .map(
+        (s, i) => `${
+          i > 0
+            ? `<span class="const-strip-edge${s.edgeLit ? " lit" : ""}">${s.edgeLabel ? `<span class="const-strip-edge-tag">${esc(s.edgeLabel)}</span>` : ""}</span>`
+            : ""
+        }<span class="const-strip-star ${s.state}${s.isRoot ? " root" : ""}" title="${esc(s.label || "?")}">${starGlyph(s.state, s.isRoot)}</span>`
+      )
+      .join("")}</div>`;
+  }
+  /* ---- SVG sky renderer (build mode) ---- */
+  // Fixed 5-node layouts (both puzzle types always have exactly 5 nodes: a
+  // free/hub star + 4 built ones): cluster puts the shared root at the
+  // center as a sun with 4 word-planets orbiting it; chain spaces its 5
+  // stars along a gentle arc, left to right, the shape the share string is.
+  function constellationLayout(type) {
+    const W = 320,
+      H = 176;
+    if (type === "cluster") {
+      const cx = W / 2,
+        cy = H / 2 + 6,
+        R = 60;
+      const pts = [];
+      for (let i = 0; i < 4; i++) {
+        const a = -Math.PI / 2 + (i * Math.PI) / 2 + 0.35;
+        pts.push([cx + R * Math.cos(a), cy + R * Math.sin(a)]);
+      }
+      return { W, H, hub: [cx, cy], R, pts };
+    }
+    const xFrac = [0.08, 0.31, 0.535, 0.755, 0.95];
+    const yFrac = [0.8, 0.28, 0.68, 0.16, 0.55];
+    return { W, H, hub: null, pts: xFrac.map((xf, i) => [xf * W, yFrac[i] * H]) };
+  }
+  // `stars`: [{label, state: lit|muddy|dark|current|pending, isRoot?,
+  // hubMeaning?, edgeLabel?, edgeLit?}], one per node, in order.
+  function buildConstellationSVG(type, stars) {
+    const { W, H, hub, R, pts } = constellationLayout(type);
+    const coords = type === "cluster" ? [hub, ...pts] : pts;
+    let edges = type === "cluster" ? `<circle cx="${hub[0]}" cy="${hub[1]}" r="${R}" class="const-orbit"/>` : "";
+    stars.forEach((s, i) => {
+      if (i === 0) return;
+      const [x1, y1] = coords[type === "cluster" ? 0 : i - 1];
+      const [x2, y2] = coords[i];
+      edges += `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" class="const-edge${s.edgeLit ? " lit" : ""}"/>`;
+      if (s.edgeLabel && s.edgeLit) {
+        edges += `<text x="${((x1 + x2) / 2).toFixed(1)}" y="${((y1 + y2) / 2 - 6).toFixed(1)}" text-anchor="middle" class="const-edge-tag">${esc(s.edgeLabel)}</text>`;
+      }
+    });
+    const nodes = stars
+      .map((s, i) => {
+        const [x, y] = coords[i];
+        const r = s.isRoot ? 15 : 6;
+        let g = `<g class="const-node ${s.state}${s.isRoot ? " sun" : ""}">`;
+        if (s.state === "lit" || s.state === "muddy" || s.isRoot) g += `<circle cx="${x}" cy="${y}" r="${r + 8}" class="const-halo"/>`;
+        g += `<circle cx="${x}" cy="${y}" r="${r}" class="const-dot"/>`;
+        if (s.isRoot) {
+          g += `<text x="${x}" y="${y + 3}" text-anchor="middle" class="const-hub-word">${esc((s.label || "").split(",")[0])}</text>`;
+          g += `<text x="${x}" y="${y + r + 19}" text-anchor="middle" class="const-hub-meaning">${esc(s.hubMeaning || "")}</text>`;
+        } else if (s.label) {
+          g += `<text x="${x}" y="${y - r - 8}" text-anchor="middle" class="const-label">${esc(s.label)}</text>`;
+        }
+        return g + `</g>`;
+      })
+      .join("");
+    return `<svg class="const-sky" viewBox="0 0 ${W} ${H}" role="img" aria-label="Tonight's constellation">${edges}${nodes}</svg>`;
+  }
+  function frozenStarsFromRec(rec) {
+    return rec.starGlyphs.map((state, i) => {
+      const isRoot = rec.type === "cluster" && i === 0;
+      return {
+        state,
+        label: rec.words[i],
+        isRoot,
+        hubMeaning: isRoot ? rec.rootRecap[0].meaning : undefined,
+        edgeLit: i > 0,
+      };
+    });
+  }
+
+  /* ---- mode picker ---- */
+  let constellation = null; // in-progress MC play state; see startConstellation()
+  let assembly = null; // in-progress "build the word" play state; see startAssembly()
+  function showConstellation() {
+    const today = localDateStr();
+    if (constellation && constellation.dateStr === today) {
+      renderConstellation();
+      return;
+    }
+    if (assembly && assembly.dateStr === today) {
+      renderAssembly();
+      return;
+    }
+    // A day record holds both modes independently — show the day screen
+    // (with a prompt to try whichever mode is still open) as soon as
+    // EITHER one is done, rather than only once both are.
+    const dayRec = todaysDayRec();
+    if (dayRec) {
+      renderConstellationDay(dayRec);
+      return;
+    }
+    showConstellationModePicker();
+  }
+  function showConstellationModePicker() {
+    const puzzle = todaysPuzzle();
+    if (!puzzle) {
+      showPractice(); // puzzle bank missing/failed to load — fail soft
+      return;
+    }
+    // Build mode only covers ~1/3 of days (see tools/build_assembly.py) —
+    // when it's not available tonight, still show the picker with that
+    // card disabled and say so, rather than silently skipping straight to
+    // MC mode. A vanishing choice reads as broken; a disabled, explained
+    // one doesn't.
+    const asm = todaysAssemblyPuzzle();
+    app.innerHTML = `${header()}
+      <section class="quiz const-quiz">
+        <div class="quiz-top">
+          <span class="phase-kicker boss">🌌 Tonight's Constellation <span class="const-num">#${puzzleNumber()}</span></span>
+          <button class="back-btn" data-nav="home">Back</button>
+        </div>
+        <p class="const-def">How do you want to chart tonight's stars?</p>
+        <div class="const-mode-row">
+          <button class="const-mode-card" id="mode-mc">
+            <span class="const-mode-icon">🔭</span>
+            <span class="const-mode-title">Multiple choice</span>
+            <span class="const-mode-note">Read the definition, pick the word.</span>
+          </button>
+          <button class="const-mode-card${asm ? "" : " disabled"}" id="mode-assembly"${asm ? "" : " disabled"}>
+            <span class="const-mode-icon">🧩</span>
+            <span class="const-mode-title">Build the word</span>
+            <span class="const-mode-note">${asm ? "Assemble it from root tiles." : "Not available for tonight's words — try tomorrow."}</span>
+          </button>
+        </div>
+      </section>`;
+    wireNav();
+    $("#mode-mc").addEventListener("click", startConstellation);
+    if (asm) $("#mode-assembly").addEventListener("click", () => startAssembly(asm));
+  }
+
+  /* ---- mode 1: multiple choice ---- */
+  function startConstellation() {
+    const puzzle = todaysPuzzle();
+    if (!puzzle) {
       showPractice();
       return;
     }
-    const q = L.optionsFor(word, GAME, rng, save.hardMode);
+    const norm = normalizeConstellation(puzzle);
+    constellation = {
+      dateStr: localDateStr(),
+      puzzle,
+      norm,
+      idx: 0,
+      flickers: 0,
+      results: new Array(norm.steps.length).fill(null), // null=pending, true/false once answered
+    };
+    renderConstellation();
+  }
+  // One star per word in the constellation: the free starting star (chain)
+  // or the root itself (cluster), then one per step, lit/dark/current/pending.
+  function constellationStars() {
+    const { norm, idx, results } = constellation;
+    const stars = [];
+    if (norm.type === "chain") {
+      stars.push({ label: norm.words[0], state: "lit" });
+      norm.steps.forEach((st, i) => {
+        const r = results[i];
+        stars.push({
+          label: r === null ? "" : norm.words[i + 1],
+          state: r === true ? "lit" : r === false ? "dark" : i === idx ? "current" : "pending",
+          edgeLabel: st.rootDisplay,
+          edgeLit: r !== null,
+        });
+      });
+    } else {
+      stars.push({ label: norm.root.root, state: "lit", isRoot: true, hubMeaning: norm.root.meaning });
+      norm.steps.forEach((st, i) => {
+        const r = results[i];
+        stars.push({
+          label: r === null ? "" : st.answer,
+          state: r === true ? "lit" : r === false ? "dark" : i === idx ? "current" : "pending",
+          edgeLabel: null,
+          edgeLit: r !== null,
+        });
+      });
+    }
+    return stars;
+  }
+  function renderConstellation() {
+    const { norm, idx, flickers } = constellation;
+    const stars = constellationStars();
+    const step = norm.steps[idx];
+    const total = norm.steps.length;
+    // Cluster rounds all draw from the SAME fixed options list (not shrunk
+    // as rounds are answered) — otherwise the last round or two would be
+    // down to one or two forced picks instead of a real 4-5 way choice.
+    const options = norm.type === "chain" ? step.options : norm.pool;
     app.innerHTML = `${header()}
-      <section class="quiz daily-quiz">
-        <div class="quiz-top"><span class="phase-kicker boss">Word of the day</span><span><button class="back-btn" data-nav="home">Back</button></span></div>
-        <h2 class="quiz-word">${esc(word.word)} <span class="pos">${esc(word.part_of_speech || "")}</span>${examBadges(word)}</h2>
-        <p class="discover-hint">No roots to lean on — this one you just have to know. 30 points.</p>
-        <div class="options">${q.options.map((o, i) => `<button class="option" data-i="${i}">${esc(o)}</button>`).join("")}</div>
+      <section class="quiz const-quiz">
+        <div class="quiz-top">
+          <span class="phase-kicker boss">🌌 Tonight's Constellation <span class="const-num">#${puzzleNumber()}</span></span>
+          <span><span class="const-flicker" title="Flickers so far">✨ ${flickers}</span><button class="back-btn" data-nav="home">Back</button></span>
+        </div>
+        ${
+          norm.type === "cluster"
+            ? `<div class="const-root-badge"><span class="const-root-word">${esc(norm.root.root)}</span><span class="const-root-arrow">→</span><span class="const-root-meaning">${esc(norm.root.meaning)}</span></div>`
+            : ""
+        }
+        ${constellationStripHTML(stars)}
+        ${
+          norm.type === "chain"
+            ? `<div class="const-root-badge"><span class="const-root-word">${esc(step.rootDisplay)}</span><span class="const-root-arrow">→</span><span class="const-root-meaning">${esc(step.rootMeaning)}</span></div>`
+            : ""
+        }
+        <p class="const-progress">Star ${idx + 1} of ${total}</p>
+        <p class="const-def">“${esc(step.definition)}”</p>
+        <div class="options">${options.map((o) => `<button class="option" data-opt="${esc(o)}">${esc(o)}</button>`).join("")}</div>
         <div id="feedback" class="feedback" hidden></div>
       </section>`;
     wireNav();
@@ -1575,38 +1950,372 @@
       btn.addEventListener("click", () => {
         if (answered) return;
         answered = true;
-        const correct = Number(btn.dataset.i) === q.correctIndex;
-        app.querySelectorAll(".option").forEach((b, bi) => {
-          if (bi === q.correctIndex) b.classList.add("right");
-          else if (b === btn) b.classList.add("wrong");
-          b.disabled = true;
-        });
-        if (correct) {
-          save.points += 30;
-          popEl(btn);
-          confettiBurst(btn);
-          if (window.WordWebSFX) window.WordWebSFX.correct();
-        } else {
-          const wordKey = word.key || word.word;
-          if (!save.review.some((r) => r.word === wordKey))
-            save.review.push({ word: wordKey, box: 0, due: Date.now() });
-          shakeEl(btn);
-          if (window.WordWebSFX) window.WordWebSFX.wrong();
-        }
-        save.daily[todayStr()] = true;
-        touchStreak();
-        persist();
-        if (correct) checkAchievements();
-        const fb = $("#feedback");
-        fb.hidden = false;
-        fb.innerHTML = `<div class="verdict ${correct ? "yes" : "no"}"><span class="mascot">${correct ? "✳" : "…"}</span> ${reactionLine(correct)} ${correct ? "<b>+30</b>" : ""}</div>
-          <p class="example">“${esc(word.example)}”</p>
-          <button class="btn primary" id="next">Done</button>`;
-        document.body.classList.add("has-sticky-next");
-        $("#next").addEventListener("click", showPractice);
-        $("#next").focus();
+        resolveConstellationPick(btn, btn.dataset.opt === step.answer, step);
       })
     );
+  }
+  function resolveConstellationPick(btn, correct, step) {
+    const { norm, idx } = constellation;
+    app.querySelectorAll(".option").forEach((b) => {
+      b.disabled = true;
+      if (b.dataset.opt === step.answer) b.classList.add("right");
+      else if (b === btn) b.classList.add("wrong");
+    });
+    constellation.results[idx] = correct;
+    if (correct) {
+      popEl(btn);
+      confettiBurst(btn);
+      if (window.WordWebSFX) window.WordWebSFX.correct();
+    } else {
+      constellation.flickers++;
+      shakeEl(btn);
+      if (window.WordWebSFX) window.WordWebSFX.wrong();
+      // Missed words feed the personal review queue — the post-completion
+      // "revisit fading stars" button funnels into save.review, same as
+      // every other wrong answer in the app.
+      const missed = GAME.wordsByName && GAME.wordsByName[step.answer];
+      const key = (missed && (missed.key || missed.word)) || step.answer;
+      if (!save.review.some((r) => r.word === key)) save.review.push({ word: key, box: 0, due: Date.now() });
+    }
+    persist();
+    const fb = $("#feedback");
+    fb.hidden = false;
+    fb.innerHTML = `<div class="verdict ${correct ? "yes" : "no"}"><span class="mascot">${correct ? "✳" : "…"}</span> ${reactionLine(correct)}</div>
+      <button class="btn primary" id="const-next">${idx + 1 >= norm.steps.length ? "See your sky" : "Next star"}</button>`;
+    document.body.classList.add("has-sticky-next");
+    $("#const-next").addEventListener("click", () => {
+      constellation.idx++;
+      if (constellation.idx >= norm.steps.length) finishConstellation();
+      else renderConstellation();
+    });
+    $("#const-next").focus();
+  }
+  function finishConstellation() {
+    const { norm, results, flickers, puzzle } = constellation;
+    const stars = results.filter((r) => r === true).length;
+    const rec = {
+      puzzleId: puzzle.id,
+      puzzleNum: puzzleNumber(),
+      type: norm.type,
+      mode: "mc",
+      stars,
+      total: results.length,
+      flickers,
+      words: norm.type === "chain" ? norm.words.slice() : [norm.root.root].concat(norm.steps.map((s) => s.answer)),
+      rootRecap: rootRecapFromPuzzle(puzzle),
+      starGlyphs: constellationStars().map((s) => s.state),
+      completedAt: Date.now(),
+    };
+    save.constellations = save.constellations || {};
+    const today = localDateStr();
+    save.constellations[today] = Object.assign({}, normalizeDayRec(save.constellations[today]), { mc: rec });
+    persist();
+    touchStreak();
+    checkAchievements();
+    constellation = null;
+    renderConstellationDay(save.constellations[today]);
+  }
+
+  /* ---- mode 2: build the word from root tiles ----
+     Same daily words, played by assembling each one from a tile bank
+     (its root stems + leftover "ending" chunks + decoys) instead of
+     picking it from a list — data/assembly_puzzles.js (see
+     tools/build_assembly.py). No free first star here: every word,
+     including the chain's opener, has to be built. A wrong attempt just
+     shakes and resets the slots — you keep trying the same word, so
+     "flickers" here means retries, not a permanently missed star; a word
+     solved clean on the first try lights fully, one that took retries
+     lights dimmer ("muddy") rather than staying dark.
+     Cluster puzzles pre-fill the shared root's tile into whichever slot it
+     actually belongs in for THAT word (its position moves — "dermatology"
+     starts with the root, "pachyderm" ends with it — so a fixed slot would
+     be wrong for half the family) and drop it from the tile bank, so the
+     player places it once per puzzle instead of re-picking it every round. */
+  function startAssembly(asm) {
+    const puzzle = todaysPuzzle();
+    assembly = {
+      dateStr: localDateStr(),
+      puzzle,
+      asm,
+      wordIdx: 0,
+      misfires: asm.words.map(() => 0),
+      placed: null, // set fresh by renderAssembly() each round
+      locked: false,
+      usedHints: false,
+    };
+    renderAssembly();
+  }
+  function sharedAssemblyStem(prevWord, word) {
+    return word.sequence.find((s) => prevWord.sequence.includes(s)) || null;
+  }
+  function assemblyStars() {
+    const { asm, wordIdx, misfires } = assembly;
+    const clean = (i) => (misfires[i] === 0 ? "lit" : "muddy");
+    const stars = [];
+    if (asm.type === "chain") {
+      asm.words.forEach((w, i) => {
+        stars.push({
+          label: i < wordIdx ? w.word : "",
+          state: i < wordIdx ? clean(i) : i === wordIdx ? "current" : "pending",
+          edgeLabel: i > 0 ? sharedAssemblyStem(asm.words[i - 1], w) : null,
+          edgeLit: i > 0 && i <= wordIdx,
+        });
+      });
+    } else {
+      stars.push({ label: asm.hub.root, state: "lit", isRoot: true, hubMeaning: asm.hub.meaning });
+      asm.words.forEach((w, i) => {
+        stars.push({
+          label: i < wordIdx ? w.word : "",
+          state: i < wordIdx ? clean(i) : i === wordIdx ? "current" : "pending",
+          edgeLabel: null,
+          edgeLit: i < wordIdx,
+        });
+      });
+    }
+    return stars;
+  }
+  function renderAssembly() {
+    const { asm, wordIdx, misfires } = assembly;
+    const w = asm.words[wordIdx];
+    const stars = assemblyStars();
+    const hubStem = asm.type === "cluster" ? asm.hub.stem : null;
+    const hubSlotIdx = hubStem ? w.sequence.indexOf(hubStem) : -1;
+    // Pre-fill the shared root's slot (at ITS position in this word, not a
+    // fixed one — see the doc comment above) and keep it out of the bank.
+    assembly.placed = w.sequence.map((_, i) => (i === hubSlotIdx ? { stem: hubStem, given: true } : null));
+    assembly.locked = false;
+    const bankTiles = asm.tiles.map((t, i) => ({ ...t, tileIdx: i })).filter((t) => !(hubStem && t.stem === hubStem));
+    app.innerHTML = `${header()}
+      <section class="quiz const-quiz const-assembly">
+        <div class="quiz-top">
+          <span class="phase-kicker boss">🌌 Tonight's Constellation <span class="const-num">#${puzzleNumber()}</span><span class="const-mode-tag">🧩 build mode</span></span>
+          <button class="back-btn" data-nav="home">Back</button>
+        </div>
+        ${buildConstellationSVG(asm.type, stars)}
+        <p class="const-progress">Word ${wordIdx + 1} of ${asm.words.length}${misfires[wordIdx] ? ` · ${misfires[wordIdx]} retr${misfires[wordIdx] === 1 ? "y" : "ies"}` : ""}</p>
+        <p class="const-def">“${esc(w.definition)}”</p>
+        <div class="const-slots" id="const-slots">${w.sequence
+          .map((_, i) => `<button class="const-slot${i === hubSlotIdx ? " given" : ""}" data-slot="${i}">${i === hubSlotIdx ? esc(hubStem) : ""}</button>`)
+          .join("")}</div>
+        <div class="const-bank">${bankTiles
+          .map(
+            (t) => `<button class="const-tile${t.meaning ? "" : " ending"}" data-tile-idx="${t.tileIdx}">
+              <span class="const-tile-stem">${esc(t.stem)}</span>${t.meaning ? `<span class="const-tile-meaning">${esc(t.meaning)}</span>` : ""}
+            </button>`
+          )
+          .join("")}</div>
+        <div class="const-assembly-controls">
+          <button class="btn ghost" id="const-hint">Show root meanings</button>
+          <button class="btn ghost" id="const-clear">Clear</button>
+        </div>
+        <div id="feedback" class="feedback" hidden></div>
+      </section>`;
+    wireNav();
+    app.querySelectorAll(".const-tile").forEach((btn) => btn.addEventListener("click", () => placeAssemblyTile(Number(btn.dataset.tileIdx), btn)));
+    app.querySelectorAll(".const-slot").forEach((btn) => btn.addEventListener("click", () => removeAssemblyTile(Number(btn.dataset.slot))));
+    $("#const-hint").addEventListener("click", () => {
+      assembly.usedHints = true;
+      $(".const-assembly").classList.toggle("show-hints");
+    });
+    $("#const-clear").addEventListener("click", () => {
+      if (!assembly.locked) renderAssembly();
+    });
+  }
+  function placeAssemblyTile(tileIdx, btnEl) {
+    if (assembly.locked || btnEl.classList.contains("used")) return;
+    const nextSlot = assembly.placed.findIndex((p) => p === null);
+    if (nextSlot === -1) return;
+    assembly.placed[nextSlot] = { stem: assembly.asm.tiles[tileIdx].stem, tileIdx };
+    btnEl.classList.add("used");
+    refreshAssemblySlots();
+    if (assembly.placed.every((p) => p !== null)) checkAssembly();
+  }
+  function removeAssemblyTile(slotIdx) {
+    if (assembly.locked) return;
+    const p = assembly.placed[slotIdx];
+    if (!p || p.given) return; // the pre-filled root tile can't be pulled back out
+    assembly.placed[slotIdx] = null;
+    const bankBtn = app.querySelector(`[data-tile-idx="${p.tileIdx}"]`);
+    if (bankBtn) bankBtn.classList.remove("used");
+    refreshAssemblySlots();
+  }
+  function refreshAssemblySlots() {
+    app.querySelectorAll(".const-slot").forEach((el, i) => {
+      const p = assembly.placed[i];
+      el.textContent = p ? p.stem : "";
+      el.classList.toggle("filled", !!p);
+    });
+  }
+  function checkAssembly() {
+    const { asm, wordIdx } = assembly;
+    const w = asm.words[wordIdx];
+    const built = assembly.placed.map((p) => p.stem);
+    const ok = built.join("|") === w.sequence.join("|");
+    const slotsEl = $("#const-slots");
+    assembly.locked = true;
+    $(".const-assembly").classList.add("locked");
+    if (!ok) {
+      assembly.misfires[wordIdx]++;
+      slotsEl.classList.add("wrong");
+      if (window.WordWebSFX) window.WordWebSFX.wrong();
+      setTimeout(renderAssembly, 650);
+      return;
+    }
+    if (window.WordWebSFX) window.WordWebSFX.correct();
+    confettiBurst(slotsEl);
+    // Held open on a "Next" tap rather than a fixed timeout — the whole
+    // point of this pause is to actually register the assembled word, and
+    // a timer either rushes that or (if long enough not to) idles for
+    // players who read fast. A button lets everyone set their own pace.
+    const fb = $("#feedback");
+    fb.hidden = false;
+    fb.innerHTML = `<div class="verdict yes"><span class="mascot">✳</span> ${reactionLine(true)}</div>
+      <h3 class="const-built-word">${esc(w.word)}</h3>
+      <p class="example">“${esc(w.definition)}”</p>
+      <button class="btn primary" id="const-next">${assembly.wordIdx + 1 >= asm.words.length ? "See your sky" : "Next word"}</button>`;
+    document.body.classList.add("has-sticky-next");
+    persist();
+    $("#const-next").addEventListener("click", () => {
+      assembly.wordIdx++;
+      if (assembly.wordIdx >= asm.words.length) finishAssembly();
+      else renderAssembly();
+    });
+    $("#const-next").focus();
+  }
+  function finishAssembly() {
+    const { asm, misfires, puzzle } = assembly;
+    const total = asm.words.length;
+    const rec = {
+      puzzleId: puzzle.id,
+      puzzleNum: puzzleNumber(),
+      type: asm.type,
+      mode: "assembly",
+      stars: misfires.filter((m) => m === 0).length,
+      total,
+      flickers: misfires.reduce((a, b) => a + b, 0),
+      usedHints: assembly.usedHints,
+      words: asm.type === "chain" ? asm.words.map((w) => w.word) : [asm.hub.root].concat(asm.words.map((w) => w.word)),
+      rootRecap: rootRecapFromPuzzle(puzzle),
+      starGlyphs: assemblyStars().map((s) => s.state),
+      completedAt: Date.now(),
+    };
+    save.constellations = save.constellations || {};
+    const today = localDateStr();
+    save.constellations[today] = Object.assign({}, normalizeDayRec(save.constellations[today]), { assembly: rec });
+    persist();
+    touchStreak();
+    checkAchievements();
+    assembly = null;
+    renderConstellationDay(save.constellations[today]);
+  }
+
+  /* ---- shared: recap, share, archive ---- */
+  // A day record can hold one or both modes' results (see finishConstellation/
+  // finishAssembly); this always shows every run that's done and, if a mode
+  // is still open (and actually available today), offers it as a next step
+  // instead of treating the day as "used up" the moment one mode is played.
+  function renderConstellationDay(dayRec) {
+    const dueCount = dueReviews().length;
+    const runs = [
+      dayRec.mc ? { key: "mc", icon: "🔭", label: "Multiple choice", rec: dayRec.mc } : null,
+      dayRec.assembly ? { key: "assembly", icon: "🧩", label: "Build the word", rec: dayRec.assembly } : null,
+    ].filter(Boolean);
+    const missing = !dayRec.mc ? "mc" : !dayRec.assembly ? "assembly" : null;
+    const missingAsm = missing === "assembly" ? todaysAssemblyPuzzle() : null;
+    const canTryOther = missing === "mc" || (missing === "assembly" && !!missingAsm);
+    app.innerHTML = `${header()}
+      <section class="results const-results">
+        <div class="phase-kicker boss">🌌 Tonight's Constellation <span class="const-num">#${runs[0].rec.puzzleNum}</span></div>
+        ${runs.map(renderConstellationRunCard).join("")}
+        ${
+          canTryOther
+            ? `<button class="btn const-try-other" id="const-try-other">${missing === "mc" ? "🔭 Also try multiple choice" : "🧩 Also try building the word"}</button>`
+            : ""
+        }
+        <div class="btn-row">
+          <button class="btn ghost" id="const-sky">🌠 Night sky</button>
+        </div>
+        ${
+          dueCount
+            ? `<button class="btn const-revisit" id="const-revisit">${dueCount} star${dueCount === 1 ? "" : "s"} from past galaxies are fading ✨ Revisit them?</button>`
+            : ""
+        }
+        <button class="back-btn" data-nav="home">Back</button>
+      </section>`;
+    wireNav();
+    runs.forEach((r) => $(`#const-share-${r.key}`).addEventListener("click", () => shareConstellation(r.rec, $(`#const-share-${r.key}`))));
+    $("#const-sky").addEventListener("click", showNightSky);
+    const tryBtn = $("#const-try-other");
+    if (tryBtn) tryBtn.addEventListener("click", () => (missing === "mc" ? startConstellation() : startAssembly(missingAsm)));
+    const revisitBtn = $("#const-revisit");
+    if (revisitBtn) revisitBtn.addEventListener("click", showReview);
+  }
+  function renderConstellationRunCard(run) {
+    const rec = run.rec;
+    const stars = frozenStarsFromRec(rec);
+    return `<div class="const-run-card">
+        <div class="const-run-head"><span class="const-run-icon">${run.icon}</span><span class="const-run-label">${esc(run.label)}</span></div>
+        ${run.key === "assembly" ? buildConstellationSVG(rec.type, stars) : constellationStripHTML(stars)}
+        <h2>${rec.stars}/${rec.total} stars${rec.flickers ? `, ${rec.flickers} flicker${rec.flickers === 1 ? "" : "s"}` : ""}</h2>
+        <div class="const-root-recap">${rec.rootRecap.map((r) => `<span class="const-recap-chip"><b>${esc(r.root)}</b> — ${esc(r.meaning)}</span>`).join("")}</div>
+        <p class="const-words">${rec.words.map(esc).join(" → ")}</p>
+        <button class="btn primary" id="const-share-${run.key}">Share</button>
+      </div>`;
+  }
+  function shareConstellation(rec, el) {
+    const glyphs = rec.starGlyphs.map((s, i) => starGlyph(s, rec.type === "cluster" && i === 0)).join("—");
+    const text = `Word Web #${rec.puzzleNum} 🌌\n${glyphs}\n${rec.stars}/${rec.total} stars${rec.flickers ? `, ${rec.flickers} flicker${rec.flickers === 1 ? "" : "s"}` : ""}${
+      rec.mode === "assembly" && !rec.usedHints ? " · 🔒 no hints" : ""
+    }`;
+    const done = () => {
+      if (el) {
+        const old = el.textContent;
+        el.textContent = "Copied!";
+        setTimeout(() => (el.textContent = old), 1500);
+      }
+    };
+    if (navigator.share) navigator.share({ text }).catch(() => {});
+    else if (navigator.clipboard) navigator.clipboard.writeText(text).then(done, done);
+  }
+  // Reverse-chronological archive of every completed constellation — a free
+  // collection mechanic, and gaps are shown deliberately (not skipped) so a
+  // lapsed player sees the hole in their sky. Trimmed to start at today and
+  // stop just past the earliest completion, rather than a fixed 60-day
+  // stretch, so a brand-new player doesn't see 59 empty rows.
+  function showNightSky() {
+    const now = new Date();
+    const rows = [];
+    for (let i = 0; i < 60; i++) {
+      const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+      rows.push({ d, dayRec: normalizeDayRec(save.constellations && save.constellations[localDateStr(d)]) });
+    }
+    const lastFilled = rows.reduce((last, r, i) => (r.dayRec ? i : last), -1);
+    const visible = lastFilled === -1 ? rows.slice(0, 1) : rows.slice(0, lastFilled + 1);
+    const runGlyphs = (rec, icon) =>
+      `<span class="sky-run"><span class="sky-glyphs">${rec.starGlyphs.map((s, i) => starGlyph(s, rec.type === "cluster" && i === 0)).join("")}</span><span class="sky-score">${icon} ${rec.stars}/${rec.total}</span></span>`;
+    app.innerHTML = `${header()}
+      <section class="night-sky">
+        <div class="practice-head">
+          <span class="phase-kicker boss">🌠 Your night sky</span>
+          <p class="practice-sub">Every constellation you've completed, dated.</p>
+          <button class="back-btn" data-nav="home">Back</button>
+        </div>
+        <div class="sky-list">
+          ${visible
+            .map(
+              ({ d, dayRec }) => `<div class="sky-row ${dayRec ? "filled" : "empty"}">
+                <span class="sky-date">${esc(d.toLocaleDateString(undefined, { month: "short", day: "numeric" }))}</span>
+                ${
+                  dayRec
+                    ? `${dayRec.mc ? runGlyphs(dayRec.mc, "🔭") : ""}${dayRec.assembly ? runGlyphs(dayRec.assembly, "🧩") : ""}`
+                    : `<span class="sky-glyphs sky-gap">· · · · ·</span><span class="sky-score dim">—</span>`
+                }
+              </div>`
+            )
+            .join("")}
+        </div>
+      </section>`;
+    wireNav();
   }
 
   /* ---------- share ---------- */
@@ -1637,7 +2346,8 @@
         if (t === "you") showProfile();
         if (t === "review") showReview();
         if (t === "revision") showRevision();
-        if (t === "daily") showDaily();
+        if (t === "constellation") showConstellation();
+        if (t === "nightsky") showNightSky();
         if (t === "bridges" && window.WordWebBridges) window.WordWebBridges.show();
         if (t === "web" && window.WordWebView) window.WordWebView.show();
         if (t === "share") shareProgress(el);

@@ -139,6 +139,7 @@ h1, h2, .brand, .quiz-word, .root-name {
 .exam-badge { font-size: 0.65rem; vertical-align: middle; margin-left: 6px; border-radius: 4px; padding: 1px 5px; font-family: "Public Sans", sans-serif; letter-spacing: 0.08em; display: inline-block; border: 1px solid hsl(var(--h) 70% 55%); color: hsl(var(--h) 75% 68%); }
 .exam-badge.gre { border-color: var(--gold); color: var(--gold); }
 .hint-row { margin-bottom: 12px; }
+.hint-note { font-size: 0.75rem; color: var(--paper-dim); font-weight: 400; font-style: italic; margin-left: 4px; }
 .hint-box { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip { background: var(--accent-soft); border: 1px solid hsl(var(--h) 55% 62% / 0.35); color: var(--paper); border-radius: 999px; padding: 3px 10px; font-size: 0.82rem; }
 .options { display: grid; gap: 10px; }
@@ -677,15 +678,6 @@ h1, h2, .brand, .quiz-word, .root-name {
 }
 .tut-arrow { color: var(--paper-dim); font-size: 1rem; }
 
-.tut-visual-domains { flex-direction: column; gap: 10px; }
-.tut-domain-row { display: flex; align-items: center; gap: 6px; font-size: 0.84rem; }
-.tut-star { color: #2a3454; font-size: 0.9rem; }
-.tut-star.lit { color: var(--gold); }
-.tut-badge {
-  font-size: 0.68rem; background: var(--gold); color: var(--ink);
-  padding: 1px 6px; border-radius: 999px; font-weight: 700; margin-left: 4px;
-}
-
 .tut-visual-phases { justify-content: center; gap: 6px; flex-wrap: nowrap; }
 .tut-phase {
   display: flex; flex-direction: column; align-items: center; gap: 4px;
@@ -694,18 +686,39 @@ h1, h2, .brand, .quiz-word, .root-name {
 }
 .tut-phase-icon { font-size: 1.1rem; }
 
-.tut-visual-cards { gap: 6px; justify-content: center; }
-.tut-visual-exams { justify-content: center; }
-.tut-mini-card {
-  display: flex; align-items: center; gap: 6px;
-  padding: 6px 10px; border-radius: 8px; font-size: 0.78rem;
-  border: 1px solid #2a3868; color: var(--paper-dim);
+/* live spotlight tour — dims the whole screen except a gold-ring cutout
+   around the real element being pointed at (a box-shadow trick: the hole
+   div is sized to the target's rect, and its shadow spread covers
+   everything else), with a small callout parked beside it. Falls back to
+   the plain centered .tutorial-card for steps with no real on-screen
+   target. See showTutorial()'s render(). */
+.tut-spotlight-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  animation: tut-fade-in 0.22s ease;
 }
-.tut-mini-card.daily-c { background: hsl(43 40% 14%); border-color: hsl(43 55% 30%); }
-.tut-mini-card.bridge-c { background: hsl(220 35% 14%); border-color: hsl(220 45% 30%); }
-.tut-mini-card.review-c { background: hsl(280 25% 14%); border-color: hsl(280 35% 30%); }
-
-.tut-visual-web { justify-content: center; padding: 10px; }
+.tut-spotlight-hole {
+  /* No pointer-events:none — the tour is look-don't-touch, same as the
+     rest of the overlay, so a stray tap on the real button underneath
+     can't quietly end the tour early. */
+  position: fixed;
+  border-radius: 16px;
+  border: 2px solid var(--gold);
+  box-shadow: 0 0 0 9999px rgba(9, 13, 26, 0.82);
+  transition: left 0.3s ease, top 0.3s ease, width 0.3s ease, height 0.3s ease;
+}
+.tut-callout {
+  position: fixed;
+  background: var(--ink-2);
+  border: 1px solid #2d3860;
+  border-radius: 16px;
+  padding: 16px 18px 14px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.55);
+  animation: tut-slide-up 0.26s ease;
+}
+.tut-callout .tutorial-icon { font-size: 1.5rem; margin-bottom: 6px; }
+.tut-callout .tutorial-title { font-size: 1.1rem; margin-bottom: 8px; }
+.tut-callout .tutorial-body { font-size: 0.84rem; margin-bottom: 12px; }
+.tut-mini-web { display: block; margin: 4px auto 10px; }
 
 /* ---------- in-quiz knowledge graph ---------- */
 .quiz-graph {
@@ -1145,3 +1158,173 @@ body::before {
   30% { opacity: 1; }
   100% { opacity: 0.4; transform: translateX(-50%) scale(1); }
 }
+
+/* ---------- phase 6: Tonight's Constellation ---------- */
+.const-num { color: var(--paper-dim); font-weight: 400; text-transform: none; letter-spacing: normal; font-size: 0.85em; }
+.const-flicker { color: var(--paper-dim); font-size: 0.85rem; font-variant-numeric: tabular-nums; margin-right: 10px; }
+.const-mode-tag {
+  display: inline-flex; align-items: center; font-size: 0.68rem; font-weight: 600;
+  text-transform: none; letter-spacing: normal; vertical-align: middle;
+  color: hsl(205 70% 68%); background: hsl(205 55% 20% / 0.35);
+  border: 1px solid hsl(205 55% 45%); border-radius: 999px; padding: 1px 8px; margin-left: 6px;
+}
+
+/* one root badge — only shown in chain mode (each link pivots on a
+   different root); cluster mode's single root already lives in the sun,
+   see .const-hub-* below, so a separate banner would just repeat it. */
+.const-root-badge {
+  display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;
+  background: var(--accent-soft); border: 1px solid hsl(var(--h) 55% 62% / 0.35);
+  border-radius: var(--radius); padding: 8px 12px; margin: 2px 0 14px;
+}
+.const-root-word { font-family: "IBM Plex Mono", ui-monospace, monospace; color: var(--accent); font-weight: 600; }
+.const-root-arrow { color: var(--paper-dim); }
+.const-root-meaning { color: var(--paper); }
+
+/* MC mode's sky: the original one-line strip, a row of star glyphs joined
+   by short dashes — matches the share string's own look
+   (⭐—⭐—🌑—⭐—⭐). Kept deliberately compact for MC's faster pace; build
+   mode uses the fuller SVG view below instead. */
+.const-strip { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 0; margin: 4px 0 16px; }
+.const-strip-star {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; font-size: 1.3rem; flex: none;
+  color: var(--paper-dim); transition: color 0.2s, transform 0.2s;
+}
+.const-strip-star.lit { color: var(--gold); text-shadow: 0 0 10px hsl(43 80% 60% / 0.55); }
+.const-strip-star.root { color: var(--accent); text-shadow: 0 0 10px hsl(var(--h) 70% 60% / 0.5); }
+.const-strip-star.muddy { color: #c9975a; text-shadow: 0 0 8px hsl(30 55% 55% / 0.4); }
+.const-strip-star.dark { color: #6a5a68; }
+.const-strip-star.current { color: var(--paper); animation: const-twinkle 1.4s ease-in-out infinite; }
+.const-strip-star.pending { color: #3a4058; font-size: 0.8rem; }
+.const-strip-edge {
+  position: relative; width: 22px; height: 1px; background: #3a4058; flex: none;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.const-strip-edge.lit { background: hsl(43 60% 55% / 0.6); }
+.const-strip-edge-tag {
+  position: absolute; top: -17px; left: 50%; transform: translateX(-50%);
+  font-size: 0.6rem; color: var(--paper-dim); white-space: nowrap;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+}
+@media (prefers-reduced-motion: reduce) { .const-strip-star.current { animation: none; } }
+
+/* Build mode's sky: an SVG where a cluster's shared root sits at the
+   center as a sun with its word-planets orbiting it, and a chain spaces
+   its stars along a gentle arc, left to right. lit = correct, muddy =
+   correct after retries, current = being built now, pending = not yet. */
+.const-sky { width: 100%; max-width: 340px; display: block; margin: 2px auto 8px; }
+.const-orbit { fill: none; stroke: hsl(var(--h) 50% 55% / 0.25); stroke-width: 1; stroke-dasharray: 3 4; }
+.const-edge { stroke: #2a3454; stroke-width: 1.5; transition: stroke 0.3s; }
+.const-edge.lit { stroke: hsl(43 60% 55% / 0.65); }
+.const-edge-tag { fill: var(--paper-dim); font-size: 7px; font-family: "IBM Plex Mono", ui-monospace, monospace; }
+.const-dot { fill: #2a3454; transition: fill 0.3s; }
+.const-halo { fill: none; }
+.const-node.lit .const-dot { fill: var(--gold); }
+.const-node.lit .const-halo { fill: hsl(43 80% 60% / 0.22); }
+.const-node.muddy .const-dot { fill: #c9975a; }
+.const-node.muddy .const-halo { fill: hsl(30 55% 55% / 0.18); }
+.const-node.dark .const-dot { fill: #4a3f4a; }
+.const-node.current .const-dot { fill: var(--paper); animation: const-twinkle 1.4s ease-in-out infinite; }
+.const-node.pending .const-dot { fill: #2a3454; opacity: 0.6; }
+.const-node.sun .const-dot { fill: var(--gold); }
+.const-node.sun .const-halo { fill: hsl(43 85% 62% / 0.3); }
+@keyframes const-twinkle { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+.const-label { fill: var(--paper); font-size: 8px; font-family: "Fraunces", Georgia, serif; }
+.const-hub-word { fill: var(--ink); font-size: 8px; font-weight: 700; font-family: "IBM Plex Mono", ui-monospace, monospace; }
+.const-hub-meaning { fill: var(--paper-dim); font-size: 7px; font-family: "Public Sans", sans-serif; }
+@media (prefers-reduced-motion: reduce) { .const-node.current .const-dot { animation: none; } }
+
+.const-progress { color: var(--paper-dim); font-size: 0.85rem; margin: 0 0 4px; }
+.const-def { font-size: 1.15rem; margin: 4px 0 14px; }
+
+.const-root-recap { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 12px 0; }
+.const-recap-chip { background: var(--accent-soft); border: 1px solid hsl(var(--h) 55% 62% / 0.35); border-radius: 999px; padding: 4px 10px; font-size: 0.82rem; color: var(--paper); }
+.const-recap-chip b { font-family: "IBM Plex Mono", ui-monospace, monospace; color: var(--accent); font-weight: 600; }
+.const-words { color: var(--paper-dim); font-size: 0.92rem; }
+.const-revisit {
+  display: block; width: 100%; margin: 14px auto 0; text-align: center;
+  background: linear-gradient(135deg, #241a3a, #1a1430); border: 1px solid #3d2f66;
+  color: var(--paper); font-weight: 600; padding: 12px 16px;
+}
+@media (hover: hover) { .const-revisit:hover { border-color: var(--gold); } }
+
+/* one card per mode played today — a day can hold both, see
+   renderConstellationDay; .const-try-other offers whichever is still open. */
+.const-run-card {
+  background: var(--ink-2); border: 1px solid #2a3454; border-radius: var(--radius);
+  padding: 16px 14px 18px; margin: 14px 0;
+}
+.const-run-head { display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 4px; }
+.const-run-icon { font-size: 1.1rem; }
+.const-run-label { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--paper-dim); font-weight: 700; }
+.const-try-other {
+  display: block; width: 100%; margin: 4px auto 0; text-align: center;
+  background: var(--accent-soft); border: 1px dashed hsl(var(--h) 55% 62% / 0.5);
+  color: var(--paper); font-weight: 600; padding: 12px 16px;
+}
+@media (hover: hover) { .const-try-other:hover { border-style: solid; border-color: var(--gold); } }
+
+/* the word an assembly-mode round just built — held on screen behind a
+   "Next" button instead of a timer, see checkAssembly() */
+.const-built-word { font-family: "Fraunces", Georgia, serif; color: var(--gold); font-size: 1.6rem; margin: 6px 0; }
+
+/* mode picker: "multiple choice" vs "build the word" */
+.const-mode-row { display: flex; gap: 12px; margin: 14px 0 6px; }
+.const-mode-card {
+  all: unset; cursor: pointer; touch-action: manipulation; flex: 1 1 0; box-sizing: border-box; text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  background: var(--ink-2); border: 1px solid #2a3454; border-radius: var(--radius);
+  padding: 18px 12px;
+}
+.const-mode-icon { font-size: 1.8rem; }
+.const-mode-title { font-weight: 700; color: var(--paper); }
+.const-mode-note { font-size: 0.8rem; color: var(--paper-dim); }
+@media (hover: hover) { .const-mode-card:hover { border-color: var(--gold); } }
+.const-mode-card.disabled { opacity: 0.45; cursor: default; pointer-events: none; }
+@media (hover: hover) { .const-mode-card.disabled:hover { border-color: #2a3454; } }
+
+/* build-the-word mode: ordered slots + a tile bank (root stems, endings,
+   decoys). The pre-filled root slot (cluster only) is marked .given and
+   can't be removed; .show-hints (toggled by "Show root meanings") reveals
+   each tile's meaning, off by default so it doesn't hand the answer away. */
+.const-slots { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin: 6px 0 4px; }
+.const-slot {
+  all: unset; cursor: pointer; touch-action: manipulation; box-sizing: border-box;
+  min-width: 56px; height: 40px; display: flex; align-items: center; justify-content: center;
+  border-bottom: 2px solid #2a3454; font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.95rem; color: var(--gold); text-align: center;
+}
+.const-slot.given { color: var(--paper-dim); border-bottom-color: hsl(var(--h) 55% 55% / 0.5); cursor: default; }
+#const-slots.wrong .const-slot { border-bottom-color: #d05555; animation: const-shake 0.35s; }
+@keyframes const-shake { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+.const-bank { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 10px 0 6px; }
+.const-tile {
+  background: var(--ink-2); border: 1px solid #2a3454; border-radius: 6px;
+  color: var(--paper); font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 0.9rem;
+  padding: 8px 12px; cursor: pointer; touch-action: manipulation;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+}
+.const-tile.used { opacity: 0.25; pointer-events: none; }
+.const-tile.ending { color: var(--paper-dim); border-style: dashed; }
+.const-tile-meaning { font-family: "Public Sans", sans-serif; font-size: 0.62rem; color: var(--accent); display: none; }
+.const-assembly.show-hints .const-tile-meaning { display: block; }
+.const-assembly-controls { display: flex; justify-content: center; gap: 12px; margin: 4px 0; }
+.const-assembly.locked .const-tile, .const-assembly.locked .const-slot { pointer-events: none; opacity: 0.6; }
+@media (prefers-reduced-motion: reduce) { .const-slot { animation: none !important; } }
+
+/* night sky archive */
+.sky-list { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; }
+.sky-row {
+  display: flex; align-items: center; gap: 8px 12px; flex-wrap: wrap;
+  background: var(--ink-2); border: 1px solid #2a3454; border-radius: var(--radius);
+  padding: 10px 14px;
+}
+.sky-row.empty { opacity: 0.5; border-style: dashed; }
+.sky-date { flex: none; width: 62px; color: var(--paper-dim); font-size: 0.82rem; font-variant-numeric: tabular-nums; }
+/* one .sky-run per mode played that day — a day can have one or two */
+.sky-run { display: flex; align-items: center; gap: 12px; flex: 1 1 140px; min-width: 0; }
+.sky-glyphs { flex: 1; letter-spacing: 2px; }
+.sky-glyphs.sky-gap { color: #3a4058; letter-spacing: 4px; }
+.sky-score { flex: none; font-variant-numeric: tabular-nums; color: var(--gold); font-weight: 600; font-size: 0.85rem; }
+.sky-score.dim { color: var(--paper-dim); font-weight: 400; }
