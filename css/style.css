@@ -840,6 +840,7 @@ body.has-tabbar #app { padding-bottom: 88px; }
 .quest-bubble .qb-label {
   font-size: var(--fs-nav); line-height: 1.33; font-weight: 700;
   text-transform: uppercase; letter-spacing: 0.053em; color: var(--gold);
+  overflow-wrap: break-word;
 }
 .quest-bubble .qb-word { font-size: var(--fs-body); line-height: 1.18; margin-top: 2px; color: var(--paper); }
 .quest-bubble .qb-go { color: var(--paper-dim); font-size: 1.1rem; flex: none; }
@@ -1040,7 +1041,6 @@ body.has-tabbar #app { padding-bottom: 88px; }
   flex: none; width: 44px; height: 44px; border-radius: 12px;
   display: flex; align-items: center; justify-content: center; font-size: 1.3rem;
 }
-.prac-icon.daily { background: hsl(43 55% 45% / 0.18); }
 .prac-icon.bridge { background: hsl(205 55% 50% / 0.18); }
 .prac-icon.review { background: hsl(280 45% 55% / 0.18); }
 .prac-text { flex: 1; min-width: 0; display: flex; flex-direction: column; text-align: left; }

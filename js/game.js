@@ -981,9 +981,6 @@
 
   function showPractice() {
     const due = dueReviews();
-    const todayDay = todaysDayRec();
-    const todayConst = primaryRun(todayDay);
-    const bothDone = !!(todayDay && todayDay.mc && todayDay.assembly);
     app.innerHTML = `${header()}
       <section class="practice">
         <div class="practice-head">
@@ -992,21 +989,6 @@
           <button class="back-btn" data-nav="home">Back</button>
         </div>
         <div class="practice-list">
-          <button class="prac-row" data-nav="constellation">
-            <span class="prac-icon daily">🌌</span>
-            <span class="prac-text">
-              <span class="prac-title">Tonight's Constellation</span>
-              <span class="prac-note">${todayConst ? `${todayConst.stars}/${todayConst.total} stars${bothDone ? " — both modes done" : " — tap to revisit or try the other mode"}` : "5 linked stars · pick the word from its definition"}</span>
-            </span>
-            <span class="prac-badge ${todayConst ? "done" : ""}">${todayConst ? "✓" : "NEW"}</span>
-          </button>
-          <button class="prac-row" data-nav="nightsky">
-            <span class="prac-icon review">🌠</span>
-            <span class="prac-text">
-              <span class="prac-title">Night sky</span>
-              <span class="prac-note">Every constellation you've completed, dated</span>
-            </span>
-          </button>
           <button class="prac-row" data-nav="bridges">
             <span class="prac-icon bridge">🌉</span>
             <span class="prac-text">
@@ -1078,6 +1060,7 @@
             <p class="discover-hint" style="margin:0 0 8px">Show only words that appear on real vocabulary lists for these exams — fewer words per root, so some lessons run leaner and a few roots sit out entirely. Leave everything unchecked to play the full set.</p>
             ${examFilterGridHTML()}
           </div>
+          <button class="btn" data-nav="nightsky">🌠 Night sky</button>
           <button class="btn" data-nav="share">Share progress</button>
           <button class="btn" data-nav="tutorial">How to play</button>
         </div>
