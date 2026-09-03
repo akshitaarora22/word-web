@@ -766,7 +766,6 @@ button, a, .option, .tile, .path-node, .level { touch-action: manipulation; }
   .quest-bubble { padding: 9px 12px; margin: 2px 0 12px; }
   .quest-row { margin: 2px 0 12px; gap: 8px; }
   .quest-row .quest-bubble { padding: 9px 10px; margin: 0; }
-  .quest-row .qb-icon { width: 32px; height: 32px; font-size: 1rem; }
   .quest-row .qb-label { font-size: 0.68rem; }
   .quest-row .qb-word { font-size: 0.78rem; }
 
@@ -831,12 +830,10 @@ body.has-tabbar #app { padding-bottom: 88px; }
   border: 1px solid #3d2f66; border-radius: 16px;
   padding: 11px 14px; margin: 4px 0 18px;
 }
-.quest-bubble .qb-icon {
-  flex: none; width: 38px; height: 38px; border-radius: 11px;
-  background: hsl(43 65% 55% / 0.16); border: 1px solid hsl(43 65% 55% / 0.4);
-  display: flex; align-items: center; justify-content: center; font-size: 1.15rem;
-}
 .quest-bubble .qb-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+/* icon lives inline in the label text (e.g. "🌌 Tonight's Constellation")
+   rather than its own boxed column — reclaims that width for the label,
+   which otherwise wrapped awkwardly in the half-width .quest-row layout. */
 .quest-bubble .qb-label {
   font-size: var(--fs-nav); line-height: 1.33; font-weight: 700;
   text-transform: uppercase; letter-spacing: 0.053em; color: var(--gold);
@@ -846,7 +843,6 @@ body.has-tabbar #app { padding-bottom: 88px; }
 .quest-bubble .qb-go { color: var(--paper-dim); font-size: 1.1rem; flex: none; }
 @media (hover: hover) { .quest-bubble:hover { border-color: hsl(43 60% 50% / 0.7); } }
 .quest-bubble.done { opacity: 0.7; }
-.quest-bubble.done .qb-icon { opacity: 0.7; }
 
 /* Word of the day + Exam focus side by side, each at half width — same
    card, half the space, rather than a second full-width bubble stacked
@@ -855,7 +851,6 @@ body.has-tabbar #app { padding-bottom: 88px; }
 .quest-row { display: flex; gap: 10px; margin: 4px 0 18px; }
 .quest-row .quest-bubble { flex: 1 1 0; min-width: 0; margin: 0; }
 .examfocus-bubble { background: linear-gradient(135deg, #1a2a3a, #142030); border-color: #2f5270; }
-.examfocus-bubble .qb-icon { background: hsl(205 65% 55% / 0.16); border-color: hsl(205 65% 55% / 0.4); }
 .examfocus-bubble .qb-label { color: hsl(205 70% 68%); }
 .examfocus-bubble.active { border-color: hsl(205 65% 55% / 0.85); }
 @media (hover: hover) { .examfocus-bubble:hover { border-color: hsl(205 60% 50% / 0.7); } }

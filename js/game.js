@@ -909,25 +909,22 @@
         ${
           todayConst
             ? `<button class="quest-bubble done" data-nav="constellation">
-                <span class="qb-icon">🌌</span>
                 <span class="qb-text">
-                  <span class="qb-label">Tonight's Constellation</span>
+                  <span class="qb-label">🌌 Tonight's Constellation</span>
                   <span class="qb-word">${todayConst.stars}/${todayConst.total} stars — ${bothDone ? "both modes done" : otherModeAvailable ? "try the other mode?" : "revisit"}</span>
                 </span>
               </button>`
             : `<button class="quest-bubble" data-nav="constellation">
-                <span class="qb-icon">🌌</span>
                 <span class="qb-text">
-                  <span class="qb-label">Tonight's Constellation</span>
+                  <span class="qb-label">🌌 Tonight's Constellation</span>
                   <span class="qb-word">New tonight ✨</span>
                 </span>
                 <span class="qb-go">›</span>
               </button>`
         }
         <button class="quest-bubble examfocus-bubble${save.examFilter.length ? " active" : ""}" data-open-examfocus>
-          <span class="qb-icon">🎓</span>
           <span class="qb-text">
-            <span class="qb-label">Exam focus</span>
+            <span class="qb-label">🎓 Exam focus</span>
             <span class="qb-word">${save.examFilter.length ? esc(save.examFilter.slice().sort().join(", ")) : "No exam selected"}</span>
           </span>
           <span class="qb-go">›</span>
