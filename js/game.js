@@ -159,10 +159,19 @@
     return `${d.getFullYear()}-${m}-${day}`;
   };
   const CONSTELLATION_EPOCH = new Date(2026, 0, 1); // local Jan 1 2026 = puzzle #1
+  // Date.UTC(y, m, d), not `new Date(y, m, d).getTime()` — the latter
+  // reflects true elapsed real time, which a DST transition shortens or
+  // lengthens by an hour, so dividing by the constant DAY and flooring
+  // occasionally gets the wrong calendar-day count (verified: the puzzle
+  // silently fails to change the day after "spring forward", and skips a
+  // day after "fall back", in any DST-observing timezone). Date.UTC has no
+  // DST, so treating the local y/m/d as UTC calendar cells (purely for this
+  // subtraction — it never touches the real UTC date) counts pure calendar
+  // days elapsed, immune to the local clock's own DST jumps.
   const daysSinceEpochLocal = (d) => {
     d = d || new Date();
-    const midnight = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
-    const epoch = CONSTELLATION_EPOCH.getTime();
+    const midnight = Date.UTC(d.getFullYear(), d.getMonth(), d.getDate());
+    const epoch = Date.UTC(CONSTELLATION_EPOCH.getFullYear(), CONSTELLATION_EPOCH.getMonth(), CONSTELLATION_EPOCH.getDate());
     return Math.floor((midnight - epoch) / DAY);
   };
   const REVISION_COUNT = 12; // number of words in revision mode
